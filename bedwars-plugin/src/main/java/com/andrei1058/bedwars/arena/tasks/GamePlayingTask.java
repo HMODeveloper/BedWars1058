@@ -126,27 +126,20 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                 dragon_spawn_countdown--;
                 if (getDragonSpawnCountdown() == 0) {
                     for (Player p : getArena().getPlayers()) {
-                        nms.sendTitle(p, getMsg(p, Messages.NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH), getMsg(p, Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH), 0, 40, 10);
-                        for (ITeam t : getArena().getTeams()) {
-                            if (t.getMembers().isEmpty()) continue;
-                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("{TeamDragons}", String.valueOf(t.getDragons()))
-                                    .replace("{TeamColor}", t.getColor().chat().toString()).replace("{TeamName}", t.getDisplayName(Language.getPlayerLanguage(p))));
-                        }
+                        announceSuddenDeath(p);
                     }
                     for (Player p : getArena().getSpectators()) {
-                        nms.sendTitle(p, getMsg(p, Messages.NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH), getMsg(p, Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH), 0, 40, 10);
-                        for (ITeam t : getArena().getTeams()) {
-                            if (t.getMembers().isEmpty()) continue;
-                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("{TeamDragons}", String.valueOf(t.getDragons()))
-                                    .replace("{TeamColor}", t.getColor().chat().toString()).replace("{TeamName}", t.getDisplayName(Language.getPlayerLanguage(p))));
-                        }
+                        announceSuddenDeath(p);
                     }
                     getArena().updateNextEvent();
-                    for (ITeam team : arena.getTeams()){
-                        for (IGenerator o : team.getGenerators()) {
-                            Location l = o.getLocation();
-                            for (int y = 0; y < 20; y++) {
-                                l.clone().subtract(0, y, 0).getBlock().setType(Material.AIR);
+                    //Configurable resources generator removal
+                    if (getArena().isSuddenDeathRemoveResourceGenerator()){
+                        for (ITeam team : arena.getTeams()){
+                            for (IGenerator o : team.getGenerators()) {
+                                Location l = o.getLocation();
+                                for (int y = 0; y < 20; y++) {
+                                    l.clone().subtract(0, y, 0).getBlock().setType(Material.AIR);
+                                }
                             }
                         }
                     }
@@ -251,6 +244,15 @@ public class GamePlayingTask implements Runnable, PlayingTask {
         /* SPAWN ITEMS */
         for (IGenerator o : getArena().getOreGenerators()) {
             o.spawn();
+        }
+    }
+
+    private void announceSuddenDeath(Player p) {
+        nms.sendTitle(p, getMsg(p, Messages.NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH), getMsg(p, Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH), 0, 40, 10);
+        for (ITeam t : getArena().getTeams()) {
+            if (t.getMembers().isEmpty()) continue;
+            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("{TeamDragons}", String.valueOf(t.getDragons()))
+                    .replace("{TeamColor}", t.getColor().chat().toString()).replace("{TeamName}", t.getDisplayName(Language.getPlayerLanguage(p))));
         }
     }
 

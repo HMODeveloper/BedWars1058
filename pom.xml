@@ -30,6 +30,10 @@
         <!--            <url>https://gitlab.com/api/v4/projects/6491858/packages/maven</url>-->
         <!--        </repository>-->
         <repository>
+            <id>spigotmc-repo-public</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
             <id>codemc-nms</id>
             <url>https://repo.codemc.io/repository/nms/</url>
         </repository>

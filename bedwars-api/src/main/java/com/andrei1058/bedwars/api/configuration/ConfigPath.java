@@ -88,6 +88,8 @@ public class ConfigPath {
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
     public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";
+    public static final String GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS = "ender-dragon-breaks";
+    public static final String GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS_MAP = "ender-dragon-breaks-map";
 
     // Replace %path% with name
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.material";
@@ -199,6 +201,7 @@ public class ConfigPath {
     public static final String ARENA_SPEC_LOC = "spectator-loc";
     public static final String ARENA_TEAM_KILL_DROPS_LOC = "kill-drops-loc";
     public static final String ARENA_Y_LEVEL_KILL = "y-kill-height";
+    public static final String ARENA_SUDDEN_DEATH_REMOVE_RESOURCE_GENERATOR = "sudden-death-remove-resource-generator";
 
     public static final String SOUNDS_COUNTDOWN_TICK = "game-countdown-others";
     public static final String SOUNDS_COUNTDOWN_TICK_X = "game-countdown-s";

@@ -73,6 +73,8 @@ import com.andrei1058.bedwars.support.citizens.JoinNPC;
 import com.andrei1058.bedwars.support.paper.TeleportManager;
 import com.andrei1058.bedwars.support.papi.SupportPAPI;
 import com.andrei1058.bedwars.support.vault.WithEconomy;
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -177,7 +179,11 @@ public class Arena implements IArena {
     private Instant startTime;
     private ITeamAssigner teamAssigner = new TeamAssigner();
 
+    @Setter
+    @Getter
     private boolean allowMapBreak = false;
+    @Getter
+    private boolean suddenDeathRemoveResourceGenerator = false;
     private @Nullable ITeam winner;
 
     /**
@@ -230,6 +236,7 @@ public class Arena implements IArena {
         allowSpectate = yml.getBoolean("allowSpectate");
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
         allowMapBreak = yml.getBoolean(ConfigPath.ARENA_ALLOW_MAP_BREAK);
+        suddenDeathRemoveResourceGenerator = yml.getBoolean(ConfigPath.ARENA_SUDDEN_DEATH_REMOVE_RESOURCE_GENERATOR);
         if (config.getYml().get("arenaGroups") != null) {
             if (config.getYml().getStringList("arenaGroups").contains(yml.getString("group"))) {
                 group = yml.getString("group");
@@ -2676,14 +2683,6 @@ public class Arena implements IArena {
                 TeleportManager.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
         }
-    }
-
-    public boolean isAllowMapBreak() {
-        return allowMapBreak;
-    }
-
-    public void setAllowMapBreak(boolean allowMapBreak) {
-        this.allowMapBreak = allowMapBreak;
     }
 
     @Override

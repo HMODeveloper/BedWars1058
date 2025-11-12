@@ -62,6 +62,7 @@ public class ArenaConfig extends ConfigManager {
         yml.addDefault(ConfigPath.ARENA_NORMAL_DEATH_DROPS, false);
         yml.addDefault(ConfigPath.ARENA_USE_BED_HOLO, true);
         yml.addDefault(ConfigPath.ARENA_ALLOW_MAP_BREAK, false);
+        yml.addDefault(ConfigPath.ARENA_SUDDEN_DEATH_REMOVE_RESOURCE_GENERATOR, false);
         ArrayList<String> rules = new ArrayList<>();
         rules.add("doDaylightCycle:false");
         rules.add("announceAdvancements:false");
