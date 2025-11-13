@@ -494,8 +494,8 @@ public class BreakPlace implements Listener {
     @EventHandler
     public void onBlow(@NotNull EntityExplodeEvent e) {
         if (e.isCancelled()) return;
-        //End dragon destroys
         IArena a = Arena.getArenaByIdentifier(e.getLocation().getWorld().getName());
+        //End dragon destroys
         boolean isDragon = e.getEntity().getType() == EntityType.ENDER_DRAGON;
         boolean canDragonBreak = (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS) && isDragon);
         boolean breaksMap = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS_MAP);

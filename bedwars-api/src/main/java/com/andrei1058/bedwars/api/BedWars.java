@@ -35,6 +35,7 @@ import com.andrei1058.bedwars.api.sidebar.ISidebarService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -304,6 +305,9 @@ public interface BedWars {
          */
         @SuppressWarnings("unused")
         ConfigManager getUpgradesConfig();
+
+        @Unmodifiable
+        Iterable<ConfigManager> allConfigs();
     }
 
     /**

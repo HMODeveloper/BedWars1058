@@ -39,15 +39,19 @@ import com.andrei1058.bedwars.shop.main.CategoryContent;
 import com.andrei1058.bedwars.sidebar.SidebarService;
 import com.andrei1058.bedwars.stats.StatsAPI;
 import com.andrei1058.bedwars.upgrades.UpgradesManager;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -220,6 +224,12 @@ public class API implements com.andrei1058.bedwars.api.BedWars {
         @Override
         public ConfigManager getUpgradesConfig() {
             return UpgradesManager.getConfiguration();
+        }
+
+        @Override
+        @Unmodifiable
+        public List<ConfigManager> allConfigs() {
+            return ImmutableList.of(BedWars.config, BedWars.signs, BedWars.generators, BedWars.shop, UpgradesManager.getConfiguration());
         }
     };
 

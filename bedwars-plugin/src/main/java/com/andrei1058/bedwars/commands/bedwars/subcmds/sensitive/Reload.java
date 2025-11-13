@@ -20,9 +20,11 @@
 
 package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive;
 
-import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.BedWars;
+import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.configuration.ConfigManager;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
@@ -53,6 +55,16 @@ public class Reload extends SubCommand {
         } else {
             if (!MainCommand.isLobbySet(null)) return true;
         }
+        com.andrei1058.bedwars.api.BedWars api = BedWars.getAPI();
+        for (IArena arena : api.getArenaUtil().getArenas()) {
+            ConfigManager config = arena.getConfig();
+            config.reload();
+            s.sendMessage("§6 ▪ §7Arena config: "+config.getName()+" reloaded!");
+        }
+        for (ConfigManager configManager : api.getConfigs().allConfigs()) {
+            configManager.reload();
+            s.sendMessage("§6 ▪ §7"+configManager.getName()+" reloaded!");
+        }
         for (Language l : Language.getLanguages()){
             l.reload();
             s.sendMessage("§6 ▪ §7"+l.getLangName()+" reloaded!");
@@ -66,7 +78,7 @@ public class Reload extends SubCommand {
     }
 
     @Override
-    public boolean canSee(CommandSender s, BedWars api) {
+    public boolean canSee(CommandSender s, com.andrei1058.bedwars.api.BedWars api) {
         if (s instanceof Player) {
             Player p = (Player) s;
             if (Arena.isInArena(p)) return false;
