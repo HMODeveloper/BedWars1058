@@ -72,7 +72,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
             new CmdGUI(this, "gui");
         }
         new CmdStats(this, "stats");
-        new CmdStart(this, "forceStart");
+        new CmdForceStart(this, "forceStart");
         new CmdStart(this, "start");
         if (BedWars.getServerType() != ServerType.BUNGEE) {
             new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.SetLobby(this, "setLobby"); //priority 1
