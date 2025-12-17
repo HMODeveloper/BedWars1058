@@ -37,6 +37,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import static com.andrei1058.bedwars.BedWars.nms;
+import static java.lang.Math.floor;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 @SuppressWarnings("WeakerAccess")
 public class EggBridgeTask implements Runnable {
@@ -46,6 +50,10 @@ public class EggBridgeTask implements Runnable {
     private Player player;
     private IArena arena;
     private BukkitTask task;
+
+    // 延迟两个 tick 来避免撞上自己生成的方块
+    private Queue<Location> locationHistory = new LinkedList<>();
+    private static final int DELAY_TICKS = 2;
 
     public EggBridgeTask(Player player, Egg projectile, TeamColor teamColor) {
         IArena a = Arena.getArenaByPlayer(player);
@@ -76,57 +84,78 @@ public class EggBridgeTask implements Runnable {
     @Override
     public void run() {
 
-        Location loc = getProjectile().getLocation();
+//        Location loc = getProjectile().getLocation();
+
+//        System.out.println(String.format("[EggDebug] X: %.3f | Y: %.3f | Z: %.3f",
+//                loc.getX(), loc.getY(), loc.getZ()));
 
         if (getProjectile().isDead()
-                || !arena.isPlayer(getPlayer())
-                || getPlayer().getLocation().distance(getProjectile().getLocation()) > 27
-                || getPlayer().getLocation().getY() - getProjectile().getLocation().getY() > 9) {
+                || !arena.isPlayer(getPlayer())) {
+            EggBridge.removeEgg(projectile);
+            return;
+        }
+
+        // 延迟两个 tick
+        locationHistory.add(getProjectile().getLocation());
+        if (locationHistory.size() <= DELAY_TICKS) {
+            return;
+        }
+        Location loc = locationHistory.poll();
+
+        // 进行距离检查
+        double distance = getPlayer().getLocation().distance(loc);
+        double heightDiff = getPlayer().getLocation().getY() - loc.getY();
+        if (distance > 27 || heightDiff > 10) {
             EggBridge.removeEgg(projectile);
             return;
         }
 
         if (getPlayer().getLocation().distance(loc) > 4.0D) {
 
-            Block b2 = loc.clone().subtract(0.0D, 2.0D, 0.0D).getBlock();
-            if (!Misc.isBuildProtected(b2.getLocation(), getArena())) {
-                if (b2.getType() == Material.AIR) {
-                    b2.setType(nms.woolMaterial());
-                    nms.setBlockTeamColor(b2, getTeamColor());
-                    getArena().addPlacedBlock(b2);
-                    Bukkit.getPluginManager().callEvent(new EggBridgeBuildEvent(getTeamColor(), getArena(), b2));
-                    loc.getWorld().playEffect(b2.getLocation(), nms.eggBridge(), 3);
-                    Sounds.playSound("egg-bridge-block", getPlayer());
-                }
+            double deltaX;
+            if (loc.getX() - floor(loc.getX()) < 0.5) {
+                deltaX = -1.0D;
+            } else {
+                deltaX = 1.0D;
             }
 
-            Block b3 = loc.clone().subtract(1.0D, 2.0D, 0.0D).getBlock();
-            if (!Misc.isBuildProtected(b3.getLocation(), getArena())) {
-                if (b3.getType() == Material.AIR) {
-                    b3.setType(nms.woolMaterial());
-                    nms.setBlockTeamColor(b3, getTeamColor());
-                    getArena().addPlacedBlock(b3);
-                    Bukkit.getPluginManager().callEvent(new EggBridgeBuildEvent(getTeamColor(), getArena(), b3));
-                    loc.getWorld().playEffect(b3.getLocation(), nms.eggBridge(), 3);
-                    Sounds.playSound("egg-bridge-block", getPlayer());
-                }
+            double deltaZ;
+            if (loc.getZ() - floor(loc.getZ()) < 0.5) {
+                deltaZ = -1.0D;
+            } else {
+                deltaZ = 1.0D;
             }
 
-            Block b4 = loc.clone().subtract(0.0D, 2.0D, 1.0D).getBlock();
-            if (!Misc.isBuildProtected(b4.getLocation(), getArena())) {
-                if (b4.getType() == Material.AIR) {
-                    b4.setType(nms.woolMaterial());
-                    nms.setBlockTeamColor(b4, getTeamColor());
-                    getArena().addPlacedBlock(b4);
-                    Bukkit.getPluginManager().callEvent(new EggBridgeBuildEvent(getTeamColor(), getArena(), b4));
-                    loc.getWorld().playEffect(b4.getLocation(), nms.eggBridge(), 3);
-                    Sounds.playSound("egg-bridge-block", getPlayer());
-                }
+            Block b2 = loc.clone().add(0.0D, -2.0D, 0.0D).getBlock();
+            createBridgeBlock(b2, loc);
+
+            Block b3 = loc.clone().add(deltaX, -2.0D, 0.0D).getBlock();
+            createBridgeBlock(b3, loc);
+
+            Block b4 = loc.clone().add(0.0D, -2.0D, deltaZ).getBlock();
+            createBridgeBlock(b4, loc);
+
+            Block b5 = loc.clone().add(deltaX, -2.0D, deltaZ).getBlock();
+            createBridgeBlock(b5, loc);
+        }
+    }
+
+    // 创建方块逻辑
+    private void createBridgeBlock(Block block, Location effectLoc) {
+        if (!Misc.isBuildProtected(block.getLocation(), getArena())) {
+            if (block.getType() == Material.AIR) {
+                block.setType(nms.woolMaterial());
+                nms.setBlockTeamColor(block, getTeamColor());
+                getArena().addPlacedBlock(block);
+                Bukkit.getPluginManager().callEvent(new EggBridgeBuildEvent(getTeamColor(), getArena(), block));
+                effectLoc.getWorld().playEffect(block.getLocation(), nms.eggBridge(), 3);
+                Sounds.playSound("egg-bridge-block", getPlayer());
             }
         }
     }
 
     public void cancel(){
         task.cancel();
+        locationHistory.clear();
     }
 }
