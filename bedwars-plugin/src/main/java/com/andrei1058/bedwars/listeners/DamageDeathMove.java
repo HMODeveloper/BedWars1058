@@ -83,7 +83,7 @@ public class DamageDeathMove implements Listener {
         this.tntDamageSelf = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF);
         this.tntDamageTeammates = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
-        this.ironGolemDamage = shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DAMAGE);
+        this.ironGolemDamage = config.getYml().getDouble(ConfigPath.GENERAL_IRON_GOLEM_DAMAGE);
     }
 
     @EventHandler

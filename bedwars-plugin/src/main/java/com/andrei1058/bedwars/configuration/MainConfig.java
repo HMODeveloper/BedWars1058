@@ -214,6 +214,8 @@ public class MainConfig extends ConfigManager {
 
         yml.addDefault(ConfigPath.GENERAL_GAME_END_SB_TOP_STATISTIC, DefaultStatistics.KILLS.toString());
         yml.addDefault(ConfigPath.GENERAL_GAME_END_SB_TOP_HIDE_MISSING, true);
+
+        yml.addDefault(ConfigPath.GENERAL_IRON_GOLEM_DAMAGE, 6.0D);
         yml.options().copyDefaults(true);
         save();
 
