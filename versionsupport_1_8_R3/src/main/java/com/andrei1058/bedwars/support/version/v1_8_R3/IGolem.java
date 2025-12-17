@@ -21,7 +21,6 @@
 package com.andrei1058.bedwars.support.version.v1_8_R3;
 
 import com.andrei1058.bedwars.api.arena.team.ITeam;
-import com.andrei1058.bedwars.api.entity.IBedWarsIronGolem;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.support.version.common.VersionCommon;
@@ -38,7 +37,7 @@ import java.lang.reflect.Field;
 
 @SuppressWarnings("ALL")
 @Deprecated
-public class IGolem extends EntityIronGolem implements IBedWarsIronGolem {
+public class IGolem extends EntityIronGolem {
 
     private ITeam team;
 
