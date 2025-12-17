@@ -229,6 +229,7 @@ public class DamageDeathMove implements Listener {
                     if (rawDamager instanceof IronGolem && ironGolemDamage != 0) {
                         if (getAPI().getVersionSupport().getDespawnablesList().containsKey(rawDamager.getUniqueId())) {
                             e.setDamage(ironGolemDamage);
+                            handleInvisibilityRemoval(p, a);
                         }
                     }
                 }
@@ -265,19 +266,7 @@ public class DamageDeathMove implements Listener {
 
                     // #274
                     // if player gets hit show him
-                    if (a.getShowTime().containsKey(p)) {
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            for (Player on : a.getWorld().getPlayers()) {
-                                BedWars.nms.showArmor(p, on);
-                                //BedWars.nms.showPlayer(p, on);
-                            }
-                            a.getShowTime().remove(p);
-                            p.removePotionEffect(PotionEffectType.INVISIBILITY);
-                            ITeam team = a.getTeam(p);
-                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
-                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
-                        });
-                    }
+                    handleInvisibilityRemoval(p, a);
                     //
                 }
             }
@@ -330,6 +319,25 @@ public class DamageDeathMove implements Listener {
             if (e.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                 e.setCancelled(true);
             }
+        }
+    }
+
+    private void handleInvisibilityRemoval(Player p, IArena a) {
+        if (p.hasPotionEffect(PotionEffectType.INVISIBILITY) || a.getShowTime().containsKey(p)) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                p.removePotionEffect(PotionEffectType.INVISIBILITY);
+
+                if (a.getShowTime().containsKey(p)) {
+                    for (Player on : a.getWorld().getPlayers()) {
+                        BedWars.nms.showArmor(p, on);
+                    }
+                    a.getShowTime().remove(p);
+
+                    ITeam team = a.getTeam(p);
+                    p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                    Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
+                }
+            });
         }
     }
 
