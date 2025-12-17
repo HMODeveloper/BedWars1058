@@ -57,6 +57,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -73,6 +74,7 @@ public class DamageDeathMove implements Listener {
     private final double tntDamageSelf;
     private final double tntDamageTeammates;
     private final double tntDamageOthers;
+    private final double ironGolemDamage;
 
     public DamageDeathMove() {
         this.tntJumpBarycenterAlterationInY = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y);
@@ -81,6 +83,7 @@ public class DamageDeathMove implements Listener {
         this.tntDamageSelf = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF);
         this.tntDamageTeammates = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
+        this.ironGolemDamage = shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DAMAGE);
     }
 
     @EventHandler
@@ -153,6 +156,7 @@ public class DamageDeathMove implements Listener {
 
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent e) {
+        Entity rawDamager = e.getDamager();
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             IArena a = Arena.getArenaByPlayer(p);
@@ -167,23 +171,21 @@ public class DamageDeathMove implements Listener {
                 }
 
                 Player damager = null;
-                boolean projectile = false;
-                if (e.getDamager() instanceof Player) {
-                    damager = (Player) e.getDamager();
-                } else if (e.getDamager() instanceof Projectile) {
-                    ProjectileSource shooter = ((Projectile) e.getDamager()).getShooter();
+                if (rawDamager instanceof Player) {
+                    damager = (Player) rawDamager;
+                } else if (rawDamager instanceof Projectile) {
+                    ProjectileSource shooter = ((Projectile) rawDamager).getShooter();
                     if (shooter instanceof Player) {
                         damager = (Player) shooter;
                     } else return;
-                    projectile = true;
-                } else if (e.getDamager() instanceof Player) {
-                    damager = (Player) e.getDamager();
+                } else if (rawDamager instanceof Player) {
+                    damager = (Player) rawDamager;
                     if (a.isReSpawning(damager)) {
                         e.setCancelled(true);
                         return;
                     }
-                } else if (e.getDamager() instanceof TNTPrimed) {
-                    TNTPrimed tnt = (TNTPrimed) e.getDamager();
+                } else if (rawDamager instanceof TNTPrimed) {
+                    TNTPrimed tnt = (TNTPrimed) rawDamager;
                     if (tnt.getSource() != null) {
                         if (tnt.getSource() instanceof Player) {
                             damager = (Player) tnt.getSource();
@@ -214,13 +216,20 @@ public class DamageDeathMove implements Listener {
                             }
                         } else return;
                     }
-                } else if ((e.getDamager() instanceof Silverfish) || (e.getDamager() instanceof IronGolem)) {
+                } else if ((rawDamager instanceof Silverfish) || (rawDamager instanceof IronGolem)) {
                     LastHit lh = LastHit.getLastHit(p);
                     if (lh != null) {
-                        lh.setDamager(e.getDamager());
+                        lh.setDamager(rawDamager);
                         lh.setTime(System.currentTimeMillis());
                     } else {
-                        new LastHit(p, e.getDamager(), System.currentTimeMillis());
+                        new LastHit(p, rawDamager, System.currentTimeMillis());
+                    }
+
+                    //Fixed iron golem damage
+                    if (rawDamager instanceof IronGolem && ironGolemDamage != 0) {
+                        if (getAPI().getVersionSupport().getDespawnablesList().containsKey(rawDamager.getUniqueId())) {
+                            e.setDamage(ironGolemDamage);
+                        }
                     }
                 }
                 if (damager != null) {
@@ -230,7 +239,7 @@ public class DamageDeathMove implements Listener {
                     }
 
                     if (a.getTeam(p).equals(a.getTeam(damager))) {
-                        if (!(e.getDamager() instanceof TNTPrimed)) {
+                        if (!(rawDamager instanceof TNTPrimed)) {
                             e.setCancelled(true);
                         }
                         return;
@@ -274,13 +283,13 @@ public class DamageDeathMove implements Listener {
             }
         } else if (nms.isDespawnable(e.getEntity())) {
             Player damager;
-            if (e.getDamager() instanceof Player) {
-                damager = (Player) e.getDamager();
-            } else if (e.getDamager() instanceof Projectile) {
-                Projectile proj = (Projectile) e.getDamager();
+            if (rawDamager instanceof Player) {
+                damager = (Player) rawDamager;
+            } else if (rawDamager instanceof Projectile) {
+                Projectile proj = (Projectile) rawDamager;
                 damager = (Player) proj.getShooter();
-            } else if (e.getDamager() instanceof TNTPrimed) {
-                TNTPrimed tnt = (TNTPrimed) e.getDamager();
+            } else if (rawDamager instanceof TNTPrimed) {
+                TNTPrimed tnt = (TNTPrimed) rawDamager;
                 if (tnt.getSource() instanceof Player) {
                     damager = (Player) tnt.getSource();
                 } else return;
@@ -358,13 +367,7 @@ public class DamageDeathMove implements Listener {
             PlayerKillEvent.PlayerKillCause cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.UNKNOWN_FINAL_KILL : PlayerKillEvent.PlayerKillCause.UNKNOWN;
             if (damageEvent != null) {
                 if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
-                    LastHit lh = getLastHit(victim);
-                    if (lh != null) {
-                        if (lh.getTime() >= System.currentTimeMillis() - 15000) {
-                            if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
-                        }
-                    }
+                    killer = findKiller(victim, killer);
                     if (killer == null) {
                         message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
                     } else {
@@ -377,13 +380,7 @@ public class DamageDeathMove implements Listener {
                     cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.EXPLOSION_FINAL_KILL : PlayerKillEvent.PlayerKillCause.EXPLOSION;
 
                 } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                    LastHit lh = getLastHit(victim);
-                    if (lh != null) {
-                        if (lh.getTime() >= System.currentTimeMillis() - 15000) {
-                            if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
-                        }
-                    }
+                    killer = findKiller(victim, killer);
                     if (killer == null) {
                         message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
                     } else {
@@ -502,6 +499,18 @@ public class DamageDeathMove implements Listener {
         }
     }
 
+    @Nullable
+    private Player findKiller(Player victim, Player killer) {
+        LastHit lh = getLastHit(victim);
+        if (lh != null) {
+            if (lh.getTime() >= System.currentTimeMillis() - 15000) {
+                if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
+                if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+            }
+        }
+        return killer;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent e) {
         IArena a = Arena.getArenaByPlayer(e.getPlayer());
@@ -513,20 +522,7 @@ public class DamageDeathMove implements Listener {
         } else {
             if (a.isSpectator(e.getPlayer())) {
                 e.setRespawnLocation(a.getSpectatorLocation());
-                String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
-                for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
-                }
-                for (ITeam t : a.getTeams()) {
-                    for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
-                    }
-                }
-                for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
-                    }
-                }
+                updateHolograms(a, e.getPlayer());
                 a.sendSpectatorCommandItems(e.getPlayer());
                 return;
             }
@@ -578,20 +574,7 @@ public class DamageDeathMove implements Listener {
             ) {
 
                 /* update armor-stands hidden by nms */
-                String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
-                for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
-                }
-                for (ITeam t : a.getTeams()) {
-                    for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
-                    }
-                }
-                for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
-                    }
-                }
+                updateHolograms(a, e.getPlayer());
 
                 // hide armor for those with invisibility potions
                 if (!a.getShowTime().isEmpty()) {
@@ -664,6 +647,23 @@ public class DamageDeathMove implements Listener {
                 if (e.getTo().getY() < config.getInt(ConfigPath.LOBBY_VOID_TELEPORT_HEIGHT)) {
                     TeleportManager.teleportC(e.getPlayer(), config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 }
+            }
+        }
+    }
+
+    private void updateHolograms(IArena a, Player player) {
+        String iso = Language.getPlayerLanguage(player).getIso();
+        for (IGenerator o : a.getOreGenerators()) {
+            o.updateHolograms(player, iso);
+        }
+        for (ITeam t : a.getTeams()) {
+            for (IGenerator o : t.getGenerators()) {
+                o.updateHolograms(player, iso);
+            }
+        }
+        for (ShopHolo sh : ShopHolo.getShopHolo()) {
+            if (sh.getA() == a) {
+                sh.updateForPlayer(player, iso);
             }
         }
     }

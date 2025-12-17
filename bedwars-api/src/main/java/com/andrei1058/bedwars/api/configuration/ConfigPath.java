@@ -284,6 +284,7 @@ public class ConfigPath {
     public static final String SHOP_SPECIAL_IRON_GOLEM_MATERIAL = SHOP_SPECIALS_PATH + ".iron-golem.material";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DATA = SHOP_SPECIALS_PATH + ".iron-golem.data";
     public static final String SHOP_SPECIAL_IRON_GOLEM_HEALTH = SHOP_SPECIALS_PATH + ".iron-golem.health";
+    public static final String SHOP_SPECIAL_IRON_GOLEM_DAMAGE = SHOP_SPECIALS_PATH + ".iron-golem.damage";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DESPAWN = SHOP_SPECIALS_PATH + ".iron-golem.despawn";
     public static final String SHOP_SPECIAL_IRON_GOLEM_SPEED = SHOP_SPECIALS_PATH + ".iron-golem.speed";
 

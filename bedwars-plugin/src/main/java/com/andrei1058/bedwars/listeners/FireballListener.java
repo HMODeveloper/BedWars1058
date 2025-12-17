@@ -105,8 +105,11 @@ public class FireballListener implements Listener {
     }
 
 
+    /**
+     * Remove the damage effect caused by the explosion created by the fireball
+     * */
     @EventHandler
-    public void fireballDirectHit(EntityDamageByEntityEvent e) {
+    public void fireballExplosionHit(EntityDamageByEntityEvent e) {
         if(!(e.getDamager() instanceof Fireball)) return;
         if(!(e.getEntity() instanceof Player)) return;
 

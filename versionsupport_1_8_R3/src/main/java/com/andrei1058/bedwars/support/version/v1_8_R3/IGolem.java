@@ -21,6 +21,7 @@
 package com.andrei1058.bedwars.support.version.v1_8_R3;
 
 import com.andrei1058.bedwars.api.arena.team.ITeam;
+import com.andrei1058.bedwars.api.entity.IBedWarsIronGolem;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.support.version.common.VersionCommon;
@@ -37,7 +38,7 @@ import java.lang.reflect.Field;
 
 @SuppressWarnings("ALL")
 @Deprecated
-public class IGolem extends EntityIronGolem {
+public class IGolem extends EntityIronGolem implements IBedWarsIronGolem {
 
     private ITeam team;
 
@@ -63,7 +64,7 @@ public class IGolem extends EntityIronGolem {
         this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true));
         this.goalSelector.a(3, new PathfinderGoalRandomStroll(this, 1D));
         this.goalSelector.a(4, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget(this, EntityHuman.class, 20, true, false, player -> {
+        this.targetSelector.a(2, new GolemPathfinderGoalNearestAttackableTarget(this, EntityHuman.class, 20, true, false, player -> {
             if (player == null) return false;
             return ((EntityHuman)player).isAlive() && !team.wasMember(((EntityHuman)player).getUniqueID()) && !team.getArena().isReSpawning(((EntityHuman)player).getUniqueID())
                     && !team.getArena().isSpectator(((EntityHuman)player).getUniqueID());
