@@ -26,6 +26,7 @@ import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.upgrades.UpgradeAction;
 import com.andrei1058.bedwars.upgrades.UpgradesManager;
 import com.andrei1058.bedwars.upgrades.upgradeaction.*;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -35,13 +36,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class UpgradeTier {
 
-    private ItemStack displayItem;
-    private String name;
-    private List<UpgradeAction> upgradeActions = new ArrayList<>();
-    private int cost;
-    private Material currency;
+    private final ItemStack displayItem;
+    private final String name;
+    private final List<UpgradeAction> upgradeActions = new ArrayList<>();
+    private final int cost;
+    private final Material currency;
 
     /**
      * @param parentName is the parent name.
@@ -197,23 +199,4 @@ public class UpgradeTier {
         }
     }
 
-    public ItemStack getDisplayItem() {
-        return displayItem;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public Material getCurrency() {
-        return currency;
-    }
-
-    public List<UpgradeAction> getUpgradeActions() {
-        return upgradeActions;
-    }
 }
