@@ -38,6 +38,8 @@ public class ConfigPath {
     public static final String GENERAL_GAME_END_SB_TOP_HIDE_MISSING = GAME_END_PATH+".sb-top.hide-missing";
 
     public static final String GENERATOR_STACK_ITEMS = "stack-items";
+    public static final String GENERATOR_ENABLE_GEN_SPLIT = "enable-gen-split";
+    public static final String GENERATOR_GEN_SPLIT_RADIUS = "gen-split-radius";
 
     public static final String GENERATOR_IRON_DELAY = "iron.delay";
     public static final String GENERATOR_IRON_AMOUNT = "iron.amount";
@@ -174,7 +176,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_DISABLE_BREWING_STAND = "inventories.disable-brewing-stand";
     public static final String GENERAL_CONFIGURATION_DISABLE_ANVIL = "inventories.disable-anvil";
     public static final String GENERAL_CONFIGURATION_MARK_LEAVE_AS_ABANDON = "mark-leave-as-abandon";
-    public static final String GENERAL_CONFIGURATION_ENABLE_GEN_SPLIT = "enable-gen-split";
 
     public static final String GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP = "server-ip";
     public static final String GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_POWERED_BY = "powered-by";

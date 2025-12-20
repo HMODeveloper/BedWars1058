@@ -38,6 +38,7 @@ import com.andrei1058.bedwars.arena.OreGenerator;
 import com.andrei1058.bedwars.configuration.Sounds;
 import com.andrei1058.bedwars.shop.ShopCache;
 import com.andrei1058.bedwars.support.paper.TeleportManager;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
@@ -91,6 +92,7 @@ public class BedWarsTeam implements ITeam {
     // Queued traps
     private LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
     // Amount of dragons for Sudden Death phase
+    @Getter
     private int dragons = 1;
     // Player cache, used for losers stats and rejoin
     private List<Player> membersCache = new ArrayList<>();
@@ -809,10 +811,6 @@ public class BedWarsTeam implements ITeam {
 
     public Arena getArena() {
         return arena;
-    }
-
-    public int getDragons() {
-        return dragons;
     }
 
     @Override
