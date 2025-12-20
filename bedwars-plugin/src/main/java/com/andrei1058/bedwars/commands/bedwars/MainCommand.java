@@ -110,7 +110,6 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
             new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.NPC(this, "npc");
         }
         new CmdTpStaff(this, "tp");
-        new CmdUpgrades(this, "upgradesmenu");
         new SetKillDropsLoc(this, "setKillDrops");
     }
 

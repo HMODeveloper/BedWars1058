@@ -78,6 +78,16 @@ public class MenuSeparator implements MenuContent {
 
     @Override
     public void onClick(Player player, ClickType clickType, ITeam team) {
+        // 检查是否是返回按钮
+        if (name.equals("separator-back")) {
+            // 直接打开主升级菜单
+            com.andrei1058.bedwars.api.arena.IArena arena = com.andrei1058.bedwars.BedWars.getAPI().getArenaUtil().getArenaByPlayer(player);
+            if (arena != null && arena.isPlayer(player)) {
+                player.closeInventory();
+                com.andrei1058.bedwars.upgrades.UpgradesManager.getMenuForArena(arena).open(player);
+            }
+        }
+        
         for (String cmd : playerCommands) {
             if (cmd.trim().isEmpty()) continue;
             Bukkit.dispatchCommand(player, cmd.replace("{playername}", player.getName()).replace("{player}", player.getDisplayName()).replace("{team}", team == null ? "null" : team.getDisplayName(Language.getPlayerLanguage(player))));
