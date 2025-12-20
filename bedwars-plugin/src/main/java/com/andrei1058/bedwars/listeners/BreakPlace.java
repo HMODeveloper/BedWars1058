@@ -218,7 +218,36 @@ public class BreakPlace implements Listener {
             if (event.getClickedBlock() != null && event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.FIRE) {
                 if (!isBuildSession(player)) {
                     event.setCancelled(true);
-                    //return;
+                }
+            }
+            return;
+        }
+
+        // 防止竞技场地图被灭火
+        if (event.getClickedBlock() != null && event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            Block fireBlock = null;
+            if (event.getClickedBlock().getType().toString().contains("FIRE")) {
+                fireBlock = event.getClickedBlock();
+            } else if (event.getClickedBlock().getRelative(BlockFace.UP).getType().toString().contains("FIRE")) {
+                fireBlock = event.getClickedBlock().getRelative(BlockFace.UP);
+            }
+
+            if (fireBlock != null) {
+                IArena a = Arena.getArenaByPlayer(player);
+                if (a != null && a.getStatus() == GameState.playing) {
+                    boolean isPlaced = a.isBlockPlaced(fireBlock);
+                    boolean cancel = false;
+
+                    if (!isPlaced) {
+                        cancel = true;
+                    } else if (!allowFireBreak) {
+                        cancel = true;
+                    }
+
+                    if (cancel) {
+                        event.setCancelled(true);
+                        player.sendBlockChange(fireBlock.getLocation(), fireBlock.getType(), fireBlock.getData());
+                    }
                 }
             }
         }
@@ -286,11 +315,14 @@ public class BreakPlace implements Listener {
                     }
                     return;
                 case "FIRE":
-                    if (allowFireBreak) {
-                        e.setCancelled(false);
-                        return;
+                case "SOUL_FIRE":
+                    if (a.isBlockPlaced(e.getBlock())) {
+                        e.setCancelled(!allowFireBreak);
+                    } else {
+                        // 地图原有的火，永远禁止破坏
+                        e.setCancelled(true);
                     }
-                    break;
+                    return;
             }
 
             if (nms.isBed(e.getBlock().getType())) {
