@@ -40,6 +40,8 @@ public class GeneratorsConfig extends ConfigManager {
         yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT, 32);
         yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT, 7);
         yml.addDefault(ConfigPath.GENERATOR_STACK_ITEMS, false);
+        yml.addDefault(ConfigPath.GENERATOR_ENABLE_GEN_SPLIT, true);
+        yml.addDefault(ConfigPath.GENERATOR_GEN_SPLIT_RADIUS, 1.5D);
 
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY, 30);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_AMOUNT, 1);
