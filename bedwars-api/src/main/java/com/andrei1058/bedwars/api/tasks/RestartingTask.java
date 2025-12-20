@@ -36,5 +36,7 @@ public interface RestartingTask {
 
     int getRestarting();
 
+    void setRestarting(int restarting);
+
     void cancel();
 }

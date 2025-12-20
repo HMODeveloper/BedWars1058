@@ -6,6 +6,7 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.language.Messages;
+import com.andrei1058.bedwars.api.tasks.RestartingTask;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
@@ -25,9 +26,9 @@ public class CmdForceEndGame extends SubCommand {
         super(parent, name);
         setPriority(16); // Just after forceStart
         showInList(true);
-        setPermission("bw.forceendgame");
-        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName() + " §8 - §eforce end an arena",
-                "/" + getParent().getName() + " " + getSubCommandName(), "§fForce end an arena without winner.\n§fPermission: §cbw.forceendgame"));
+        setPermission(Permissions.PERMISSION_FORCE_END_GAME);
+        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName() + " §8 - §eForce end an arena",
+                "/" + getParent().getName() + " " + getSubCommandName(), "§fForce end an arena without winner.\n§fPermission: §c" + Permissions.PERMISSION_FORCE_END_GAME));
     }
 
     @Override
@@ -54,14 +55,9 @@ public class CmdForceEndGame extends SubCommand {
         // Force end the game
         p.sendMessage("§aForce ending the game...");
         a.changeStatus(GameState.restarting);
-        if (a.getRestartingTask() != null) {
-            try {
-                java.lang.reflect.Field restartingField = a.getRestartingTask().getClass().getDeclaredField("restarting");
-                restartingField.setAccessible(true);
-                restartingField.set(a.getRestartingTask(), 8);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        RestartingTask restartingTask = a.getRestartingTask();
+        if (restartingTask != null) {
+            restartingTask.setRestarting(8);
         }
         return true;
     }
