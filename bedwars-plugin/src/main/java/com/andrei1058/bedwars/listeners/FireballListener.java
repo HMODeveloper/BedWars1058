@@ -46,6 +46,7 @@ public class FireballListener implements Listener {
 
     @EventHandler
     public void fireballHit(ProjectileHitEvent e) {
+        // validate important info
         if (!(e.getEntity() instanceof Fireball)) return;
         Fireball fireball = (Fireball) e.getEntity();
         ProjectileSource projectileSource = e.getEntity().getShooter();
@@ -55,18 +56,21 @@ public class FireballListener implements Listener {
         IArena arena = Arena.getArenaByPlayer(source);
         if (arena == null) return;
 
+        // calc explosion loc
         Vector velocity = fireball.getVelocity();
         Location startLoc = fireball.getLocation();
         Location explosionLoc = calculateExactExplosionLoc(startLoc, velocity, 0);
+
+        // apply player kb
         World world = explosionLoc.getWorld();
         assert world != null;
         Collection<Entity> nearbyEntities = world.getNearbyEntities(explosionLoc, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
-
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof Player)) continue;
             Player player = (Player) entity;
             if (!getAPI().getArenaUtil().isPlaying(player)) continue;
 
+            // calc & apply player kb
             Vector playerTarget = player.getLocation().toVector().add(new Vector(0, 0.9, 0));
             Vector knockbackDir = playerTarget.subtract(explosionLoc.toVector());
             double distance = explosionLoc.distance(player.getLocation());
@@ -83,10 +87,11 @@ public class FireballListener implements Listener {
             if (verticalFactor < 0.25) verticalFactor = 0.25;
 
             Vector finalVelocity = knockbackDir.multiply(fireballHorizontal * multiplier);
-            Location checkLoc = player.getLocation().clone().subtract(0, 0.1, 0);
             finalVelocity.setY(fireballVertical * multiplier * verticalFactor);
 
             player.setVelocity(finalVelocity);
+
+            // debug
             String debugMsg = String.format("[FireballDebug]: %s | BoomLoc: %.2f, %.2f, %.2f | PlayerLoc: %.2f, %.2f, %.2f | KB_Vel: %.2f, %.2f, %.2f", player.getName(), explosionLoc.getX(), explosionLoc.getY(), explosionLoc.getZ(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), finalVelocity.getX(), finalVelocity.getY(), finalVelocity.getZ());
             System.out.println(debugMsg);
 
