@@ -31,6 +31,8 @@ import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.configuration.Sounds;
 import com.andrei1058.bedwars.support.paper.TeleportManager;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -47,6 +49,8 @@ import java.util.Random;
 public class GameRestartingTask implements Runnable, RestartingTask {
 
     private Arena arena;
+    @Setter
+    @Getter
     private int restarting = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RESTART) + 5;
     private final BukkitTask task;
 
@@ -94,10 +98,6 @@ public class GameRestartingTask implements Runnable, RestartingTask {
         return task.getTaskId();
     }
 
-    @Override
-    public int getRestarting() {
-        return restarting;
-    }
 
     public Arena getArena() {
         return arena;

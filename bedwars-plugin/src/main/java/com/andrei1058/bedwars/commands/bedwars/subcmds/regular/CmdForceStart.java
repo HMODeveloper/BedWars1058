@@ -14,7 +14,7 @@ public class CmdForceStart extends AbstractCmdStart {
         super(parent, name);
         setPriority(15);
         showInList(true);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName()+" §8 - §eforce start an arena",
+        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName()+" §8 - §eForce start an arena",
                 "/"+getParent().getName()+" "+getSubCommandName(), "§fForce start an arena.\n§fPermission: §c"+ Permissions.PERMISSION_FORCESTART));
     }
 
