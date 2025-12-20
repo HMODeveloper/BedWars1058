@@ -84,10 +84,6 @@ public class FireballListener implements Listener {
 
             Vector finalVelocity = knockbackDir.multiply(fireballHorizontal * multiplier);
             Location checkLoc = player.getLocation().clone().subtract(0, 0.1, 0);
-            if (checkLoc.getBlock().getType().isSolid()) {
-                // 抬升 0.1 格，强制脱离地面物理判定
-                player.teleport(player.getLocation().add(0, 0.1, 0));
-            }
             finalVelocity.setY(fireballVertical * multiplier * verticalFactor);
 
             player.setVelocity(finalVelocity);
