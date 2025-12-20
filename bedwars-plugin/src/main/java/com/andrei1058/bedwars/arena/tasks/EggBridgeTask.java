@@ -83,12 +83,6 @@ public class EggBridgeTask implements Runnable {
 
     @Override
     public void run() {
-
-//        Location loc = getProjectile().getLocation();
-
-//        System.out.println(String.format("[EggDebug] X: %.3f | Y: %.3f | Z: %.3f",
-//                loc.getX(), loc.getY(), loc.getZ()));
-
         if (getProjectile().isDead()
                 || !arena.isPlayer(getPlayer())) {
             EggBridge.removeEgg(projectile);
