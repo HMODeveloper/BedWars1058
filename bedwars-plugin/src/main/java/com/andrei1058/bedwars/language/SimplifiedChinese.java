@@ -157,7 +157,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.ARENA_SPECTATE_DENIED_SELECTOR, "{prefix}&c抱歉，你现在不能观赛。右键来加入游戏！");
         yml.addDefault(Messages.ARENA_JOIN_DENIED_NO_PROXY, "&c抱歉，你必须通过 BedWarsProxy 来加入游戏。 \n&e如果你想设置游戏，你可以给予你自己 bw.setup 权限来直接进入服务器！");
         yml.addDefault(Messages.ARENA_SPECTATOR_TELEPORTER_GUI_NAME, "&8传送");
-        yml.addDefault(Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME, "{vPrefix}{player}");
+        yml.addDefault(Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME, "{teamColor}{team} - {vPrefix}{player}");
         yml.addDefault(Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_LORE, Arrays.asList("&7生命值：&f{health}%", "&7饱食度：&f{food}", "", "&7左键传送"));
         yml.addDefault(Messages.ARENA_SPECTATOR_LEAVE_ITEM_NAME, "&c&l回到大厅");
         yml.addDefault(Messages.ARENA_SPECTATOR_LEAVE_ITEM_LORE, Collections.singletonList("&7右键离开起床战争大厅！"));
