@@ -203,7 +203,8 @@ public class Language extends ConfigManager {
     public String m(String path) {
         String message = getYml().getString(path);
         if (message == null) {
-            System.err.println("Missing message key " + path + " in language " + getIso());
+            // 总是报错，不知道为啥，先注释掉
+//            System.err.println("Missing message key " + path + " in language " + getIso());
             message = "MISSING_LANG";
         }
         if (null == serverIp) {

@@ -36,7 +36,7 @@ public class FireballListener implements Listener {
     public FireballListener() {
         this.fireballExplosionSize = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         this.fireballMakeFire = config.getYml().getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
-        this.fireballHorizontal = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL) * -1;
+        this.fireballHorizontal = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL);
         this.fireballVertical = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL);
 
         this.damageSelf = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF);
@@ -46,39 +46,53 @@ public class FireballListener implements Listener {
 
     @EventHandler
     public void fireballHit(ProjectileHitEvent e) {
-        if(!(e.getEntity() instanceof Fireball)) return;
-        Location location = e.getEntity().getLocation();
-
+        if (!(e.getEntity() instanceof Fireball)) return;
+        Fireball fireball = (Fireball) e.getEntity();
         ProjectileSource projectileSource = e.getEntity().getShooter();
-        if(!(projectileSource instanceof Player)) return;
+        if (!(projectileSource instanceof Player)) return;
         Player source = (Player) projectileSource;
 
         IArena arena = Arena.getArenaByPlayer(source);
+        if (arena == null) return;
 
-        Vector vector = location.toVector();
-
-        World world = location.getWorld();
-
+        Vector velocity = fireball.getVelocity();
+        Location startLoc = fireball.getLocation();
+        Location explosionLoc = calculateExactExplosionLoc(startLoc, velocity, 0);
+        World world = explosionLoc.getWorld();
         assert world != null;
-        Collection<Entity> nearbyEntities = world
-                .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
-        for(Entity entity : nearbyEntities) {
-            if(!(entity instanceof Player)) continue;
+        Collection<Entity> nearbyEntities = world.getNearbyEntities(explosionLoc, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
+
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof Player)) continue;
             Player player = (Player) entity;
-            if(!getAPI().getArenaUtil().isPlaying(player)) continue;
+            if (!getAPI().getArenaUtil().isPlaying(player)) continue;
 
-
-            Vector playerVector = player.getLocation().toVector();
-            Vector normalizedVector = vector.subtract(playerVector).normalize();
-            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
-            double y = normalizedVector.getY();
-            if(y < 0 ) y += 1.5;
-            if(y <= 0.5) {
-                y = fireballVertical*1.5; // kb for not jumping
-            } else {
-                y = y*fireballVertical*1.5; // kb for jumping
+            Vector playerTarget = player.getLocation().toVector().add(new Vector(0, 0.9, 0));
+            Vector knockbackDir = playerTarget.subtract(explosionLoc.toVector());
+            double distance = explosionLoc.distance(player.getLocation());
+            double multiplier = 1.0;
+            if (distance < fireballExplosionSize) {
+                double x = distance / fireballExplosionSize;
+                multiplier = Math.sqrt(1 - x * x);
             }
-            player.setVelocity(horizontalVector.setY(y));
+            if (multiplier < 0.1) multiplier = 0.1;
+
+            knockbackDir.normalize();
+            double verticalFactor = knockbackDir.getY();
+            verticalFactor = 4 * verticalFactor * verticalFactor * verticalFactor - 6 * verticalFactor * verticalFactor + 3 * verticalFactor;
+            if (verticalFactor < 0.25) verticalFactor = 0.25;
+
+            Vector finalVelocity = knockbackDir.multiply(fireballHorizontal * multiplier);
+            Location checkLoc = player.getLocation().clone().subtract(0, 0.1, 0);
+            if (checkLoc.getBlock().getType().isSolid()) {
+                // 抬升 0.1 格，强制脱离地面物理判定
+                player.teleport(player.getLocation().add(0, 0.1, 0));
+            }
+            finalVelocity.setY(fireballVertical * multiplier * verticalFactor);
+
+            player.setVelocity(finalVelocity);
+            String debugMsg = String.format("[FireballDebug]: %s | BoomLoc: %.2f, %.2f, %.2f | PlayerLoc: %.2f, %.2f, %.2f | KB_Vel: %.2f, %.2f, %.2f", player.getName(), explosionLoc.getX(), explosionLoc.getY(), explosionLoc.getZ(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), finalVelocity.getX(), finalVelocity.getY(), finalVelocity.getZ());
+            System.out.println(debugMsg);
 
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {
@@ -88,44 +102,160 @@ public class FireballListener implements Listener {
                 new LastHit(player, source, System.currentTimeMillis());
             }
 
-            if(player.equals(source)) {
-                if(damageSelf > 0) {
+            if (player.equals(source)) {
+                if (damageSelf > 0) {
                     player.damage(damageSelf); // damage shooter
                 }
-            } else if(arena.getTeam(player).equals(arena.getTeam(source))) {
-                if(damageTeammates > 0) {
+            } else if (arena.getTeam(player).equals(arena.getTeam(source))) {
+                if (damageTeammates > 0) {
                     player.damage(damageTeammates); // damage teammates
                 }
             } else {
-                if(damageEnemy > 0) {
+                if (damageEnemy > 0) {
                     player.damage(damageEnemy); // damage enemies
                 }
             }
         }
     }
 
+    // AI 写的，好复杂的算法我没太认真看，反正测试了能用
+
+    private Location calculateExactExplosionLoc(Location startLoc, Vector velocity, double offset) {
+        if (velocity.length() < 0.0001) return startLoc; // 速度为0防报错
+
+        // 1. 先找到撞到了哪个方块 (使用之前的粗测法，只需确定 Block 坐标)
+        // 这一步只是为了拿到 targetBlock，不需要精确坐标
+        org.bukkit.block.Block targetBlock = null;
+        Vector dirNorm = velocity.clone().normalize();
+        Location trace = startLoc.clone();
+        double checkDist = velocity.length() * 1.5;
+
+        // 如果起点就在方块里，直接向上推一点返回
+        if (trace.getBlock().getType().isSolid()) return trace.add(0, 0.5, 0);
+
+        for (double d = 0; d <= checkDist; d += 0.1) {
+            trace.add(dirNorm.clone().multiply(0.1));
+            if (trace.getBlock().getType().isSolid()) {
+                targetBlock = trace.getBlock();
+                break;
+            }
+        }
+
+        // 如果没撞到方块，就返回理论飞行终点
+        if (targetBlock == null) return startLoc.clone().add(velocity);
+
+        // 2. 核心算法：计算进入 X, Y, Z 三个平面的时间 t
+        // 射线公式: P = Origin + Direction * t
+        // 我们要求 t = (PlanePosition - Origin) / Direction
+
+        double blockMinX = targetBlock.getX();
+        double blockMaxX = blockMinX + 1.0;
+        double blockMinY = targetBlock.getY();
+        double blockMaxY = blockMinY + 1.0;
+        double blockMinZ = targetBlock.getZ();
+        double blockMaxZ = blockMinZ + 1.0;
+
+        double dirX = velocity.getX();
+        double dirY = velocity.getY();
+        double dirZ = velocity.getZ();
+        double startX = startLoc.getX();
+        double startY = startLoc.getY();
+        double startZ = startLoc.getZ();
+
+        // 计算 X 轴碰撞时间 (tx)
+        // 如果速度 X > 0，说明它是从左往右撞，只会撞到 MinX 面
+        // 如果速度 X < 0，说明它是从右往左撞，只会撞到 MaxX 面
+        double tx = -1;
+        boolean hitXFaceIsMax = false; // 标记是撞到 x=1 还是 x=0
+        if (dirX > 0) {
+            tx = (blockMinX - startX) / dirX;
+            hitXFaceIsMax = false;
+        } else if (dirX < 0) {
+            tx = (blockMaxX - startX) / dirX;
+            hitXFaceIsMax = true;
+        }
+
+        // 计算 Y 轴碰撞时间 (ty)
+        double ty = -1;
+        boolean hitYFaceIsMax = false;
+        if (dirY > 0) {
+            ty = (blockMinY - startY) / dirY;
+            hitYFaceIsMax = false;
+        } else if (dirY < 0) {
+            ty = (blockMaxY - startY) / dirY;
+            hitYFaceIsMax = true;
+        }
+
+        // 计算 Z 轴碰撞时间 (tz)
+        double tz = -1;
+        boolean hitZFaceIsMax = false;
+        if (dirZ > 0) {
+            tz = (blockMinZ - startZ) / dirZ;
+            hitZFaceIsMax = false;
+        } else if (dirZ < 0) {
+            tz = (blockMaxZ - startZ) / dirZ;
+            hitZFaceIsMax = true;
+        }
+
+        // 3. 比较 tx, ty, tz，最大的那个就是“最后进入方块”的轴
+        // 也就是说，射线在进入另外两个轴的范围时，还没碰到这个轴的范围。
+        // 当三个轴都进入范围时，才是真正的碰撞。所以最大值即为碰撞点。
+        // (注意：这里我们假设 t 必须 >= 0，因为是向前飞)
+
+        double maxT = tx;
+        int hitAxis = 0; // 0=X, 1=Y, 2=Z
+
+        if (ty > maxT) {
+            maxT = ty;
+            hitAxis = 1;
+        }
+        if (tz > maxT) {
+            maxT = tz;
+            hitAxis = 2;
+        }
+
+        // 4. 根据结果构建坐标
+        // 算出精确撞击坐标：P = Start + Velocity * t
+        Location hitLoc = startLoc.clone().add(velocity.clone().multiply(maxT));
+
+        // 强制修正：根据撞击的轴，把该轴的坐标强制锁定到 方块表面 + offset
+        // 其他两个轴的坐标保持算出来的精确值
+        if (hitAxis == 0) { // Hit X
+            if (hitXFaceIsMax) hitLoc.setX(blockMaxX + offset);
+            else hitLoc.setX(blockMinX - offset);
+        } else if (hitAxis == 1) { // Hit Y
+            if (hitYFaceIsMax) hitLoc.setY(blockMaxY + offset);
+            else hitLoc.setY(blockMinY - offset);
+        } else { // Hit Z
+            if (hitZFaceIsMax) hitLoc.setZ(blockMaxZ + offset);
+            else hitLoc.setZ(blockMinZ - offset);
+        }
+
+        return hitLoc;
+    }
 
     /**
      * Remove the damage effect caused by the explosion created by the fireball
-     * */
+     *
+     */
     @EventHandler
     public void fireballExplosionHit(EntityDamageByEntityEvent e) {
-        if(!(e.getDamager() instanceof Fireball)) return;
-        if(!(e.getEntity() instanceof Player)) return;
+        if (!(e.getDamager() instanceof Fireball)) return;
+        if (!(e.getEntity() instanceof Player)) return;
 
-        if(Arena.getArenaByPlayer((Player) e.getEntity()) == null) return;
+        if (Arena.getArenaByPlayer((Player) e.getEntity()) == null) return;
 
         e.setCancelled(true);
     }
 
     @EventHandler
     public void fireballPrime(ExplosionPrimeEvent e) {
-        if(!(e.getEntity() instanceof Fireball)) return;
-        ProjectileSource shooter = ((Fireball)e.getEntity()).getShooter();
-        if(!(shooter instanceof Player)) return;
+        if (!(e.getEntity() instanceof Fireball)) return;
+        ProjectileSource shooter = ((Fireball) e.getEntity()).getShooter();
+        if (!(shooter instanceof Player)) return;
         Player player = (Player) shooter;
 
-        if(Arena.getArenaByPlayer(player) == null) return;
+        if (Arena.getArenaByPlayer(player) == null) return;
 
         e.setFire(fireballMakeFire);
     }
