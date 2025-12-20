@@ -23,6 +23,9 @@ public class HealPoolTask extends BukkitRunnable {
     private IArena arena;
     private Random r = new Random();
     private Location l;
+    
+    // Particle density setting
+    private int particleDensity;
 
     private static List<HealPoolTask> healPoolTasks = new ArrayList<>();
 
@@ -42,6 +45,8 @@ public class HealPoolTask extends BukkitRunnable {
         this.maxZ = (teamspawn.getBlockZ() + radius);
         this.minZ = (teamspawn.getBlockZ() - radius);
         this.arena = bwt.getArena();
+        // Get particle density from config
+        this.particleDensity = config.getInt("heal-pool-particle-density");
         this.runTaskTimerAsynchronously(plugin, 0, 80L);
         healPoolTasks.add(this);
     }
@@ -59,7 +64,8 @@ public class HealPoolTask extends BukkitRunnable {
                 for (int z = minZ; z <= maxZ; z++) {
                     l = new Location(arena.getWorld(), x + .5, y + .5, z +.5);
                     if (l.getBlock().getType() != Material.AIR) continue;
-                    int chance = r.nextInt(9);
+                    // Use configurable particle density
+                    int chance = r.nextInt(particleDensity);
                     if (chance == 0) {
                         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY)) {
                             for (Player p : bwt.getMembers()) {
@@ -108,7 +114,7 @@ public class HealPoolTask extends BukkitRunnable {
     }
 
     public  static void removeForTeam(ITeam team){
-        if (healPoolTasks == null || healPoolTasks.isEmpty()  || (team == null)) return;
+        if (healPoolTasks == null || healPoolTasks.isEmpty() || (team == null)) return;
         for (HealPoolTask hpt:healPoolTasks) {
             if (hpt == null) continue;
             if (hpt.getBwt().equals(team)){

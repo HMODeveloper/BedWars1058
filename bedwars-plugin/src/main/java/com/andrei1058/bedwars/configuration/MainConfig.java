@@ -106,6 +106,8 @@ public class MainConfig extends ConfigManager {
         //heal pool category
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY, true);
+        // Add heal pool particle density setting
+        yml.addDefault("heal-pool-particle-density", 150);
 
         // tnt jump category
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y, 0.5);
