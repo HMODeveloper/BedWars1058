@@ -110,6 +110,7 @@ public class ConfigPath {
 
     public static final String GENERAL_CONFIGURATION_STATS_PATH = "stats-gui";
     public static final String GENERAL_CONFIGURATION_STATS_GUI_SIZE = GENERAL_CONFIGURATION_STATS_PATH + ".inv-size";
+    public static final String GENERAL_CONFIGURATION_GUI_ANTISPAM_DELAY = "gui-settings.antispam-delay";
     public static final String GENERAL_CONFIGURATION_STATS_ITEMS_MATERIAL = GENERAL_CONFIGURATION_STATS_PATH + ".%path%.material";
     public static final String GENERAL_CONFIGURATION_STATS_ITEMS_DATA = GENERAL_CONFIGURATION_STATS_PATH + ".%path%.data";
     public static final String GENERAL_CONFIGURATION_STATS_ITEMS_SLOT = GENERAL_CONFIGURATION_STATS_PATH + ".%path%.slot";

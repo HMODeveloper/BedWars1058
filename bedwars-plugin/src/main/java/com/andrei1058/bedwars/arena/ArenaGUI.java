@@ -50,7 +50,6 @@ public class ArenaGUI {
     //Object[0] = inventory, Object[1] = group
     //private static HashMap<Player, Object[]> refresh = new HashMap<>();
     private static YamlConfiguration yml = BedWars.config.getYml();
-
     private static HashMap<UUID, Long> antiCalledTwice = new HashMap<>();
 
     //Object[0] = inventory, Object[1] = group
@@ -226,10 +225,12 @@ public class ArenaGUI {
     }
 
     private static void updateCalledTwice(@NotNull Player player) {
+        int delay = BedWars.config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_GUI_ANTISPAM_DELAY);
+        if (delay <= 0) return;
         if (antiCalledTwice.containsKey(player.getUniqueId())) {
-            antiCalledTwice.replace(player.getUniqueId(), System.currentTimeMillis() + 2000);
+            antiCalledTwice.replace(player.getUniqueId(), System.currentTimeMillis() + delay);
         } else {
-            antiCalledTwice.put(player.getUniqueId(), System.currentTimeMillis() + 2000);
+            antiCalledTwice.put(player.getUniqueId(), System.currentTimeMillis() + delay);
         }
     }
 }
