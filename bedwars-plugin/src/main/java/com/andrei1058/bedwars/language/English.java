@@ -54,7 +54,7 @@ public class English extends Language {
             yml.set("player-die-knocked-final", null);
         }
 
-        yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<arena/group>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3(vip)"));
+        yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<arena/group>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3(vip)", "&2▪ &7/" + mainCmd + " specmode &3(spectator)"));
         yml.addDefault(Messages.COMMAND_LANG_LIST_HEADER, "{prefix} &2Available languages:");
         yml.addDefault(Messages.COMMAND_LANG_LIST_FORMAT, "&a▪  &7{iso} - &f{name}");
         yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&7Usage: /lang &f&o<iso>");
@@ -123,6 +123,8 @@ public class English extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "§c▪ §7Countdown shortened!");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "{prefix}&7You can't forcestart the arena.\n§7Please consider donating for VIP features.");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cYou can't do that yet! Wait {seconds} more seconds!");
+        yml.addDefault(Messages.COMMAND_SPECTATOR_MODE_SWITCH_VANILLA, "{prefix}&aSwitched to Vanilla Spectator Mode.");
+        yml.addDefault(Messages.COMMAND_SPECTATOR_MODE_SWITCH_NORMAL, "{prefix}&aSwitched to Normal Spectator Mode.");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "{prefix}&cSorry, but you were kicked out because a donor joined the arena.\n&aPlease consider donating for more features. &7&o(click)");
         yml.addDefault(Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT, "{prefix}§cThere aren't enough players! Countdown stopped!");
         yml.addDefault(Messages.ARENA_RESTART_PLAYER_KICK, "{prefix}&eThe arena you were in is restarting.");

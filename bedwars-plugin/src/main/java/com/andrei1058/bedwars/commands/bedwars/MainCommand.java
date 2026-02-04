@@ -68,6 +68,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new CmdLeave(this, "leave");
         new CmdLang(this, "lang");
         new CmdTeleporter(this, "teleporter");
+        new CmdSpecMode(this, "specmode");
         if (getServerType() != ServerType.BUNGEE) {
             new CmdGUI(this, "gui");
         }

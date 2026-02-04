@@ -54,7 +54,7 @@ public class SimplifiedChinese extends Language {
             yml.set("player-die-knocked-final", null);
         }
 
-        yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）"));
+        yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）", "&2▪ &7/" + mainCmd + " specmode &3（旁观者）"));
         yml.addDefault(Messages.COMMAND_LANG_LIST_HEADER, "{prefix} &2可用的语言：");
         yml.addDefault(Messages.COMMAND_LANG_LIST_FORMAT, "&a▪  &7{iso} - &f{name}");
         yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&用法：/lang &f&o<iso>");
@@ -123,6 +123,8 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "&c▪ &7游戏开始倒计时缩短！");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "{prefix}&7你不可以强制开始游戏！\n&7请考虑赞助以得到对应权限！");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&c你不能这么做！ 请等待 {seconds} 秒！");
+        yml.addDefault(Messages.COMMAND_SPECTATOR_MODE_SWITCH_VANILLA, "{prefix}&a已切换到原版旁观模式。");
+        yml.addDefault(Messages.COMMAND_SPECTATOR_MODE_SWITCH_NORMAL, "{prefix}&a已切换到普通观战模式。");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "{prefix}&c抱歉，由于有一位赞助者加入该游戏，因此你被移出了该游戏。\n&a请考虑赞助以支持我们！ &7&o(点击查看)");
         yml.addDefault(Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT, "{prefix}&c玩家不足！ 倒计时取消！");
         yml.addDefault(Messages.ARENA_RESTART_PLAYER_KICK, "{prefix}&e当前游戏正在重启。");

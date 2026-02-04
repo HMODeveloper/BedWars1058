@@ -105,6 +105,8 @@ public class Messages {
     public static String COMMAND_START_NOT_ENOUGH_PLAYERS = "cmd-start-not-enough-players";
     public static String COMMAND_FORCESTART_NO_PERM = "cmd-start-no-perm";
     public static String COMMAND_COOLDOWN = "cmd-cooldown";
+    public static String COMMAND_SPECTATOR_MODE_SWITCH_VANILLA = "cmd-specmode-vanilla";
+    public static String COMMAND_SPECTATOR_MODE_SWITCH_NORMAL = "cmd-specmode-normal";
 
     /**
      * Arena join/ leave related
