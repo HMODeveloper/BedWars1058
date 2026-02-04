@@ -712,6 +712,7 @@ public class Arena implements IArena {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false));
 
                 p.getInventory().setArmorContents(null);
+                p.setFireTicks(0);
             });
 
             leaving.remove(p);

@@ -39,6 +39,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -259,6 +260,17 @@ public class SpectatorListeners implements Listener {
         if (damager == null) return;
         if (a.isSpectator(damager)) {
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onSpectatorFire(EntityCombustEvent e) {
+        if (e.getEntity() instanceof Player) {
+            Player p = (Player) e.getEntity();
+            IArena a = Arena.getArenaByPlayer(p);
+            if (a != null && a.isSpectator(p)) {
+                e.setCancelled(true);
+            }
         }
     }
 }

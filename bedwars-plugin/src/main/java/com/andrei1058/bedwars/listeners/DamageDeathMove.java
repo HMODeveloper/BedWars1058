@@ -94,6 +94,7 @@ public class DamageDeathMove implements Listener {
             if (a != null) {
                 if (a.isSpectator(p)) {
                     e.setCancelled(true);
+                    p.setFireTicks(0);
                     return;
                 }
                 if (a.isReSpawning(p)) {
