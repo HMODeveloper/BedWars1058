@@ -1,6 +1,6 @@
 /*
  * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dasc��lu
+ * Copyright (C) 2021 Andrei Dascฤ�lu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +90,9 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new Level(this, "level");
         new Reload(this, "reload"); //priority 11
         new CmdList(this, "cmds"); //priority 20
+        new CmdEcho(this, "echo"); //priority 21
+        new CmdEchoTo(this, "echoto"); //priority 22
+        new CmdEchoAll(this, "echoall"); //priority 23
 
         /* Arena setup commands (in world) */
         new AutoCreateTeams(this, "autoCreateTeams");
@@ -126,16 +129,16 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
                         Bukkit.dispatchCommand(s, getName() + " cmds");
                     } else {
                         s.sendMessage("");
-                        s.sendMessage("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Admin Commands");
+                        s.sendMessage("ยง8ยงl" + dot + " ยง6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " ยง7- ยงc Admin Commands");
                         s.sendMessage("");
                         sendSubCommands((Player) s);
                     }
                 } else {
-                    s.sendMessage("§f   bw safemode §eenable/ disable");
+                    s.sendMessage("ยงf   bw safemode ยงeenable/ disable");
                 }
             } else {
                 if (s instanceof ConsoleCommandSender) {
-                    s.sendMessage("§fNo console commands available atm.");
+                    s.sendMessage("ยงfNo console commands available atm.");
                     return true;
                 }
                 /* Send player commands */
@@ -230,7 +233,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         if (BedWars.getServerType() == ServerType.BUNGEE) return true;
         if (config.getLobbyWorldName().isEmpty()) {
             if (p != null) {
-                p.sendMessage("§c��� §7You have to set the lobby location first!");
+                p.sendMessage("ยงcโ�ช ยง7You have to set the lobby location first!");
             }
             return false;
         }

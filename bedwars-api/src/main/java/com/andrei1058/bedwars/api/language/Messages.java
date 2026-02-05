@@ -104,6 +104,15 @@ public class Messages {
     public static String COMMAND_FORCESTART_SUCCESS = "cmd-start";
     public static String COMMAND_START_NOT_ENOUGH_PLAYERS = "cmd-start-not-enough-players";
     public static String COMMAND_FORCESTART_NO_PERM = "cmd-start-no-perm";
+    public static String COMMAND_ECHO_USAGE = "cmd-echo-usage";
+    public static String COMMAND_ECHO_SENT = "cmd-echo-sent";
+    public static String COMMAND_ECHO_NOT_IN_ARENA = "cmd-echo-not-in-arena";
+    public static String COMMAND_ECHOTO_USAGE = "cmd-echoto-usage";
+    public static String COMMAND_ECHOTO_SENT = "cmd-echoto-sent";
+    public static String COMMAND_ECHOALL_USAGE = "cmd-echoall-usage";
+    public static String COMMAND_ECHOALL_SENT = "cmd-echoall-sent";
+    public static String COMMAND_ARENA_NOT_FOUND = "cmd-arena-not-found";
+    public static String COMMAND_NOT_PLAYER = "cmd-not-player";
     public static String COMMAND_COOLDOWN = "cmd-cooldown";
     public static String COMMAND_SPECTATOR_MODE_SWITCH_VANILLA = "cmd-specmode-vanilla";
     public static String COMMAND_SPECTATOR_MODE_SWITCH_NORMAL = "cmd-specmode-normal";

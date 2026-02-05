@@ -55,6 +55,15 @@ public class SimplifiedChinese extends Language {
         }
 
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）", "&2▪ &7/" + mainCmd + " specmode &3（旁观者）"));
+        yml.addDefault(Messages.COMMAND_ECHO_USAGE, "{prefix}&c用法：/bw echo <消息>");
+        yml.addDefault(Messages.COMMAND_ECHO_SENT, "{prefix}&a消息已发送至竞技场 {arena}");
+        yml.addDefault(Messages.COMMAND_ECHO_NOT_IN_ARENA, "{prefix}&c你不在一个竞技场中。");
+        yml.addDefault(Messages.COMMAND_ECHOTO_USAGE, "{prefix}&c用法：/bw echoto <竞技场> <消息>");
+        yml.addDefault(Messages.COMMAND_ECHOTO_SENT, "{prefix}&a消息已发送至竞技场 {arena}");
+        yml.addDefault(Messages.COMMAND_ECHOALL_USAGE, "{prefix}&c用法：/bw echoall <消息>");
+        yml.addDefault(Messages.COMMAND_ECHOALL_SENT, "{prefix}&a消息已发送至所有竞技场。");
+        yml.addDefault(Messages.COMMAND_ARENA_NOT_FOUND, "{prefix}&c未找到竞技场：{arena}");
+        yml.addDefault(Messages.COMMAND_NOT_PLAYER, "{prefix}&c该命令仅限玩家使用。");
         yml.addDefault(Messages.COMMAND_LANG_LIST_HEADER, "{prefix} &2可用的语言：");
         yml.addDefault(Messages.COMMAND_LANG_LIST_FORMAT, "&a▪  &7{iso} - &f{name}");
         yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&用法：/lang &f&o<iso>");

@@ -55,6 +55,15 @@ public class English extends Language {
         }
 
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<arena/group>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3(vip)", "&2▪ &7/" + mainCmd + " specmode &3(spectator)"));
+        yml.addDefault(Messages.COMMAND_ECHO_USAGE, "{prefix}&cUsage: /bw echo <message>");
+        yml.addDefault(Messages.COMMAND_ECHO_SENT, "{prefix}&aMessage sent to arena {arena}");
+        yml.addDefault(Messages.COMMAND_ECHO_NOT_IN_ARENA, "{prefix}&cYou are not in an arena.");
+        yml.addDefault(Messages.COMMAND_ECHOTO_USAGE, "{prefix}&cUsage: /bw echoto <arena> <message>");
+        yml.addDefault(Messages.COMMAND_ECHOTO_SENT, "{prefix}&aMessage sent to arena {arena}");
+        yml.addDefault(Messages.COMMAND_ECHOALL_USAGE, "{prefix}&cUsage: /bw echoall <message>");
+        yml.addDefault(Messages.COMMAND_ECHOALL_SENT, "{prefix}&aMessage sent to all arenas.");
+        yml.addDefault(Messages.COMMAND_ARENA_NOT_FOUND, "{prefix}&cArena not found: {arena}");
+        yml.addDefault(Messages.COMMAND_NOT_PLAYER, "{prefix}&cThis command is for players only.");
         yml.addDefault(Messages.COMMAND_LANG_LIST_HEADER, "{prefix} &2Available languages:");
         yml.addDefault(Messages.COMMAND_LANG_LIST_FORMAT, "&a▪  &7{iso} - &f{name}");
         yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&7Usage: /lang &f&o<iso>");
