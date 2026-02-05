@@ -1,6 +1,6 @@
 /*
  * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei DascÄƒlu
+ * Copyright (C) 2021 Andrei DascÄÿlu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new CmdLeave(this, "leave");
         new CmdLang(this, "lang");
         new CmdTeleporter(this, "teleporter");
-        new CmdSpecMode(this, "specmode");
+        new CmdSpecMode(this, "spec");
         if (getServerType() != ServerType.BUNGEE) {
             new CmdGUI(this, "gui");
         }
@@ -230,7 +230,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         if (BedWars.getServerType() == ServerType.BUNGEE) return true;
         if (config.getLobbyWorldName().isEmpty()) {
             if (p != null) {
-                p.sendMessage("Â§câ–ª Â§7You have to set the lobby location first!");
+                p.sendMessage("Â§câÿª Â§7You have to set the lobby location first!");
             }
             return false;
         }
