@@ -95,12 +95,18 @@ public class FireballListener implements Listener {
             String debugMsg = String.format("[FireballDebug]: %s | BoomLoc: %.2f, %.2f, %.2f | PlayerLoc: %.2f, %.2f, %.2f | KB_Vel: %.2f, %.2f, %.2f", player.getName(), explosionLoc.getX(), explosionLoc.getY(), explosionLoc.getZ(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), finalVelocity.getX(), finalVelocity.getY(), finalVelocity.getZ());
             System.out.println(debugMsg);
 
-            LastHit lh = LastHit.getLastHit(player);
-            if (lh != null) {
-                lh.setDamager(source);
-                lh.setTime(System.currentTimeMillis());
-            } else {
-                new LastHit(player, source, System.currentTimeMillis());
+            // Prevent teammates from overriding last hit
+            boolean isTeammate = arena.getTeam(player).equals(arena.getTeam(source));
+            boolean isSelf = player.equals(source);
+
+            if (!isTeammate || isSelf) {
+                LastHit lh = LastHit.getLastHit(player);
+                if (lh != null) {
+                    lh.setDamager(source);
+                    lh.setTime(System.currentTimeMillis());
+                } else {
+                    new LastHit(player, source, System.currentTimeMillis());
+                }
             }
 
             if (player.equals(source)) {
