@@ -89,16 +89,21 @@ public class FireballListener implements Listener {
             Vector finalVelocity = knockbackDir.multiply(fireballHorizontal * multiplier);
             finalVelocity.setY(fireballVertical * multiplier * verticalFactor);
 
-            player.setVelocity(finalVelocity);
+            // Prevent teammates from overriding last hit
+            boolean isTeammate = arena.getTeam(player).equals(arena.getTeam(source));
+            boolean isSelf = player.equals(source);
+
+            if (isSelf) {
+                player.setVelocity(finalVelocity);
+            } else if (!isTeammate) {
+                player.setVelocity(finalVelocity.multiply(0.5));
+            }
 
             // debug
             String debugMsg = String.format("[FireballDebug]: %s | BoomLoc: %.2f, %.2f, %.2f | PlayerLoc: %.2f, %.2f, %.2f | KB_Vel: %.2f, %.2f, %.2f", player.getName(), explosionLoc.getX(), explosionLoc.getY(), explosionLoc.getZ(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), finalVelocity.getX(), finalVelocity.getY(), finalVelocity.getZ());
             System.out.println(debugMsg);
 
             // Prevent teammates from overriding last hit
-            boolean isTeammate = arena.getTeam(player).equals(arena.getTeam(source));
-            boolean isSelf = player.equals(source);
-
             if (!isTeammate || isSelf) {
                 LastHit lh = LastHit.getLastHit(player);
                 if (lh != null) {
