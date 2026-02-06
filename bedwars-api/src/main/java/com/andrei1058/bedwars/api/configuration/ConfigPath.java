@@ -211,6 +211,7 @@ public class ConfigPath {
     public static final String SOUNDS_BED_DESTROY = "bed-destroy";
     public static final String SOUNDS_BED_DESTROY_OWN = "bed-destroy-own";
     public static final String SOUNDS_INSUFF_MONEY = "shop-insufficient-money";
+    public static final String SOUNDS_INSUFF_INVENTORY = "shop-insufficient-inventory";
     public static final String SOUNDS_BOUGHT = "shop-bought";
     public static final String SOUNDS_KILL = "kill";
 

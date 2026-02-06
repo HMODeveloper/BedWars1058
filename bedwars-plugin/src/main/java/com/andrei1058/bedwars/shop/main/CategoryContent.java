@@ -319,7 +319,7 @@ public class CategoryContent implements ICategoryContent {
 
         if (!hasInventorySpace(player, ct.getBuyItemsList(), ct.getCurrency(), ct.getPrice())) {
             player.sendMessage(getMsg(player, Messages.SHOP_INSUFFICIENT_INVENTORY_SPACE));
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_INVENTORY, player);
             return;
         }
 
