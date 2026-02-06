@@ -28,6 +28,8 @@ public class FireballListener implements Listener {
     private final boolean fireballMakeFire;
     private final double fireballHorizontal;
     private final double fireballVertical;
+    private final double knockbackTeammates;
+    private final double knockbackEnemy;
 
     private final double damageSelf;
     private final double damageEnemy;
@@ -38,6 +40,8 @@ public class FireballListener implements Listener {
         this.fireballMakeFire = config.getYml().getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
         this.fireballHorizontal = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL);
         this.fireballVertical = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL);
+        this.knockbackTeammates = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_TEAMMATES);
+        this.knockbackEnemy = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_ENEMY);
 
         this.damageSelf = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF);
         this.damageEnemy = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY);
@@ -95,8 +99,14 @@ public class FireballListener implements Listener {
 
             if (isSelf) {
                 player.setVelocity(finalVelocity);
-            } else if (!isTeammate) {
-                player.setVelocity(finalVelocity.multiply(0.5));
+            } else if (isTeammate) {
+                if (knockbackTeammates > 0) {
+                    player.setVelocity(finalVelocity.multiply(knockbackTeammates));
+                }
+            } else {
+                if (knockbackEnemy > 0) {
+                    player.setVelocity(finalVelocity.multiply(knockbackEnemy));
+                }
             }
 
             // debug

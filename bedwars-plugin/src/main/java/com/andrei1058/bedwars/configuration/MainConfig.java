@@ -134,6 +134,8 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE, false);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL, 2.5);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL, 1.65);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_TEAMMATES, 0.0);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_ENEMY, 0.5);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_COOLDOWN, 0.5);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY, 2.0);
