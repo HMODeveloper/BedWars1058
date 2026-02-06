@@ -60,7 +60,24 @@ public class TeleporterGUI {
             p.closeInventory();
             return;
         }
-        List<Player> players = arena.getPlayers();
+        List<Player> players = new ArrayList<>(arena.getPlayers());
+
+        // Sort by team name then player name to match TAB list
+        players.sort((p1, p2) -> {
+            ITeam t1 = arena.getTeam(p1);
+            ITeam t2 = arena.getTeam(p2);
+
+            if (t1 == null && t2 == null) return p1.getName().compareTo(p2.getName());
+            if (t1 == null) return 1;
+            if (t2 == null) return -1;
+
+            // Sort by team index (config order) to match TAB list
+            int teamCompare = Integer.compare(arena.getTeams().indexOf(t1), arena.getTeams().indexOf(t2));
+            if (teamCompare != 0) return teamCompare;
+
+            return p1.getName().compareTo(p2.getName());
+        });
+
         for (int i = 0; i < inv.getSize(); i++) {
             if (i < players.size()) {
                 inv.setItem(i, createHead(players.get(i), p));
