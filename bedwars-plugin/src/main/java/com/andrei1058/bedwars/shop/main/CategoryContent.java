@@ -26,6 +26,7 @@ import com.andrei1058.bedwars.api.arena.shop.IBuyItem;
 import com.andrei1058.bedwars.api.arena.shop.ICategoryContent;
 import com.andrei1058.bedwars.api.arena.shop.IContentTier;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.arena.team.TeamEnchant;
 import com.andrei1058.bedwars.api.events.shop.ShopBuyEvent;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
@@ -39,10 +40,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.andrei1058.bedwars.BedWars.nms;
@@ -135,6 +138,147 @@ public class CategoryContent implements ICategoryContent {
 
     }
 
+    /**
+     * Check if player has enough inventory space
+     * 检查玩家是否有足够的背包空间
+     *
+     * @param player   The player buying the item / 购买物品的玩家
+     * @param items    List of items to be bought / 要购买的物品列表
+     * @param currency The currency used for payment / 支付使用的货币类型
+     * @param price    The total price / 总价格
+     * @return true if there is enough space, false otherwise / 如果空间足够返回 true，否则返回 false
+     */
+    private boolean hasInventorySpace(Player player, List<IBuyItem> items, Material currency, int price) {
+        // Use an array to simulate inventory instead of creating a full Inventory object to save memory
+        // 使用数组来模拟背包，代替创建完整的 Inventory 对象以节省内存
+        ItemStack[] simulatedInv = new ItemStack[36];
+        
+        // Copy player storage contents to the simulated array
+        // 将玩家当前的背包内容复制到模拟数组中
+        for (int i = 0; i < 36; i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            // Clone item to avoid modifying original inventory during simulation
+            // 克隆物品以避免在模拟过程中修改原始背包
+            simulatedInv[i] = (item != null && item.getType() != Material.AIR) ? item.clone() : null;
+        }
+
+        // Simulate taking money
+        // 模拟扣除货币的过程
+        if (currency != Material.AIR) {
+            int cost = price;
+            for (int i = 0; i < 36; i++) {
+                ItemStack item = simulatedInv[i];
+                if (item == null || item.getType() != currency) continue;
+
+                if (item.getAmount() <= cost) {
+                    cost -= item.getAmount();
+                    simulatedInv[i] = null; // Slot becomes empty / 格子变为空
+                } else {
+                    item.setAmount(item.getAmount() - cost);
+                    cost = 0;
+                }
+                if (cost <= 0) break;
+            }
+        }
+
+        // Check space for each item to be bought
+        // 检查每一个要购买的物品是否有空间放下
+        IArena arena = Arena.getArenaByPlayer(player);
+        for (IBuyItem buyItem : items) {
+            ItemStack itemToAdd = buyItem.getItemStack().clone();
+
+            // Skip auto-equip armor
+            // 跳过自动装备的护甲
+            if (buyItem.isAutoEquip() && BedWars.nms.isArmor(itemToAdd)) {
+                continue;
+            }
+
+            // Simulate item modifications (Team color, enchants, etc.) to match actual given item
+            // 模拟物品修改（队伍颜色、附魔等），以匹配实际给予的物品
+            if (arena != null && arena.getTeam(player) != null) {
+                itemToAdd = BedWars.nms.colourItem(itemToAdd, arena.getTeam(player));
+                ItemMeta im = itemToAdd.getItemMeta();
+                if (im != null) {
+                    if (buyItem.isPermanent()) BedWars.nms.setUnbreakable(im);
+                    if (buyItem.isUnbreakable()) BedWars.nms.setUnbreakable(im);
+
+                    if (itemToAdd.getType() == Material.BOW) {
+                        for (TeamEnchant e : arena.getTeam(player).getBowsEnchantments()) {
+                            im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
+                        }
+                    } else if (BedWars.nms.isSword(itemToAdd) || BedWars.nms.isAxe(itemToAdd)) {
+                        for (TeamEnchant e : arena.getTeam(player).getSwordsEnchantments()) {
+                            im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
+                        }
+                    }
+                    itemToAdd.setItemMeta(im);
+                }
+
+                if (buyItem.isPermanent()) {
+                    itemToAdd = BedWars.nms.setShopUpgradeIdentifier(itemToAdd, buyItem.getUpgradeIdentifier());
+                }
+            }
+
+            // Handle sword upgrades
+            // 处理剑类升级逻辑
+            if (BedWars.nms.isSword(itemToAdd)) {
+                for (int i = 0; i < 36; i++) {
+                    ItemStack itm = simulatedInv[i];
+                    if (itm == null || !BedWars.nms.isSword(itm)) continue;
+
+                    if (BedWars.nms.isCustomBedWarsItem(itm) && BedWars.nms.getCustomData(itm).equals("DEFAULT_ITEM")) {
+                        if (BedWars.nms.getDamage(itm) <= BedWars.nms.getDamage(itemToAdd)) {
+                            simulatedInv[i] = null; // Remove old sword / 移除旧剑
+                        }
+                    }
+                }
+            }
+
+            int amountNeeded = itemToAdd.getAmount();
+            int maxStack = itemToAdd.getMaxStackSize();
+
+            // Pass 1: Try to stack into existing items
+            // 第一步：尝试堆叠到现有的同类物品中
+            for (int i = 0; i < 36; i++) {
+                if (amountNeeded <= 0) break;
+                ItemStack current = simulatedInv[i];
+                
+                // Check if item is similar and has space in stack
+                // 检查物品是否相似且堆叠未满
+                if (current != null && current.isSimilar(itemToAdd) && current.getAmount() < maxStack) {
+                    int space = maxStack - current.getAmount();
+                    int toAdd = Math.min(space, amountNeeded);
+                    
+                    current.setAmount(current.getAmount() + toAdd);
+                    amountNeeded -= toAdd;
+                }
+            }
+
+            // Pass 2: Place remaining items into empty slots
+            // 第二步：将剩余物品放入空位
+            if (amountNeeded > 0) {
+                for (int i = 0; i < 36; i++) {
+                    if (amountNeeded <= 0) break;
+                    
+                    if (simulatedInv[i] == null) {
+                        ItemStack newItem = itemToAdd.clone();
+                        newItem.setAmount(Math.min(amountNeeded, maxStack));
+                        simulatedInv[i] = newItem;
+                        amountNeeded -= newItem.getAmount();
+                    }
+                }
+            }
+
+            // If there are still items left, it means no space
+            // 如果仍有剩余物品，说明空间不足
+            if (amountNeeded > 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     public void execute(Player player, ShopCache shopCache, int slot) {
 
         IContentTier ct;
@@ -169,6 +313,12 @@ public class CategoryContent implements ICategoryContent {
         if (money < ct.getPrice()) {
             player.sendMessage(getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY).replace("{currency}", getMsg(player, getCurrencyMsgPath(ct))).
                     replace("{amount}", String.valueOf(ct.getPrice() - money)));
+            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+            return;
+        }
+
+        if (!hasInventorySpace(player, ct.getBuyItemsList(), ct.getCurrency(), ct.getPrice())) {
+            player.sendMessage(getMsg(player, Messages.SHOP_INSUFFICIENT_INVENTORY_SPACE));
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
             return;
         }
