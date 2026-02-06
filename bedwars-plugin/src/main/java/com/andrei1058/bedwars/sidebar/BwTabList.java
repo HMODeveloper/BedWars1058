@@ -55,7 +55,7 @@ public class BwTabList {
     // this is concatenated to player identifier to keep tab-list ordered
     // and still let players have individual placeholders
     private final HashMap<UUID, String> teamOrderPrefix = new HashMap<>();
-    private int teamOrderIndex = 0;
+
     // unique string used for tab ordering. Does not track team here.
     private final HashMap<UUID, String> playerTabIdentifier = new HashMap<>();
     // used to prevent tab identifier duplication. Keeps an index of concurrent identifiers
@@ -405,17 +405,15 @@ public class BwTabList {
      * @param team target.
      * @return prefix string.
      */
-    private String getCreateTeamTabOrderPrefix(@NotNull ITeam team) {
+    private String getTeamTabOrderPrefix(@NotNull ITeam team) {
         String prefix = teamOrderPrefix.getOrDefault(team.getIdentity(), null);
         if (null == prefix) {
-            teamOrderIndex++;
-            prefix = teamOrderIndex + "";
+            // Use team index from arena teams list to ensure consistent sorting with TeleporterGUI
+            // Format with leading zeros to ensure correct string comparison (e.g. "01" < "10")
+            int index = team.getArena().getTeams().indexOf(team);
+            prefix = String.format("%03d", index);
+            
             teamOrderPrefix.put(team.getIdentity(), prefix);
-            if (prefix.length() > 3) {
-                throw new RuntimeException("Could not generate new order prefixes. Char limit exceeded. Max value is 999.");
-            }
-
-            // todo how do we clean up index? when arena became null?
         }
         return prefix;
     }
@@ -460,7 +458,7 @@ public class BwTabList {
     }
 
     private @NotNull String getPlayerTabIdentifierAliveInTeam(ITeam team, String playerId) {
-        return getCreateTeamTabOrderPrefix(team) + playerId;
+        return getTeamTabOrderPrefix(team) + playerId;
     }
 
     @SuppressWarnings("unused")
@@ -469,7 +467,7 @@ public class BwTabList {
     }
 
     private @NotNull String getPlayerTabIdentifierEliminatedInTeam(ITeam team, String playerId) {
-        return ELIMINATED_FROM_TEAM_PREFIX + getCreateTeamTabOrderPrefix(team) + playerId;
+        return ELIMINATED_FROM_TEAM_PREFIX + getTeamTabOrderPrefix(team) + playerId;
     }
 
     @SuppressWarnings("unused")
@@ -503,6 +501,5 @@ public class BwTabList {
         playerTabIdentifier.clear();
         playerTabIdentifierDuplication.clear();
         teamOrderPrefix.clear();
-        teamOrderIndex = 0;
     }
 }
