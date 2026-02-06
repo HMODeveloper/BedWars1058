@@ -50,6 +50,7 @@ public class EggBridgeTask implements Runnable {
     private Player player;
     private IArena arena;
     private BukkitTask task;
+    private Location startLocation;
 
     // 延迟两个 tick 来避免撞上自己生成的方块
     private Queue<Location> locationHistory = new LinkedList<>();
@@ -62,6 +63,7 @@ public class EggBridgeTask implements Runnable {
         this.projectile = projectile;
         this.teamColor = teamColor;
         this.player = player;
+        this.startLocation = player.getLocation();
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 1);
     }
 
@@ -97,14 +99,14 @@ public class EggBridgeTask implements Runnable {
         Location loc = locationHistory.poll();
 
         // 进行距离检查
-        double distance = getPlayer().getLocation().distance(loc);
-        double heightDiff = getPlayer().getLocation().getY() - loc.getY();
+        double distance = startLocation.distance(loc);
+        double heightDiff = startLocation.getY() - loc.getY();
         if (distance > 27 || heightDiff > 10) {
             EggBridge.removeEgg(projectile);
             return;
         }
 
-        if (getPlayer().getLocation().distance(loc) > 4.0D) {
+        if (startLocation.distance(loc) > 4.0D) {
 
             double deltaX;
             if (loc.getX() - floor(loc.getX()) < 0.5) {
