@@ -49,6 +49,9 @@ public class InvisibilityPotionListener implements Listener {
 
     public InvisibilityPotionListener() {
         // Task to handle visibility and particles for teammates/spectators
+        int interval = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL);
+        if (interval < 1) interval = 1;
+        
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             // Get configured amount (re-read in case of reload, though reload usually restarts tasks)
             int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT);
@@ -89,7 +92,7 @@ public class InvisibilityPotionListener implements Listener {
                     }
                 }
             }
-        }, 10L, 10L);
+        }, interval, interval);
     }
 
     @EventHandler
