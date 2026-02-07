@@ -859,18 +859,12 @@ public class v1_8_R3 extends VersionSupport {
 
     @Override
     public void playInvisibilityParticles(Player target, List<Player> observers, int particleAmount) {
-        // Red color for Redstone particle (count = 0, speed = 1, offsets = RGB)
-        // Note: For pure red, use -1.0f or 1.0f for R. 
-        float r = -1.0f; 
-        float g = 0.0f;
-        float b = 0.0f;
-
         // Base location: slightly above head
-        Location loc = target.getLocation().add(0, 2.2, 0);
+        Location loc = target.getLocation().add(0, 0.01, 0);
 
         for (int i = 0; i < particleAmount; i++) {
-            PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true,
-                    (float) loc.getX(), (float) loc.getY(), (float) loc.getZ(), r, g, b, 1, 0);
+            PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(EnumParticle.FOOTSTEP, true,
+                    (float) loc.getX(), (float) loc.getY(), (float) loc.getZ(), 0, 0, 0, 1, 0);
 
             for (Player observer : observers) {
                 ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(particlePacket);

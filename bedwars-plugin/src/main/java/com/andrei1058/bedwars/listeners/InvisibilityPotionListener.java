@@ -63,33 +63,32 @@ public class InvisibilityPotionListener implements Listener {
                 // Process invisible players
                 for (Player p : arena.getShowTime().keySet()) {
                     if (p == null || !p.isOnline()) continue;
-                    ITeam team = arena.getTeam(p);
-                    if (team == null) continue;
+                    ITeam selfTeam = arena.getTeam(p);
+                    if (selfTeam == null) continue;
 
-                    java.util.List<Player> observers = new java.util.ArrayList<>();
+                    java.util.List<Player> friendlyObservers = new java.util.ArrayList<>();
 
                     // Add teammates
-                    for (Player member : team.getMembers()) {
+                    for (Player member : selfTeam.getMembers()) {
                         if (member.isOnline() && !member.equals(p)) {
-                            observers.add(member);
+                            friendlyObservers.add(member);
                         }
                     }
 
                     // Add spectators
                     for (Player spec : arena.getSpectators()) {
                         if (spec.isOnline() && !spec.equals(p)) {
-                            observers.add(spec);
+                            friendlyObservers.add(spec);
                         }
                     }
 
-                    if (!observers.isEmpty()) {
-                        // Play particles
-                        nms.playInvisibilityParticles(p, observers, amount);
+                    if (!friendlyObservers.isEmpty()) {
                         // Ensure they are visible (remove invisibility effect visually)
-                        for (Player obs : observers) {
+                        for (Player obs : friendlyObservers) {
                             nms.removeInvisibilityEffect(p, obs);
                         }
                     }
+                    nms.playInvisibilityParticles(p, arena.getPlayers(), amount);
                 }
             }
         }, interval, interval);
