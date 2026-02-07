@@ -144,7 +144,7 @@
             <artifactId>resetadapter-slime</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>versionsupport_1_12_R1</artifactId>
             <version>${project.version}</version>
@@ -193,7 +193,7 @@
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>versionsupport_v1_20_R4</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>versionsupport-common</artifactId>
