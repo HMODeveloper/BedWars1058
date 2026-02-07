@@ -107,6 +107,15 @@ public class PacketInterceptor {
                         } catch (Exception e) {
                             // Ignore errors in filtering
                         }
+                    } else if (BedWars.nms.isEquipmentPacket(msg)) {
+                         try {
+                             int entityId = BedWars.nms.getEquipmentEntityId(msg);
+                             if (InvisibilityPotionListener.shouldHideArmor(entityId, player)) {
+                                 msg = BedWars.nms.getEmptyEquipmentPacket(msg);
+                             }
+                         } catch (Exception e) {
+                             // Ignore
+                         }
                     }
                     super.write(ctx, msg, promise);
                 }

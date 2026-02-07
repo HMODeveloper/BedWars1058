@@ -64,12 +64,64 @@ import static com.andrei1058.bedwars.api.language.Language.getMsg;
 @SuppressWarnings("unused")
 public class v1_8_R3 extends VersionSupport {
 
+    // Reflection fields for PacketPlayOutEntityEquipment
+    // Used to intercept and modify equipment packets for perfect invisibility (no flicker)
+    private java.lang.reflect.Field equipmentIdField;   // Field 'a': Entity ID (int)
+    private java.lang.reflect.Field equipmentSlotField; // Field 'b': Equipment slot (int)
+    private java.lang.reflect.Field equipmentItemField; // Field 'c': ItemStack (net.minecraft.server.ItemStack)
+
     public v1_8_R3(Plugin pl, String name) {
         super(pl, name);
         try {
             setEggBridgeEffect("MOBSPAWNER_FLAMES");
         } catch (InvalidEffectException e) {
             e.printStackTrace();
+        }
+        
+        // Initialize reflection fields for PacketPlayOutEntityEquipment
+        try {
+            // In 1.8.8 NMS:
+            // a = entity id
+            // b = slot id
+            // c = item stack
+            equipmentIdField = PacketPlayOutEntityEquipment.class.getDeclaredField("a");
+            equipmentIdField.setAccessible(true);
+            equipmentSlotField = PacketPlayOutEntityEquipment.class.getDeclaredField("b");
+            equipmentSlotField.setAccessible(true);
+            equipmentItemField = PacketPlayOutEntityEquipment.class.getDeclaredField("c");
+            equipmentItemField.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean isEquipmentPacket(Object packet) {
+        return packet instanceof PacketPlayOutEntityEquipment;
+    }
+
+    @Override
+    public int getEquipmentEntityId(Object packet) {
+        try {
+            return equipmentIdField.getInt(packet);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    @Override
+    public Object getEmptyEquipmentPacket(Object packet) {
+        try {
+            // Read original packet data
+            int id = equipmentIdField.getInt(packet);
+            int slot = equipmentSlotField.getInt(packet);
+            
+            // Create a new packet with the same ID and slot, but with NULL item (AIR)
+            // This effectively hides the armor/item in that slot for the receiver
+            return new PacketPlayOutEntityEquipment(id, slot, null);
+        } catch (Exception e) {
+            // Fallback: return original packet if modification fails
+            return packet;
         }
     }
 

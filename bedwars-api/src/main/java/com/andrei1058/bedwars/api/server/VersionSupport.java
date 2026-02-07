@@ -468,6 +468,35 @@ public abstract class VersionSupport {
     public abstract void playVillagerEffect(Player player, Location location);
 
     /**
+     * Check if the packet is an equipment packet.
+     * Used for anti-flicker invisibility.
+     */
+    public boolean isEquipmentPacket(Object packet) {
+        return false;
+    }
+
+    /**
+     * Get the entity ID from an equipment packet.
+     *
+     * @param packet The packet.
+     * @return The entity ID, or -1 if not found/not an equipment packet.
+     */
+    public int getEquipmentEntityId(Object packet) {
+        return -1;
+    }
+
+    /**
+     * Get a packet that shows empty equipment for the given equipment packet.
+     * Used for anti-flicker invisibility.
+     *
+     * @param packet The original packet.
+     * @return The modified packet (or a new one).
+     */
+    public Object getEmptyEquipmentPacket(Object packet) {
+        return packet;
+    }
+
+    /**
      * Remove invisibility effect for a player (visual only).
      * Used to make invisible players visible to teammates and spectators.
      */

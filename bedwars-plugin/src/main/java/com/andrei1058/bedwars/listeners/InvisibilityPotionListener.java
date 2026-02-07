@@ -93,6 +93,76 @@ public class InvisibilityPotionListener implements Listener {
                 }
             }
         }, interval, interval);
+
+        startInvisibilityWatchdog();
+    }
+
+    /**
+     * Fix for: enemies seeing invisible player's armor when coming from distance.
+     * The move event listener isn't enough because it only triggers on chunk change.
+     * We need to refresh hide armor packets for players entering the tracking range.
+     * <p>
+     * Running at 2 ticks to minimize the delay between entering tracking range and hiding armor.
+     */
+    private void startInvisibilityWatchdog() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (IArena arena : Arena.getArenas()) {
+                if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
+                if (arena.getShowTime().isEmpty()) continue;
+
+                for (java.util.Map.Entry<Player, Integer> entry : arena.getShowTime().entrySet()) {
+                    Player invisible = entry.getKey();
+                    if (invisible == null || !invisible.isOnline()) continue;
+
+                    // We need to hide armor for enemies
+                    ITeam team = arena.getTeam(invisible);
+                    if (team == null) continue;
+
+                    // Iterate over players in the same world to find enemies nearby
+                    for (Player target : invisible.getWorld().getPlayers()) {
+                        if (target.equals(invisible)) continue;
+                        if (arena.isSpectator(target)) continue;
+                        if (team.isMember(target)) continue;
+
+                        // Check distance (simple optimization)
+                        // Using a value slightly larger than default tracking range (48-64)
+                        // 5000 is roughly 70 blocks
+                        if (target.getLocation().distanceSquared(invisible.getLocation()) <= 5000) {
+                            nms.hideArmor(invisible, target);
+                        }
+                    }
+                }
+            }
+        }, 20L, 2L);
+    }
+
+    public static boolean shouldHideArmor(int entityId, Player observer) {
+        // Find player by entity ID
+        Player invisible = null;
+        for (IArena arena : Arena.getArenas()) {
+            if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
+            for (Player p : arena.getShowTime().keySet()) {
+                if (p.getEntityId() == entityId) {
+                    invisible = p;
+                    break;
+                }
+            }
+            if (invisible != null) break;
+        }
+
+        if (invisible == null) return false;
+
+        IArena arena = Arena.getArenaByPlayer(invisible);
+        if (arena == null) return false;
+        
+        // Don't hide for spectators
+        if (arena.isSpectator(observer)) return false;
+
+        // Don't hide for teammates
+        ITeam team = arena.getTeam(invisible);
+        if (team != null && team.isMember(observer)) return false;
+
+        return true;
     }
 
     @EventHandler
