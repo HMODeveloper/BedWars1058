@@ -777,4 +777,48 @@ public class v1_8_R3 extends VersionSupport {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(pwp);
     }
 
+    @Override
+    public void removeInvisibilityEffect(Player target, Player observer) {
+        EntityPlayer entityPlayer = ((CraftPlayer) target).getHandle();
+        DataWatcher watcher = entityPlayer.getDataWatcher();
+        byte b0 = watcher.getByte(0);
+        // Remove 0x20 (invisible) bit
+        byte b0Modified = (byte) (b0 & ~0x20);
+
+        // We use the constructor that takes watcher, but we will overwrite the list
+        PacketPlayOutEntityMetadata packet = new PacketPlayOutEntityMetadata(target.getEntityId(), watcher, false);
+        try {
+            List<DataWatcher.WatchableObject> list = new ArrayList<>();
+            // 0, 0, value -> type Byte (0), id 0
+            list.add(new DataWatcher.WatchableObject(0, 0, b0Modified));
+
+            Field b = PacketPlayOutEntityMetadata.class.getDeclaredField("b");
+            b.setAccessible(true);
+            b.set(packet, list);
+
+            ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void playInvisibilityParticles(Player target, List<Player> observers) {
+        // Red color for Redstone particle (count = 0, speed = 1, offsets = RGB)
+        // Note: For pure red, use -1.0f or 1.0f for R. 
+        float r = -1.0f; 
+        float g = 0.0f;
+        float b = 0.0f;
+
+        PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true,
+                (float) target.getLocation().getX(),
+                (float) (target.getLocation().getY() + 2.2),
+                (float) target.getLocation().getZ(),
+                r, g, b, 1, 0);
+
+        for (Player observer : observers) {
+            ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(particlePacket);
+        }
+    }
+
 }

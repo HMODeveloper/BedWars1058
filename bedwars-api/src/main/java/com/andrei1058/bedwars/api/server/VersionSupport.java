@@ -466,4 +466,19 @@ public abstract class VersionSupport {
     public abstract void placeLadder(Block b, int x, int y, int z, IArena a, int ladderdata);
 
     public abstract void playVillagerEffect(Player player, Location location);
+
+    /**
+     * Remove invisibility effect for a player (visual only).
+     * Used to make invisible players visible to teammates and spectators.
+     */
+    public void removeInvisibilityEffect(Player target, Player observer) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Play invisibility particles for teammates and spectators.
+     */
+    public void playInvisibilityParticles(Player target, List<Player> observers) {
+        // Default implementation does nothing
+    }
 }

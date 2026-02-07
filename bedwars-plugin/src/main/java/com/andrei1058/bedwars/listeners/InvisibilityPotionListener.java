@@ -44,12 +44,70 @@ import static com.andrei1058.bedwars.BedWars.plugin;
  */
 public class InvisibilityPotionListener implements Listener {
 
+    public InvisibilityPotionListener() {
+        // Task to handle visibility and particles for teammates/spectators
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (IArena arena : Arena.getArenas()) {
+                if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
+
+                // Process invisible players
+                for (Player p : arena.getShowTime().keySet()) {
+                    if (p == null || !p.isOnline()) continue;
+                    ITeam team = arena.getTeam(p);
+                    if (team == null) continue;
+
+                    java.util.List<Player> observers = new java.util.ArrayList<>();
+
+                    // Add teammates
+                    for (Player member : team.getMembers()) {
+                        if (member.isOnline() && !member.equals(p)) {
+                            observers.add(member);
+                        }
+                    }
+
+                    // Add spectators
+                    for (Player spec : arena.getSpectators()) {
+                        if (spec.isOnline() && !spec.equals(p)) {
+                            observers.add(spec);
+                        }
+                    }
+
+                    if (!observers.isEmpty()) {
+                        // Play particles
+                        nms.playInvisibilityParticles(p, observers);
+                        // Ensure they are visible (remove invisibility effect visually)
+                        for (Player obs : observers) {
+                            nms.removeInvisibilityEffect(p, obs);
+                        }
+                    }
+                }
+            }
+        }, 10L, 10L);
+    }
+
     @EventHandler
     public void onPotion(@NotNull PlayerInvisibilityPotionEvent e) {
         if (e.getTeam() == null) return;
         SidebarService.getInstance().handleInvisibility(
                 e.getTeam(), e.getPlayer(), e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED
         );
+
+        // Immediate visibility update for teammates/spectators
+        if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
+            IArena arena = e.getArena();
+            Player p = e.getPlayer();
+            ITeam team = e.getTeam();
+
+            for (Player obs : arena.getWorld().getPlayers()) {
+                if (obs.equals(p)) continue;
+                boolean isTeam = (arena.getTeam(obs) != null && arena.getTeam(obs).equals(team));
+                boolean isSpec = arena.isSpectator(obs);
+
+                if (isTeam || isSpec) {
+                    nms.removeInvisibilityEffect(p, obs);
+                }
+            }
+        }
     }
 
     @EventHandler
