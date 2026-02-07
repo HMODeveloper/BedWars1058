@@ -49,8 +49,10 @@ public class ScoreboardListener implements Listener {
             return;
         }
 
-        int health = (int) Math.ceil((player.getHealth() - e.getFinalDamage()));
-        SidebarService.getInstance().refreshHealth(arena, player, health);
+        org.bukkit.Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+            int health = (int) Math.ceil(player.getHealth());
+            SidebarService.getInstance().refreshHealth(arena, player, health);
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -65,8 +67,10 @@ public class ScoreboardListener implements Listener {
             return;
         }
 
-        int health = (int) Math.ceil(player.getHealth() + e.getAmount());
-        SidebarService.getInstance().refreshHealth(arena, player, health);
+        org.bukkit.Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+            int health = (int) Math.ceil(player.getHealth());
+            SidebarService.getInstance().refreshHealth(arena, player, health);
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
