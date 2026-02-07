@@ -93,6 +93,9 @@ public class FireballListener implements Listener {
             Vector finalVelocity = knockbackDir.multiply(fireballHorizontal * multiplier);
             finalVelocity.setY(fireballVertical * multiplier * verticalFactor);
 
+            // Reset fall distance
+            player.setFallDistance(0);
+
             // Prevent teammates from overriding last hit
             boolean isTeammate = arena.getTeam(player).equals(arena.getTeam(source));
             boolean isSelf = player.equals(source);

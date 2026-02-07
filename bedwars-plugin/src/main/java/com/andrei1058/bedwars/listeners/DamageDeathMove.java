@@ -202,6 +202,7 @@ public class DamageDeathMove implements Listener {
                                 Vector resultingForce = direction.clone().multiply(force);
                                 resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
                                 damaged.setVelocity(resultingForce);
+                                damaged.setFallDistance(0);
                             } else {
                                 ITeam currentTeam = a.getTeam(p);
                                 ITeam damagerTeam = a.getTeam(damager);
