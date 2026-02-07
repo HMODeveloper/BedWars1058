@@ -171,6 +171,16 @@ public class BuyItem implements IBuyItem {
         return loaded;
     }
 
+    private double getItemDamage(ItemStack item) {
+        if (item == null) return 0;
+        String type = item.getType().toString();
+        if (type.endsWith("DIAMOND_SWORD")) return 8; // Tier 4
+        if (type.endsWith("IRON_SWORD")) return 7;    // Tier 3
+        if (type.endsWith("STONE_SWORD")) return 6;   // Tier 2
+        if (type.endsWith("WOOD_SWORD") || type.endsWith("GOLD_SWORD") || type.endsWith("GOLDEN_SWORD") || type.endsWith("WOODEN_SWORD")) return 4; // Tier 1
+        return 0;
+    }
+
     /**
      * Give to a player
      */
@@ -247,22 +257,38 @@ public class BuyItem implements IBuyItem {
             }
         }
 
+        boolean itemGiven = false;
         //Remove swords with lower damage
         if (BedWars.nms.isSword(i)) {
+            for (int k = 0; k < 9; k++) {
+                ItemStack itm = player.getInventory().getItem(k);
+                if (itm != null && itm.getType() != Material.AIR && BedWars.nms.isSword(itm)) {
+                    if (getItemDamage(itm) < getItemDamage(i)) {
+                        ItemStack old = itm.clone();
+                        player.getInventory().setItem(k, i);
+                        player.getInventory().addItem(old);
+                        itemGiven = true;
+                        break;
+                    }
+                }
+            }
+
             for (ItemStack itm : player.getInventory().getContents()) {
                 if (itm == null) continue;
                 if (itm.getType() == Material.AIR) continue;
                 if (!BedWars.nms.isSword(itm)) continue;
                 if (itm == i) continue;
                 if (nms.isCustomBedWarsItem(itm) && nms.getCustomData(itm).equals("DEFAULT_ITEM")) {
-                    if (BedWars.nms.getDamage(itm) <= BedWars.nms.getDamage(i)) {
+                    // if (getItemDamage(itm) <= getItemDamage(i)) {
                         player.getInventory().remove(itm);
-                    }
+                    // }
                 }
             }
         }
         //
-        player.getInventory().addItem(i);
+        if (!itemGiven) {
+            player.getInventory().addItem(i);
+        }
         player.updateInventory();
     }
 
