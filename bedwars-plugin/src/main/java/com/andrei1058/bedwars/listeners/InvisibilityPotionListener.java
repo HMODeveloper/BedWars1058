@@ -84,10 +84,8 @@ public class InvisibilityPotionListener implements Listener {
                             a.getShowTime().put(e.getPlayer(), pe.getDuration() / 20);
                             //
                             for (Player p1 : e.getPlayer().getWorld().getPlayers()) {
-                                if (a.isSpectator(p1)) {
-                                    // hide player armor to spectators
-                                    nms.hideArmor(e.getPlayer(), p1);
-                                } else if (t != a.getTeam(p1)) {
+                                if (a.isSpectator(p1)) continue;
+                                if (t != a.getTeam(p1)) {
                                     // hide player armor to other teams
                                     nms.hideArmor(e.getPlayer(), p1);
                                 }
