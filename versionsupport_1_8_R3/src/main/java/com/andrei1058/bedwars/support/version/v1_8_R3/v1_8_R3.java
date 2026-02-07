@@ -31,6 +31,8 @@ import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.VersionSupport;
 import com.andrei1058.bedwars.support.version.common.VersionCommon;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -69,6 +71,7 @@ public class v1_8_R3 extends VersionSupport {
     private java.lang.reflect.Field equipmentIdField;   // Field 'a': Entity ID (int)
     private java.lang.reflect.Field equipmentSlotField; // Field 'b': Equipment slot (int)
     private java.lang.reflect.Field equipmentItemField; // Field 'c': ItemStack (net.minecraft.server.ItemStack)
+    private Field entityMetadataPacketFieldB;
 
     public v1_8_R3(Plugin pl, String name) {
         super(pl, name);
@@ -90,6 +93,8 @@ public class v1_8_R3 extends VersionSupport {
             equipmentSlotField.setAccessible(true);
             equipmentItemField = PacketPlayOutEntityEquipment.class.getDeclaredField("c");
             equipmentItemField.setAccessible(true);
+            entityMetadataPacketFieldB = PacketPlayOutEntityMetadata.class.getDeclaredField("b");
+            entityMetadataPacketFieldB.setAccessible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -838,19 +843,12 @@ public class v1_8_R3 extends VersionSupport {
         DataWatcher watcher = entityPlayer.getDataWatcher();
         byte b0 = watcher.getByte(0);
         // Remove 0x20 (invisible) bit
-        byte b0Modified = (byte) (b0 & ~0x20);
+        byte b0Modified = (byte) (b0 & ~0b100000);
 
         // We use the constructor that takes watcher, but we will overwrite the list
         PacketPlayOutEntityMetadata packet = new PacketPlayOutEntityMetadata(target.getEntityId(), watcher, false);
         try {
-            List<DataWatcher.WatchableObject> list = new ArrayList<>();
-            // 0, 0, value -> type Byte (0), id 0
-            list.add(new DataWatcher.WatchableObject(0, 0, b0Modified));
-
-            Field b = PacketPlayOutEntityMetadata.class.getDeclaredField("b");
-            b.setAccessible(true);
-            b.set(packet, list);
-
+            entityMetadataPacketFieldB.set(packet, ImmutableList.of(new DataWatcher.WatchableObject(0, 0, b0Modified)));
             ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(packet);
         } catch (Exception e) {
             e.printStackTrace();
