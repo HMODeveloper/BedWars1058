@@ -116,6 +116,9 @@ public class v1_8_R3 extends VersionSupport {
             int id = equipmentIdField.getInt(packet);
             int slot = equipmentSlotField.getInt(packet);
             
+            // Do not hide held item (slot 0)
+            if (slot == 0) return packet;
+
             // Create a new packet with the same ID and slot, but with NULL item (AIR)
             // This effectively hides the armor/item in that slot for the receiver
             return new PacketPlayOutEntityEquipment(id, slot, null);
