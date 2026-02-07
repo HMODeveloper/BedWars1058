@@ -350,7 +350,17 @@ public class BwTabList {
         );
         deployedPerPlayerTabList.put(player.getUniqueId(), teamTab);
         if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-            teamTab.setNameTagVisibility(PlayerTab.NameTagVisibility.NEVER);
+            // if it is a teammate or a spectator do not hide the name tag
+            Player observer = sidebar.getPlayer();
+            ITeam playerTeam = arena.getTeam(player);
+            boolean isTeammate = playerTeam != null && playerTeam.isMember(observer);
+            boolean isSpectator = arena.isSpectator(observer);
+
+            if (!isTeammate && !isSpectator) {
+                teamTab.setNameTagVisibility(PlayerTab.NameTagVisibility.NEVER);
+            } else {
+                teamTab.setNameTagVisibility(PlayerTab.NameTagVisibility.ALWAYS);
+            }
         }
     }
 
