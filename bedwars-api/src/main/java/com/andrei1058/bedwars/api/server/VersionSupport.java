@@ -477,8 +477,9 @@ public abstract class VersionSupport {
 
     /**
      * Play invisibility particles for teammates and spectators.
+     * @param particleAmount number of particles to spawn per tick.
      */
-    public void playInvisibilityParticles(Player target, List<Player> observers) {
+    public void playInvisibilityParticles(Player target, List<Player> observers, int particleAmount) {
         // Default implementation does nothing
     }
 }

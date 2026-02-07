@@ -35,6 +35,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
+import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.BedWars;
+
 import static com.andrei1058.bedwars.BedWars.nms;
 import static com.andrei1058.bedwars.BedWars.plugin;
 
@@ -47,6 +50,10 @@ public class InvisibilityPotionListener implements Listener {
     public InvisibilityPotionListener() {
         // Task to handle visibility and particles for teammates/spectators
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            // Get configured amount (re-read in case of reload, though reload usually restarts tasks)
+            int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT);
+            if (amount < 1) amount = 1;
+
             for (IArena arena : Arena.getArenas()) {
                 if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
 
@@ -74,7 +81,7 @@ public class InvisibilityPotionListener implements Listener {
 
                     if (!observers.isEmpty()) {
                         // Play particles
-                        nms.playInvisibilityParticles(p, observers);
+                        nms.playInvisibilityParticles(p, observers, amount);
                         // Ensure they are visible (remove invisibility effect visually)
                         for (Player obs : observers) {
                             nms.removeInvisibilityEffect(p, obs);
