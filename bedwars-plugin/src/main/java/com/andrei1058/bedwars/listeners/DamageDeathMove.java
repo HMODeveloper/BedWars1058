@@ -443,7 +443,12 @@ public class DamageDeathMove implements Listener {
                 }
             }
 
-            if (killer != null) killersTeam = a.getTeam(killer);
+            if (killer != null) {
+                killersTeam = a.getTeam(killer);
+                if (killersTeam == null) {
+                    killersTeam = a.getExTeam(killer.getUniqueId());
+                }
+            }
             String finalMessage = message;
 
             PlayerKillEvent playerKillEvent = new PlayerKillEvent(a, victim, victimsTeam, killer, killersTeam,
