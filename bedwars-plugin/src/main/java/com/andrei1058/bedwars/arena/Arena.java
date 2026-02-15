@@ -2524,6 +2524,9 @@ public class Arena implements IArena {
                     player.setAllowFlight(true);
                     player.setFlying(true);
 
+                    // add invisibility effect
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false), true);
+                    
                     nms.setCollide(player, this, false);
                     // #274
                     for (Player invisible : getShowTime().keySet()) {
