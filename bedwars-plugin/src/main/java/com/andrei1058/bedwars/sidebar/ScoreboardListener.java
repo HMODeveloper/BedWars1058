@@ -50,7 +50,7 @@ public class ScoreboardListener implements Listener {
         }
 
         org.bukkit.Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
-            int health = (int) Math.ceil(player.getHealth());
+            int health = (int) Math.ceil(player.getHealth() + BedWars.getAPI().getVersionSupport().getAbsorption(player));
             SidebarService.getInstance().refreshHealth(arena, player, health);
         });
     }
@@ -68,7 +68,7 @@ public class ScoreboardListener implements Listener {
         }
 
         org.bukkit.Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
-            int health = (int) Math.ceil(player.getHealth());
+            int health = (int) Math.ceil(player.getHealth() + BedWars.getAPI().getVersionSupport().getAbsorption(player));
             SidebarService.getInstance().refreshHealth(arena, player, health);
         });
     }
@@ -77,7 +77,7 @@ public class ScoreboardListener implements Listener {
     public void onReSpawn(@NotNull PlayerReSpawnEvent e) {
         final IArena arena = e.getArena();
 
-        SidebarService.getInstance().refreshHealth(arena, e.getPlayer(), (int) Math.ceil(e.getPlayer().getHealth()));
+        SidebarService.getInstance().refreshHealth(arena, e.getPlayer(), (int) Math.ceil(e.getPlayer().getHealth() + BedWars.getAPI().getVersionSupport().getAbsorption(e.getPlayer())));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -121,5 +121,18 @@ public class ScoreboardListener implements Listener {
         }
         // refresh placeholders in case placeholders refresh is disabled
         SidebarService.getInstance().refreshPlaceholders(e.getArena());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onConsume(org.bukkit.event.player.PlayerItemConsumeEvent e) {
+        if (e.getItem().getType().toString().contains("GOLDEN_APPLE")) {
+            final Player player = e.getPlayer();
+            final IArena arena = Arena.getArenaByPlayer(player);
+            if (arena == null) return;
+            org.bukkit.Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+                int health = (int) Math.ceil(player.getHealth() + BedWars.getAPI().getVersionSupport().getAbsorption(player));
+                SidebarService.getInstance().refreshHealth(arena, player, health);
+            }, 2L);
+        }
     }
 }

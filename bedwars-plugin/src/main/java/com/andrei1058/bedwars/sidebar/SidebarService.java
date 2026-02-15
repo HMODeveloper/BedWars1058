@@ -288,7 +288,7 @@ public class SidebarService implements ISidebarService {
             if (null != v.getArena()) {
                 v.getHandle().playerHealthRefreshAnimation();
                 for (Player player : v.getArena().getPlayers()) {
-                    v.getHandle().setPlayerHealth(player, (int) Math.ceil(player.getHealth()));
+                    v.getHandle().setPlayerHealth(player, (int) Math.ceil(player.getHealth() + BedWars.getAPI().getVersionSupport().getAbsorption(player)));
                 }
             }
         });

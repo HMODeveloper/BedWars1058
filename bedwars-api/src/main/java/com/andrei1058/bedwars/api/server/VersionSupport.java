@@ -377,6 +377,29 @@ public abstract class VersionSupport {
     public abstract Material woolMaterial();
 
     /**
+     * Get player absorption hearts.
+     * Support 1.8+.
+     */
+    public double getAbsorption(Player player) {
+        try {
+            // Try 1.9+ method via reflection
+            java.lang.reflect.Method getAbsorption = player.getClass().getMethod("getAbsorptionAmount");
+            return ((Number) getAbsorption.invoke(player)).doubleValue();
+        } catch (Exception e) {
+            // 1.8 fallback via NMS
+            try {
+                java.lang.reflect.Method getHandle = player.getClass().getMethod("getHandle");
+                Object entityPlayer = getHandle.invoke(player);
+                java.lang.reflect.Method getAbsorptionHearts = entityPlayer.getClass().getMethod("getAbsorptionHearts");
+                return ((Number) getAbsorptionHearts.invoke(entityPlayer)).doubleValue();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Get an ItemStack identifier
      * will return null text if it does not have an identifier
      */
