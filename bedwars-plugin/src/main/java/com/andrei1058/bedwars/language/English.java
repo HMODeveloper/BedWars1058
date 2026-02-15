@@ -70,6 +70,14 @@ public class English extends Language {
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_NOT_EXIST, "{prefix}&cThis language doesn't exist!");
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_SUCCESSFULLY, "{prefix}&aLanguage changed!");
         yml.addDefault(Messages.COMMAND_LANG_USAGE_DENIED, "{prefix}&cYou can't change the language during the game.");
+        yml.addDefault(Messages.COMMAND_READY_SUCCESS, "{prefix}&aYou are now ready!");
+        yml.addDefault(Messages.COMMAND_UNREADY_SUCCESS, "{prefix}&eYou are no longer ready.");
+        yml.addDefault(Messages.COMMAND_READY_COUNTDOWN_SHORTENED, "{prefix}&aAll players are ready! Countdown shortened to 10 seconds!");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_READY, "&aReady");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_NOT_READY, "&cNot Ready");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_LORE_READY, Arrays.asList("&7Right click to become ready!"));
+        yml.addDefault(Messages.COMMAND_READY_ITEM_LORE_NOT_READY, Arrays.asList("&7Right click to become unready!"));
+
         yml.addDefault(Messages.COMMAND_JOIN_USAGE, "§a▪ §7Usage: /" + mainCmd + " join §o<arena/group>");
         yml.addDefault(Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND, "{prefix}&cThere isn't any arena or arena group called: {name}");
         yml.addDefault(Messages.COMMAND_JOIN_DENIED_IS_FULL, "{prefix}&cThis arena is full!\n&aPlease consider donating for more features. &7&o(click)");

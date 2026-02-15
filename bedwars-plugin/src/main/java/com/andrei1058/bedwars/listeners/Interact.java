@@ -68,6 +68,40 @@ public class Interact implements Listener {
     }
 
     @EventHandler
+    public void onReadyItemClick(PlayerInteractEvent e) {
+        if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        Player p = e.getPlayer();
+        IArena arena = Arena.getArenaByPlayer(p);
+        if (arena == null) return;
+        if (arena.isSpectator(p)) return;
+        if (!(arena instanceof Arena)) return;
+        
+        ItemStack item = e.getItem();
+        if (item == null) return;
+        
+        if (item.getType().name().equals("EMERALD_BLOCK") || item.getType().name().equals("REDSTONE_BLOCK")) {
+            // Check display name to be sure it's our item
+            if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+                String displayName = item.getItemMeta().getDisplayName();
+                // We should check if it matches the localized string, but since we can't easily access the exact string 
+                // without knowing the player's language at this exact moment (though we can),
+                // and we set the name based on the player's language when giving the item.
+                // A safer check is checking the slot and material, or adding NBT data. 
+                // Since we didn't add NBT data in giveReadyItem, we'll check slot and material + context.
+                
+                // Check if it's in the correct slot (Slot 1)
+                if (p.getInventory().getHeldItemSlot() == 1) {
+                    e.setCancelled(true);
+                    Arena a = (Arena) arena;
+                    boolean isReady = a.isPlayerReady(p);
+                    a.setPlayerReady(p, !isReady);
+                    // Messages are sent in setPlayerReady
+                }
+            }
+        }
+    }
+
+    @EventHandler
     /* Handle custom items with commands on them */
     public void onItemCommand(PlayerInteractEvent e) {
         if (e == null) return;

@@ -114,6 +114,7 @@ public class Arena implements IArena {
     private static int gamesBeforeRestart = config.getInt(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_MODE_GAMES_BEFORE_RESTART);
     public static HashMap<UUID, Integer> afkCheck = new HashMap<>();
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
+    private final Set<UUID> readyPlayers = new HashSet<>();
 
 
     private List<Player> players = new ArrayList<>();
@@ -499,6 +500,8 @@ public class Arena implements IArena {
 
             p.closeInventory();
             players.add(p);
+            // New players are not ready by default, so we check if this change affects the start status
+            checkReady();
             p.setFlying(false);
             p.setAllowFlight(false);
             p.setHealth(20);
@@ -558,6 +561,7 @@ public class Arena implements IArena {
                 SidebarService.getInstance().giveSidebar(p, this, false);
             }
             sendPreGameCommandItems(p);
+            giveReadyItem(p, false); // Give not ready item by default, must be after sendPreGameCommandItems because it clears inventory or similar
             for (PotionEffect pf : p.getActivePotionEffects()) {
                 p.removePotionEffect(pf.getType());
             }
@@ -753,6 +757,10 @@ public class Arena implements IArena {
      * @param disconnect True if the player was disconnected
      */
     public void removePlayer(@NotNull Player p, boolean disconnect) {
+        readyPlayers.remove(p.getUniqueId());
+        // Remove item from slot 1
+        p.getInventory().setItem(1, null);
+        checkReady();
         if (leaving.contains(p)) {
             return;
         } else {
@@ -1504,6 +1512,10 @@ public class Arena implements IArena {
             return;
         }
 
+        if (status == GameState.restarting || status == GameState.playing) {
+            readyPlayers.clear();
+        }
+
         if (this.status != GameState.playing && status == GameState.playing) {
             startTime = Instant.now();
         }
@@ -1574,6 +1586,107 @@ public class Arena implements IArena {
      */
     public static boolean isVip(Player p) {
         return p.hasPermission(mainCmd + ".*") || p.hasPermission(mainCmd + ".vip");
+    }
+
+    public boolean isPlayerReady(Player p) {
+        return readyPlayers.contains(p.getUniqueId());
+    }
+
+    public void setPlayerReady(Player p, boolean ready) {
+        if (ready) {
+            readyPlayers.add(p.getUniqueId());
+            giveReadyItem(p, true);
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_READY_SUCCESS));
+        } else {
+            readyPlayers.remove(p.getUniqueId());
+            giveReadyItem(p, false);
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_UNREADY_SUCCESS));
+        }
+        checkReady();
+    }
+
+    public void giveReadyItem(Player p, boolean ready) {
+        if (status != GameState.waiting && status != GameState.starting) return;
+        
+        ItemStack item;
+        if (ready) {
+             item = BedWars.nms.createItemStack("EMERALD_BLOCK", 1, (short) 0);
+             if (item == null) return;
+             //BedWars.nms.setUnbreakable(item);
+             org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+             meta.setDisplayName(Language.getMsg(p, Messages.COMMAND_READY_ITEM_NAME_READY));
+             meta.setLore(Language.getList(p, Messages.COMMAND_READY_ITEM_LORE_NOT_READY)); // If ready, click to unready
+             item.setItemMeta(meta);
+        } else {
+             item = BedWars.nms.createItemStack("REDSTONE_BLOCK", 1, (short) 0);
+             if (item == null) return;
+             //BedWars.nms.setUnbreakable(item);
+             org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+             meta.setDisplayName(Language.getMsg(p, Messages.COMMAND_READY_ITEM_NAME_NOT_READY));
+             meta.setLore(Language.getList(p, Messages.COMMAND_READY_ITEM_LORE_READY)); // If not ready, click to ready
+             item.setItemMeta(meta);
+        }
+        
+        // Slot 1 is the second slot (0 is first)
+        p.getInventory().setItem(1, item);
+        p.updateInventory();
+    }
+
+    public void checkReady() {
+        if (players.isEmpty()) return;
+
+        if (readyPlayers.size() == players.size()) {
+            if (status == GameState.waiting) {
+                changeStatus(GameState.starting);
+                // Starting task is created in changeStatus
+                if (startingTask != null) {
+                    startingTask.setCountdown(10);
+                }
+                for (Player p : players) {
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_READY_COUNTDOWN_SHORTENED));
+                }
+                for (Player p : spectators) {
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_READY_COUNTDOWN_SHORTENED));
+                }
+            } else if (status == GameState.starting && startingTask != null) {
+                if (startingTask.getCountdown() > 10) {
+                    startingTask.setCountdown(10);
+                    for (Player p : players) {
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_READY_COUNTDOWN_SHORTENED));
+                    }
+                    for (Player p : spectators) {
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_READY_COUNTDOWN_SHORTENED));
+                    }
+                }
+            }
+        } else {
+            // Check if we need to cancel the countdown or restore it
+            if (status == GameState.starting && startingTask != null) {
+                int teams = 0, teammates = 0;
+                for (Player on : getPlayers()) {
+                    if (getParty().isOwner(on)) {
+                        teams++;
+                    }
+                    if (getParty().hasParty(on)) {
+                        teammates++;
+                    }
+                }
+                
+                // Normal start condition: minPlayers <= players.size() && teams > 0 && players.size() != teammates / teams
+                // OR players.size() >= minPlayers && teams == 0
+                boolean meetsNormalStart = (minPlayers <= players.size() && teams > 0 && players.size() != teammates / teams) || 
+                                         (players.size() >= minPlayers && teams == 0);
+
+                if (!meetsNormalStart) {
+                    // We don't meet normal start requirements AND not everyone is ready.
+                    // So we should cancel the start.
+                    changeStatus(GameState.waiting);
+                    for (Player on : players) {
+                        on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
+                    }
+                }
+            }
+        }
     }
 
     /**

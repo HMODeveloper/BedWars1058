@@ -70,6 +70,14 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_NOT_EXIST, "{prefix}&c该语言不存在！");
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_SUCCESSFULLY, "{prefix}&a语言已设置！");
         yml.addDefault(Messages.COMMAND_LANG_USAGE_DENIED, "{prefix}&c你不能在游戏进行时修改语言。");
+        yml.addDefault(Messages.COMMAND_READY_SUCCESS, "{prefix}&a你现在准备好了！");
+        yml.addDefault(Messages.COMMAND_UNREADY_SUCCESS, "{prefix}&e你取消了准备。");
+        yml.addDefault(Messages.COMMAND_READY_COUNTDOWN_SHORTENED, "{prefix}&a所有玩家都已准备！倒计时缩短至10秒！");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_READY, "&a准备");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_NOT_READY, "&c未准备");
+        yml.addDefault(Messages.COMMAND_READY_ITEM_LORE_READY, Arrays.asList("&7右键点击以准备！"));
+        yml.addDefault(Messages.COMMAND_READY_ITEM_LORE_NOT_READY, Arrays.asList("&7右键点击以取消准备！"));
+
         yml.addDefault(Messages.COMMAND_JOIN_USAGE, "&a▪ &7用法：/" + BedWars.mainCmd + " join &o<游戏/模式>");
         yml.addDefault(Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND, "{prefix}&c游戏{name}不存在！");
         yml.addDefault(Messages.COMMAND_JOIN_DENIED_IS_FULL, "{prefix}&c游戏已满！\n&a请考虑赞助以支持我们！ &7&o(点击查看)");

@@ -65,6 +65,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         setAliases(Arrays.asList("bedwars", "bedwars1058"));
         instance = this;
         new CmdJoin(this, "join");
+        new CmdReady(this, "ready");
         new CmdLeave(this, "leave");
         new CmdLang(this, "lang");
         new CmdTeleporter(this, "teleporter");

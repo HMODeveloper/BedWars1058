@@ -27,6 +27,14 @@ public class Messages {
 
     public static String PREFIX = "prefix";
 
+    public static String COMMAND_READY_SUCCESS = "cmd-ready-success";
+    public static String COMMAND_UNREADY_SUCCESS = "cmd-unready-success";
+    public static String COMMAND_READY_COUNTDOWN_SHORTENED = "cmd-ready-countdown-shortened";
+    public static String COMMAND_READY_ITEM_NAME_READY = "cmd-ready-item-name-ready";
+    public static String COMMAND_READY_ITEM_NAME_NOT_READY = "cmd-ready-item-name-not-ready";
+    public static String COMMAND_READY_ITEM_LORE_READY = "cmd-ready-item-lore-ready";
+    public static String COMMAND_READY_ITEM_LORE_NOT_READY = "cmd-ready-item-lore-not-ready";
+
     /**
      * next event related
      */
