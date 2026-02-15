@@ -48,14 +48,14 @@ import static com.andrei1058.bedwars.BedWars.plugin;
 public class InvisibilityPotionListener implements Listener {
 
     public InvisibilityPotionListener() {
-        // Task to handle visibility and particles for teammates/spectators
-        int interval = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL);
-        if (interval < 1) interval = 1;
+        // Task 1: Teammates (Redstone) - Old behavior
+        int intervalTeammates = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL);
+        if (intervalTeammates < 1) intervalTeammates = 1;
         
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            // Get configured amount (re-read in case of reload, though reload usually restarts tasks)
             int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT);
             if (amount < 1) amount = 1;
+            boolean enabled = BedWars.plugin.getConfig().getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES);
 
             for (IArena arena : Arena.getArenas()) {
                 if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
@@ -87,11 +87,38 @@ public class InvisibilityPotionListener implements Listener {
                         for (Player obs : friendlyObservers) {
                             nms.removeInvisibilityEffect(p, obs);
                         }
+                        // Old feature: Redstone particles above head for teammates
+                        if (enabled) {
+                            nms.playInvisibilityParticles(p, friendlyObservers, amount, false);
+                        }
                     }
-                    nms.playInvisibilityParticles(p, arena.getPlayers(), amount);
                 }
             }
-        }, interval, interval);
+        }, intervalTeammates, intervalTeammates);
+
+        // Task 2: Footsteps (Everyone) - New behavior
+        int intervalFootsteps = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL);
+        if (intervalFootsteps < 1) intervalFootsteps = 1;
+
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT);
+            if (amount < 1) amount = 1;
+
+            // New feature: Footstep particles for everyone (if enabled)
+            if (BedWars.plugin.getConfig().getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS)) {
+                for (IArena arena : Arena.getArenas()) {
+                    if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
+
+                    for (Player p : arena.getShowTime().keySet()) {
+                        if (p == null || !p.isOnline()) continue;
+                        ITeam selfTeam = arena.getTeam(p);
+                        if (selfTeam == null) continue;
+                        
+                        nms.playInvisibilityParticles(p, arena.getPlayers(), amount, true);
+                    }
+                }
+            }
+        }, intervalFootsteps, intervalFootsteps);
 
         startInvisibilityWatchdog();
     }

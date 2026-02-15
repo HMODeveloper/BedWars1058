@@ -86,6 +86,19 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT = "bungee-settings.bwp-time-out";
 
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
+    
+    // Invisibility Potion - Teammates (Old)
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_POTION_TEAMMATES = "invisibility-potion.teammates";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES = GENERAL_CONFIGURATION_INVISIBILITY_POTION_TEAMMATES + ".enable";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT = GENERAL_CONFIGURATION_INVISIBILITY_POTION_TEAMMATES + ".amount";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL = GENERAL_CONFIGURATION_INVISIBILITY_POTION_TEAMMATES + ".interval";
+
+    // Invisibility Potion - Footsteps (New)
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_POTION_FOOTSTEPS = "invisibility-potion.footsteps";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS = GENERAL_CONFIGURATION_INVISIBILITY_POTION_FOOTSTEPS + ".enable";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT = GENERAL_CONFIGURATION_INVISIBILITY_POTION_FOOTSTEPS + ".amount";
+    public static final String GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL = GENERAL_CONFIGURATION_INVISIBILITY_POTION_FOOTSTEPS + ".interval";
+    
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
@@ -269,9 +282,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".spoil-tnt-players";
 
     public static final String GENERAL_CONFIGURATION_PERFORMANCE_PAPER_FEATURES = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".paper-features";
-
-    public static final String GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".invisibility-particles-amount";
-    public static final String GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".invisibility-particles-interval";
 
     private static final String GENERAL_CONFIGURATION_HEAL_POOL = GENERAL_CONFIGURATION_PERFORMANCE_PATH+".heal-pool";
     public static final String GENERAL_CONFIGURATION_HEAL_POOL_ENABLE = GENERAL_CONFIGURATION_HEAL_POOL+".enable";

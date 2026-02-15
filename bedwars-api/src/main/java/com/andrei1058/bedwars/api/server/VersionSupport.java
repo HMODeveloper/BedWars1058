@@ -508,7 +508,7 @@ public abstract class VersionSupport {
      * Play invisibility particles for teammates and spectators.
      * @param particleAmount number of particles to spawn per tick.
      */
-    public void playInvisibilityParticles(Player target, List<Player> observers, int particleAmount) {
+    public void playInvisibilityParticles(Player target, List<Player> observers, int particleAmount, boolean footstepMode) {
         // Default implementation does nothing
     }
 }

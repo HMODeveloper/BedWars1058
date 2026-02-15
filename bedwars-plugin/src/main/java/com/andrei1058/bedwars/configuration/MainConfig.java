@@ -53,6 +53,17 @@ public class MainConfig extends ConfigManager {
         yml.addDefault("storeLink", "https://www.spigotmc.org/resources/authors/39904/");
         yml.addDefault("lobbyServer", "hub");
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN, true);
+        
+        // Teammates (Old)
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT, 3);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL, 20);
+
+        // Footsteps (New)
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS, false);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT, 3);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL, 20);
+
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
         yml.addDefault("debug", false);
@@ -152,10 +163,9 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_PAPER_FEATURES, true);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT, 3);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL, 10);
 
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_CRAFTING, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_ENCHANTING, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_FURNACE, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_BREWING_STAND, true);
