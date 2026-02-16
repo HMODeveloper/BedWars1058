@@ -30,6 +30,12 @@ public class Messages {
     public static String COMMAND_READY_SUCCESS = "cmd-ready-success";
     public static String COMMAND_UNREADY_SUCCESS = "cmd-unready-success";
     public static String COMMAND_READY_COUNTDOWN_SHORTENED = "cmd-ready-countdown-shortened";
+    public static String COMMAND_TOGGLE_READY_ENABLED = "cmd-toggle-ready-enabled";
+    public static String COMMAND_TOGGLE_READY_DISABLED = "cmd-toggle-ready-disabled";
+    public static String COMMAND_READY_DISABLED = "cmd-ready-disabled";
+    public static String COMMAND_READY_NOT_IN_GAME = "cmd-ready-not-in-game";
+    public static String COMMAND_READY_NOT_WAITING = "cmd-ready-not-waiting";
+    public static String COMMAND_READY_SPECTATOR = "cmd-ready-spectator";
     public static String COMMAND_READY_ITEM_NAME_READY = "cmd-ready-item-name-ready";
     public static String COMMAND_READY_ITEM_NAME_NOT_READY = "cmd-ready-item-name-not-ready";
     public static String COMMAND_READY_ITEM_LORE_READY = "cmd-ready-item-lore-ready";

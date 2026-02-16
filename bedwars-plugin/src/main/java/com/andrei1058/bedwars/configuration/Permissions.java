@@ -45,6 +45,7 @@ public class Permissions {
     public static final String PERMISSION_CHAT_COLOR = BedWars.mainCmd+".chatcolor";
     public static final String PERMISSION_VIP = BedWars.mainCmd+".vip";
     public static final String PERMISSION_ECHO = BedWars.mainCmd+".echo";
+    public static final String PERMISSION_TOGGLE_READY = BedWars.mainCmd+".toggleReady";
 
     /**
      * Check if player has one of the given permissions.

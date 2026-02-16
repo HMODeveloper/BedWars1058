@@ -73,6 +73,12 @@ public class English extends Language {
         yml.addDefault(Messages.COMMAND_READY_SUCCESS, "{prefix}&aYou are now ready!");
         yml.addDefault(Messages.COMMAND_UNREADY_SUCCESS, "{prefix}&eYou are no longer ready.");
         yml.addDefault(Messages.COMMAND_READY_COUNTDOWN_SHORTENED, "{prefix}&aAll players are ready! Countdown shortened to 10 seconds!");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_ENABLED, "{prefix}&aReady check feature enabled.");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISABLED, "{prefix}&cReady check feature disabled.");
+        yml.addDefault(Messages.COMMAND_READY_DISABLED, "{prefix}&cThis command is disabled.");
+        yml.addDefault(Messages.COMMAND_READY_NOT_IN_GAME, "{prefix}&cYou are not in a game!");
+        yml.addDefault(Messages.COMMAND_READY_NOT_WAITING, "{prefix}&cYou cannot use this command right now.");
+        yml.addDefault(Messages.COMMAND_READY_SPECTATOR, "{prefix}&cSpectators cannot use this command.");
         yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_READY, "&aReady");
         yml.addDefault(Messages.COMMAND_READY_ITEM_NAME_NOT_READY, "&cNot Ready");
         yml.addDefault(Messages.COMMAND_READY_ITEM_LORE_READY, Arrays.asList("&7Right click to become ready!"));

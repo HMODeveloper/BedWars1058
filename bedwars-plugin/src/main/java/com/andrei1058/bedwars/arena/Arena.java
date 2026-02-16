@@ -1606,6 +1606,7 @@ public class Arena implements IArena {
     }
 
     public void giveReadyItem(Player p, boolean ready) {
+        if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_READY_CHECK)) return;
         if (status != GameState.waiting && status != GameState.starting) return;
         
         ItemStack item;
@@ -1633,6 +1634,7 @@ public class Arena implements IArena {
     }
 
     public void checkReady() {
+        if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_READY_CHECK)) return;
         if (players.isEmpty()) return;
 
         if (readyPlayers.size() == players.size()) {
@@ -1683,6 +1685,48 @@ public class Arena implements IArena {
                     changeStatus(GameState.waiting);
                     for (Player on : players) {
                         on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
+                    }
+                }
+            }
+        }
+    }
+
+    public void updateReadyStatus(boolean enabled) {
+        if (status == GameState.waiting || status == GameState.starting) {
+            if (enabled) {
+                // Feature enabled: give items to all players, they are not ready by default
+                readyPlayers.clear();
+                for (Player p : players) {
+                    giveReadyItem(p, false);
+                }
+                // No need to check min players because we just enabled it and cleared ready status
+            } else {
+                // Feature disabled: remove items, clear ready status, check min players
+                readyPlayers.clear();
+                for (Player p : players) {
+                    p.getInventory().setItem(1, null);
+                }
+                
+                // Force check min players logic to potentially cancel countdown
+                if (status == GameState.starting) {
+                    int teams = 0, teammates = 0;
+                    for (Player on : getPlayers()) {
+                        if (getParty().isOwner(on)) {
+                            teams++;
+                        }
+                        if (getParty().hasParty(on)) {
+                            teammates++;
+                        }
+                    }
+                    
+                    boolean meetsNormalStart = (minPlayers <= players.size() && teams > 0 && players.size() != teammates / teams) || 
+                                             (players.size() >= minPlayers && teams == 0);
+
+                    if (!meetsNormalStart) {
+                        changeStatus(GameState.waiting);
+                        for (Player on : players) {
+                            on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
+                        }
                     }
                 }
             }
