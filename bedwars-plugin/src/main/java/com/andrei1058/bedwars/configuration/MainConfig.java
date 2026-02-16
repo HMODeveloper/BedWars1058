@@ -54,15 +54,15 @@ public class MainConfig extends ConfigManager {
         yml.addDefault("lobbyServer", "hub");
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN, true);
         
-        // Teammates (Old)
+        // Invisibility redstone particle
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES, true);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT, 3);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL, 20);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT, 1);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL, 1);
 
-        // Footsteps (New)
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS, false);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT, 3);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL, 20);
+        // Invisibility footsteps particle
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT, 1);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL, 5);
 
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
