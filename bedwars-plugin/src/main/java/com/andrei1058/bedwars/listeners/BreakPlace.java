@@ -24,7 +24,6 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.arena.NextEvent;
-import com.andrei1058.bedwars.api.arena.generator.IGenerator;
 import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
@@ -511,11 +510,13 @@ public class BreakPlace implements Listener {
                 return;
             }
 
-            // Protected areas around spawns/shops/upgrades/generators
-            if (isProtectedLocation(a, waterLocation)) {
-                e.setCancelled(true);
-                p.sendMessage(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK));
-                return;
+            // Region protection check (spawns, shops, upgrades, generators)
+            for (Region r : a.getRegionsList()) {
+                if (r.isInRegion(waterLocation) && r.isProtected()) {
+                    e.setCancelled(true);
+                    p.sendMessage(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK));
+                    return;
+                }
             }
 
             // Remove one empty bucket from player's hand after a short delay
@@ -630,23 +631,7 @@ public class BreakPlace implements Listener {
         }
     }
 
-    private boolean isProtectedLocation(@NotNull IArena a, @NotNull Location location) {
-        try {
-            for (ITeam t : a.getTeams()) {
-                if (t.getSpawn().distance(location) <= a.getConfig().getInt(ConfigPath.ARENA_SPAWN_PROTECTION)) return true;
-                if (t.getShop().distance(location) <= a.getConfig().getInt(ConfigPath.ARENA_SHOP_PROTECTION)) return true;
-                if (t.getTeamUpgrades().distance(location) <= a.getConfig().getInt(ConfigPath.ARENA_UPGRADES_PROTECTION)) return true;
-                for (IGenerator o : t.getGenerators()) {
-                    if (o.getLocation().distance(location) <= a.getConfig().getInt(ConfigPath.ARENA_GENERATOR_PROTECTION)) return true;
-                }
-            }
-            for (IGenerator o : a.getOreGenerators()) {
-                if (o.getLocation().distance(location) <= a.getConfig().getInt(ConfigPath.ARENA_GENERATOR_PROTECTION)) return true;
-            }
-        } catch (Exception ignored) {
-        }
-        return false;
-    }
+
 
     public static boolean isBuildSession(Player p) {
         return buildSession.contains(p);
