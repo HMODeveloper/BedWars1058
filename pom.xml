@@ -15,6 +15,11 @@
     </properties>
 
     <repositories>
+        <!--In-repo maven repository: self-contained build, see repo/com/andrei1058/spigot/sidebar-->
+        <repository>
+            <id>project-local</id>
+            <url>file://${maven.multiModuleProjectDirectory}/repo</url>
+        </repository>
         <repository>
             <id>spigotmc-repo-public</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
