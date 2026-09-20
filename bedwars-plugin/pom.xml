@@ -397,9 +397,11 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <target xmlns:if="ant:if">
+                                <property environment="env"/>
                                 <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
-                                      todir="/${env.BED_WARS_SERVER_DIR}/plugins"/>
+                                      todir="${env.BED_WARS_SERVER_DIR}/plugins"
+                                      if:set="env.BED_WARS_SERVER_DIR"/>
                             </target>
                         </configuration>
                     </execution>
