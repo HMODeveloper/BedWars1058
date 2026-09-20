@@ -22,11 +22,16 @@ package com.andrei1058.bedwars.api.configuration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -69,16 +74,32 @@ public class ConfigManager {
             }
         }
 
-        yml = YamlConfiguration.loadConfiguration(config);
+        loadYml();
         yml.options().copyDefaults(true);
         this.name = name;
+    }
+
+    /**
+     * Load the config file forcing UTF-8.
+     * Old Bukkit versions read with the system default charset (GBK on Windows), which corrupts non-ASCII values.
+     */
+    private void loadYml() {
+        YamlConfiguration loaded = new YamlConfiguration();
+        if (config.exists()) {
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(config), StandardCharsets.UTF_8)) {
+                loaded.load(reader);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+        yml = loaded;
     }
 
     /**
      * Reload configuration.
      */
     public void reload() {
-        yml = YamlConfiguration.loadConfiguration(config);
+        loadYml();
     }
 
     /**
@@ -176,11 +197,12 @@ public class ConfigManager {
     }
 
     /**
-     * Save config changes to file
+     * Save config changes to file forcing UTF-8.
+     * Old Bukkit versions write with the system default charset (GBK on Windows), which corrupts non-ASCII values.
      */
     public void save() {
-        try {
-            yml.save(config);
+        try (FileOutputStream out = new FileOutputStream(config)) {
+            out.write(yml.saveToString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
