@@ -51,10 +51,6 @@
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
         <repository>
-            <id>andrei1058-releases</id>
-            <url>https://repo.andrei1058.dev/releases/</url>
-        </repository>
-        <repository>
             <id>citizens-repo</id>
             <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
@@ -316,18 +312,6 @@
             <groupId>com.andrei1058.spigot.sidebar</groupId>
             <artifactId>sidebar-v1_20_R4</artifactId>
             <version>24.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.andrei1058.spigot.sidebar</groupId>
-            <artifactId>sidebar-v1_20_R4</artifactId>
-            <version>23.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.andrei1058.spigot.sidebar</groupId>
-            <artifactId>sidebar-v1_20_R4</artifactId>
-            <version>23.12</version>
             <scope>compile</scope>
         </dependency>
         <!--        End of Sidebar LIB-->
