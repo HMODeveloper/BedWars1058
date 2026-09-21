@@ -267,6 +267,49 @@ public class v1_8_R3 extends VersionSupport {
     public void setCollide(Player p, IArena a, boolean value) {
         p.spigot().setCollidesWithEntities(value);
     }
+    @Override
+    public boolean isBlockPlacementIntersectingPlayer(Player player, org.bukkit.block.Block block) {
+        if (player == null || block == null || !block.getType().isBlock()) {
+            return false;
+        }
+
+        try {
+            ItemStack itemStack = player.getItemInHand();
+            if (itemStack == null || !itemStack.getType().isBlock()) {
+                return false;
+            }
+
+            net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+            if (nmsItemStack == null || !(nmsItemStack.getItem() instanceof ItemBlock)) {
+                return false;
+            }
+
+            ItemBlock itemBlock = (ItemBlock) nmsItemStack.getItem();
+            Block placedBlock = itemBlock.d();
+            if (placedBlock == null) {
+                return false;
+            }
+
+            CraftWorld world = (CraftWorld) block.getWorld();
+            EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+            BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
+            List<AxisAlignedBB> collisions = new ArrayList<>(1);
+
+            placedBlock.a(
+                    world.getHandle(),
+                    position,
+                    placedBlock.fromLegacyData(itemBlock.filterData(nmsItemStack.getData())),
+                    nmsPlayer.getBoundingBox(),
+                    collisions,
+                    nmsPlayer
+            );
+            return !collisions.isEmpty();
+        } catch (Exception ex) {
+            getPlugin().getLogger().log(Level.FINE, "Unable to check block placement collision.", ex);
+            return false;
+        }
+    }
+
 
     @Override
     public void minusAmount(Player p, ItemStack i, int amount) {
