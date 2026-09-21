@@ -130,19 +130,57 @@ public class BreakPlace implements Listener {
         }
 
         Player player = event.getPlayer();
-        IArena arena = Arena.getArenaByPlayer(player);
-        if (arena == null
-                || !arena.isPlayer(player)
-                || arena.isSpectator(player)
-                || arena.getStatus() != GameState.playing) {
-            return;
-        }
 
         Block candidate = event.getClickedBlock().getRelative(event.getBlockFace());
-        if (nms.isBlockPlacementIntersectingPlayer(player, candidate)) {
+        if (isPlacementDeniedByArenaRules(player, candidate, item)) {
+            event.setUseItemInHand(Event.Result.DENY);
+            return;
+        }1
+
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena != null
+                && arena.isPlayer(player)
+                && !arena.isSpectator(player)
+                && arena.getStatus() == GameState.playing
+                && nms.isBlockPlacementIntersectingPlayer(player, candidate)) {
             event.setUseItemInHand(Event.Result.DENY);
         }
     }
+
+    private boolean isPlacementDeniedByArenaRules(Player player, Block candidate, ItemStack item) {
+        IArena worldArena = Arena.getArenaByIdentifier(candidate.getWorld().getName());
+        if (worldArena != null && worldArena.getStatus() != GameState.playing) {
+            return true;
+        }
+
+        IArena playerArena = Arena.getArenaByPlayer(player);
+        if (playerArena != null) {
+            if (!playerArena.isPlayer(player)
+                    || playerArena.isSpectator(player)
+                    || playerArena.getRespawnSessions().containsKey(player)
+                    || playerArena.getStatus() != GameState.playing) {
+                return true;
+            }
+            if (candidate.getY() >= playerArena.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y)) {
+                return true;
+            }
+            for (Region region : playerArena.getRegionsList()) {
+                if (region.isInRegion(candidate.getLocation()) && region.isProtected()) {
+                    return true;
+                }
+            }
+            if (item.getType().toString().contains("STRIPPED_")
+                    && candidate.getType().toString().contains("_WOOD")
+                    && !playerArena.isAllowMapBreak()) {
+                return true;
+            }
+        }
+
+        return BedWars.getServerType() == ServerType.MULTIARENA
+                && player.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())
+                && !isBuildSession(player);
+    }
+
 
 
     @EventHandler
