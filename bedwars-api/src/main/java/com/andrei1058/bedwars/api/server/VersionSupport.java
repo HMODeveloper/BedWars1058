@@ -238,6 +238,11 @@ public abstract class VersionSupport {
      * Disable collisions in 1.9+
      */
     public abstract void setCollide(Player p, IArena a, boolean value);
+    /**
+     * Check whether a candidate block collides with the player.
+     */
+    public abstract boolean isBlockPlacementIntersectingPlayer(Player player, Block block);
+
 
     /**
      * Add custom data to an ItemStack

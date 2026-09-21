@@ -49,6 +49,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -60,6 +61,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -112,6 +114,36 @@ public class BreakPlace implements Listener {
             event.setCancelled(true);
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void preventSelfIntersectingPlacement(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK
+                || event.getClickedBlock() == null
+                || event.getBlockFace() == null
+                || event.getBlockFace() == BlockFace.SELF) {
+            return;
+        }
+
+        ItemStack item = event.getItem();
+        if (item == null || !item.getType().isBlock()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null
+                || !arena.isPlayer(player)
+                || arena.isSpectator(player)
+                || arena.getStatus() != GameState.playing) {
+            return;
+        }
+
+        Block candidate = event.getClickedBlock().getRelative(event.getBlockFace());
+        if (nms.isBlockPlacementIntersectingPlayer(player, candidate)) {
+            event.setUseItemInHand(Event.Result.DENY);
+        }
+    }
+
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
