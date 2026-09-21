@@ -135,7 +135,7 @@ public class BreakPlace implements Listener {
         if (isPlacementDeniedByArenaRules(player, candidate, item)) {
             event.setUseItemInHand(Event.Result.DENY);
             return;
-        }1
+        }
 
         IArena arena = Arena.getArenaByPlayer(player);
         if (arena != null
