@@ -7,11 +7,11 @@
     <parent>
         <artifactId>BedWars1058</artifactId>
         <groupId>com.andrei1058.bedwars</groupId>
-        <version>0.2.3-beta</version>
+        <version>0.2.4-beta</version>
     </parent>
 
     <artifactId>resetadapter-aswm</artifactId>
-    <version>${project.parent.version}</version>
+    <version>0.2.4-beta</version>
 
     <repositories>
         <repository>
