@@ -74,6 +74,7 @@ The workflows mutate versions before deployment with `mvn versions:set` and `mvn
 ## Runtime/Tooling Preferences
 
 - Use Maven, not Gradle; no wrapper or Node/Bun runtime is configured.
+- Prefer offline builds: `mvn -o clean install -DskipTests`; use online mode only when required dependencies are unavailable locally.
 - Java 11 is the documented minimum and the Maven source/target. CI uses Temurin JDK 21; compile with Java 11+ and do not lower the target without an explicit compatibility requirement.
 - Run against Spigot or Paper with compiled NMS. The 1.8 dependency graph uses Spigot `1.8.8-R0.1-SNAPSHOT`; server/plugin APIs and optional integrations are generally `provided`, not bundled.
 - `plugin.yml` is resource-filtered during Maven build. Commands are registered programmatically from `BedWars`, not declared as command entries there.
@@ -82,6 +83,7 @@ The workflows mutate versions before deployment with `mvn versions:set` and `mvn
 
 ## Testing & QA
 
+- Do not add tests by default; add them only when explicitly requested.
 - No `src/test` tree, test framework, coverage tool, mock Bukkit server, or automated gameplay harness is configured. There is no repository `mvn test`, lint, formatter, or server smoke-test command to rely on.
 - `mvn clean install` is the documented build, not evidence of gameplay correctness. CI verifies Maven install/deploy lifecycles but does not run explicit tests or coverage.
 - Behavior changes require manual verification on a Spigot/Paper 1.8.8 server with compiled NMS. Exercise the affected arena state, command, listener, integration, or restore path; include reproduction/verification steps, expected behavior, server software/version, plugin version, and relevant logs in the PR or issue.
