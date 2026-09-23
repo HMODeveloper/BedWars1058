@@ -377,7 +377,10 @@ public class Misc {
         WorldBorder border = l.getWorld().getWorldBorder();
         double radius = (border.getSize() / 2) + border.getWarningDistance();
         Location center = border.getCenter();
-        return center.distance(l) >= radius;
+        // 世界边界只检查水平距离，避免给搭桥蛋附加隐含的高度限制。
+        double deltaX = l.getX() - center.getX();
+        double deltaZ = l.getZ() - center.getZ();
+        return deltaX * deltaX + deltaZ * deltaZ >= radius * radius;
     }
 
     /**

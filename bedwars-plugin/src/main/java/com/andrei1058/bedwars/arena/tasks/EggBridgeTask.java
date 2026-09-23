@@ -138,6 +138,10 @@ public class EggBridgeTask implements Runnable {
 
     // 创建方块逻辑
     private void createBridgeBlock(Block block, Location effectLoc) {
+        // 按桥方块的实际高度检查，不使用蛋的飞行高度。
+        if (block.getY() >= getArena().getYHeightLimit()) {
+            return;
+        }
         if (!Misc.isBuildProtected(block.getLocation(), getArena())) {
             if (block.getType() == Material.AIR) {
                 block.setType(nms.woolMaterial());
