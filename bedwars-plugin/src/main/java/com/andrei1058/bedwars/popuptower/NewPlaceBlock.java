@@ -13,6 +13,10 @@ public class NewPlaceBlock {
         int x = Integer.parseInt(xyz.split(", ")[0]);
         int y = Integer.parseInt(xyz.split(", ")[1]);
         int z = Integer.parseInt(xyz.split(", ")[2]);
+        // 塔身和梯子逐块遵守地图建筑限高。
+        if (b.getY() + y >= Arena.getArenaByPlayer(p).getYHeightLimit()) {
+            return;
+        }
         if (b.getRelative(x, y, z).getType().equals(Material.AIR)) {
             for (Region r : Arena.getArenaByPlayer(p).getRegionsList())
                 if (r.isInRegion(b.getRelative(x, y, z).getLocation()))
