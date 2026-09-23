@@ -45,6 +45,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -190,6 +191,18 @@ public class BreakPlace implements Listener {
         //Prevent player from placing during the removal from the arena
         IArena arena = Arena.getArenaByIdentifier(e.getBlock().getWorld().getName());
         if (arena != null) {
+            // 放置事件中的方块已经替换，必须检查修改前的状态。
+            if (e instanceof BlockMultiPlaceEvent) {
+                for (BlockState replaced : ((BlockMultiPlaceEvent) e).getReplacedBlockStates()) {
+                    if (isMapFire(arena, replaced.getBlock(), replaced.getType())) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+            } else if (isMapFire(arena, e.getBlock(), e.getBlockReplacedState().getType())) {
+                e.setCancelled(true);
+                return;
+            }
             if (arena.getStatus() != GameState.playing) {
                 e.setCancelled(true);
                 return;
@@ -292,33 +305,14 @@ public class BreakPlace implements Listener {
             return;
         }
 
-        // 防止竞技场地图被灭火
-        if (event.getClickedBlock() != null && event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            Block fireBlock = null;
-            if (event.getClickedBlock().getType().toString().contains("FIRE")) {
-                fireBlock = event.getClickedBlock();
-            } else if (event.getClickedBlock().getRelative(BlockFace.UP).getType().toString().contains("FIRE")) {
-                fireBlock = event.getClickedBlock().getRelative(BlockFace.UP);
-            }
-
-            if (fireBlock != null) {
-                IArena a = Arena.getArenaByPlayer(player);
-                if (a != null && a.getStatus() == GameState.playing) {
-                    boolean isPlaced = a.isBlockPlaced(fireBlock);
-                    boolean cancel = false;
-
-                    if (!isPlaced) {
-                        cancel = true;
-                    } else if (!allowFireBreak) {
-                        cancel = true;
-                    }
-
-                    if (cancel) {
-                        event.setCancelled(true);
-                        player.sendBlockChange(fireBlock.getLocation(), fireBlock.getType(), fireBlock.getData());
-                    }
-                }
-            }
+        // 1.8 灭火作用于点击面的相邻方块，不一定在被点击方块上方。
+        if (event.getClickedBlock() == null || event.getAction() != Action.LEFT_CLICK_BLOCK) return;
+        Block fireBlock = event.getClickedBlock().getRelative(event.getBlockFace());
+        if (fireBlock.getType() != Material.FIRE) return;
+        IArena arena = Arena.getArenaByIdentifier(fireBlock.getWorld().getName());
+        if (arena != null && (isMapFire(arena, fireBlock, fireBlock.getType()) || !allowFireBreak)) {
+            event.setCancelled(true);
+            player.sendBlockChange(fireBlock.getLocation(), fireBlock.getType(), fireBlock.getData());
         }
     }
 
@@ -561,6 +555,12 @@ public class BreakPlace implements Listener {
             return;
         }
 
+        Block target = e.getBlockClicked().getRelative(e.getBlockFace());
+        if (arena != null && e.getBucket() == Material.WATER_BUCKET && isWaterReplacementDenied(arena, target)) {
+            e.setCancelled(true);
+            return;
+        }
+
         Player p = e.getPlayer();
         IArena a = Arena.getArenaByPlayer(p);
         if (a != null) {
@@ -591,6 +591,27 @@ public class BreakPlace implements Listener {
 
             // Remove one empty bucket from player's hand after a short delay
             Bukkit.getScheduler().runTaskLater(plugin, () -> nms.minusAmount(e.getPlayer(), e.getItemStack(), 1), 3L);
+        }
+    }
+
+    private boolean isMapFire(IArena arena, Block block, Material originalType) {
+        return originalType == Material.FIRE && !arena.isBlockPlaced(block);
+    }
+
+    private boolean isWaterReplacementDenied(IArena arena, Block target) {
+        Material type = target.getType();
+        if (type == Material.AIR || target.isLiquid()) return false;
+        return isMapFire(arena, target, type)
+                || (!arena.isAllowMapBreak() && !arena.isBlockPlaced(target));
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onWaterFlow(BlockFromToEvent event) {
+        Material source = event.getBlock().getType();
+        if (source != Material.WATER && source != Material.STATIONARY_WATER) return;
+        IArena arena = Arena.getArenaByIdentifier(event.getBlock().getWorld().getName());
+        if (arena != null && isWaterReplacementDenied(arena, event.getToBlock())) {
+            event.setCancelled(true);
         }
     }
 
