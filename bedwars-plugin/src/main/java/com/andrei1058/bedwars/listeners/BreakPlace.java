@@ -94,6 +94,18 @@ public class BreakPlace implements Listener {
             if (Arena.getArenaByIdentifier(e.getBlock().getWorld().getName()) != null) e.setCancelled(true);
         }
     }
+    @EventHandler
+    public void onWaterFreeze(BlockFormEvent e) {
+        if (e.getNewState().getType() != Material.ICE) return;
+
+        String worldName = Objects.requireNonNull(e.getBlock().getWorld()).getName();
+        if (Arena.getArenaByIdentifier(worldName) != null
+                || (BedWars.getServerType() == ServerType.MULTIARENA
+                && worldName.equalsIgnoreCase(BedWars.getLobbyWorld()))) {
+            e.setCancelled(true);
+        }
+    }
+
 
     @EventHandler
     public void onCactus(BlockPhysicsEvent e) {
