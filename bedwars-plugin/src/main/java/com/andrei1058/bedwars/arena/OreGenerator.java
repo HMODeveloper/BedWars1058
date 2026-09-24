@@ -53,7 +53,7 @@ import static com.andrei1058.bedwars.BedWars.*;
 public class OreGenerator implements IGenerator {
 
     private Location location;
-    private int delay = 1, upgradeStage = 1, lastSpawn, spawnLimit = 0, amount = 1;
+    private int interval = 1, upgradeStage = 1, lastSpawn, spawnLimit = 0, amount = 1;
     private IArena arena;
     private ItemStack ore;
     private GeneratorType type;
@@ -101,14 +101,14 @@ public class OreGenerator implements IGenerator {
             case DIAMOND:
                 upgradeStage++;
                 if (upgradeStage == 2) {
-                    delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_DELAY) == null ?
+                    interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_DELAY) == null ?
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_DELAY);
                     amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_AMOUNT) == null ?
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_AMOUNT);
                     spawnLimit = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT) == null ?
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT);
                 } else if (upgradeStage == 3) {
-                    delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_DELAY) == null ?
+                    interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_DELAY) == null ?
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_DELAY);
                     amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_AMOUNT) == null ?
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_AMOUNT);
@@ -124,14 +124,14 @@ public class OreGenerator implements IGenerator {
             case EMERALD:
                 upgradeStage++;
                 if (upgradeStage == 2) {
-                    delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_DELAY) == null ?
+                    interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_DELAY) == null ?
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_DELAY);
                     amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_AMOUNT) == null ?
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_AMOUNT);
                     spawnLimit = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_SPAWN_LIMIT) == null ?
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_SPAWN_LIMIT);
                 } else if (upgradeStage == 3) {
-                    delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_DELAY) == null ?
+                    interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_DELAY) == null ?
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_DELAY);
                     amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_AMOUNT) == null ?
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_AMOUNT);
@@ -155,7 +155,7 @@ public class OreGenerator implements IGenerator {
         }
 
         if (lastSpawn == 0) {
-            lastSpawn = delay;
+            lastSpawn = interval - 1;
 
             if (spawnLimit != 0) {
                 int oreCount = 0;
@@ -169,7 +169,7 @@ public class OreGenerator implements IGenerator {
                         if (oreCount >= spawnLimit) return;
                     }
                 }
-                lastSpawn = delay;
+                lastSpawn = interval - 1;
             }
             if (bwt == null) {
                 dropItem(location);
@@ -360,8 +360,8 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public void setDelay(int delay) {
-        this.delay = delay;
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 
     @Override
@@ -426,7 +426,7 @@ public class OreGenerator implements IGenerator {
         ConfigManager generatorsCfg = getGeneratorsCfg();
         switch (type) {
             case GOLD:
-                delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) == null ?
+                interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) == null ?
                         "Default." + ConfigPath.GENERATOR_GOLD_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY);
                 ore = new ItemStack(Material.GOLD_INGOT);
                 amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_AMOUNT) == null ?
@@ -435,7 +435,7 @@ public class OreGenerator implements IGenerator {
                         "Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT);
                 break;
             case IRON:
-                delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_DELAY) == null ?
+                interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_DELAY) == null ?
                         "Default." + ConfigPath.GENERATOR_IRON_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_DELAY);
                 amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_AMOUNT) == null ?
                         "Default." + ConfigPath.GENERATOR_IRON_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_AMOUNT);
@@ -444,7 +444,7 @@ public class OreGenerator implements IGenerator {
                         "Default." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT);
                 break;
             case DIAMOND:
-                delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY) == null ?
+                interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY) == null ?
                         "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY);
                 amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_AMOUNT) == null ?
                         "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_AMOUNT);
@@ -453,7 +453,7 @@ public class OreGenerator implements IGenerator {
                 ore = new ItemStack(Material.DIAMOND);
                 break;
             case EMERALD:
-                delay = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_I_DELAY) == null ?
+                interval = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_I_DELAY) == null ?
                         "Default." + ConfigPath.GENERATOR_EMERALD_TIER_I_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_I_DELAY);
                 amount = generatorsCfg.getInt(generatorsCfg.getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_I_AMOUNT) == null ?
                         "Default." + ConfigPath.GENERATOR_EMERALD_TIER_I_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_I_AMOUNT);
@@ -462,7 +462,7 @@ public class OreGenerator implements IGenerator {
                 ore = new ItemStack(Material.EMERALD);
                 break;
         }
-        lastSpawn = delay;
+        lastSpawn = interval - 1;
     }
 
     @Override
@@ -486,8 +486,8 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public int getDelay() {
-        return delay;
+    public int getInterval() {
+        return interval;
     }
 
     @Override

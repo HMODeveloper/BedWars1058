@@ -41,38 +41,38 @@ public class ConfigPath {
     public static final String GENERATOR_ENABLE_GEN_SPLIT = "enable-gen-split";
     public static final String GENERATOR_GEN_SPLIT_RADIUS = "gen-split-radius";
 
-    public static final String GENERATOR_IRON_DELAY = "iron.delay";
+    public static final String GENERATOR_IRON_DELAY = "iron.interval";
     public static final String GENERATOR_IRON_AMOUNT = "iron.amount";
     public static final String GENERATOR_IRON_SPAWN_LIMIT = "iron.spawn-limit";
 
-    public static final String GENERATOR_GOLD_DELAY = "gold.delay";
+    public static final String GENERATOR_GOLD_DELAY = "gold.interval";
     public static final String GENERATOR_GOLD_AMOUNT = "gold.amount";
     public static final String GENERATOR_GOLD_SPAWN_LIMIT = "gold.spawn-limit";
 
-    public static final String GENERATOR_DIAMOND_TIER_I_DELAY = "diamond.tierI.delay";
+    public static final String GENERATOR_DIAMOND_TIER_I_DELAY = "diamond.tierI.interval";
     public static final String GENERATOR_DIAMOND_TIER_I_AMOUNT = "diamond.tierI.amount";
     public static final String GENERATOR_DIAMOND_TIER_I_SPAWN_LIMIT = "diamond.tierI.spawn-limit";
 
-    public static final String GENERATOR_DIAMOND_TIER_II_DELAY = "diamond.tierII.delay";
+    public static final String GENERATOR_DIAMOND_TIER_II_DELAY = "diamond.tierII.interval";
     public static final String GENERATOR_DIAMOND_TIER_II_AMOUNT = "diamond.tierII.amount";
     public static final String GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT = "diamond.tierII.spawn-limit";
     public static final String GENERATOR_DIAMOND_TIER_II_START = "diamond.tierII.start";
 
-    public static final String GENERATOR_DIAMOND_TIER_III_DELAY = "diamond.tierIII.delay";
+    public static final String GENERATOR_DIAMOND_TIER_III_DELAY = "diamond.tierIII.interval";
     public static final String GENERATOR_DIAMOND_TIER_III_AMOUNT = "diamond.tierIII.amount";
     public static final String GENERATOR_DIAMOND_TIER_III_SPAWN_LIMIT = "diamond.tierIII.spawn-limit";
     public static final String GENERATOR_DIAMOND_TIER_III_START = "diamond.tierIII.start";
 
-    public static final String GENERATOR_EMERALD_TIER_I_DELAY = "emerald.tierI.delay";
+    public static final String GENERATOR_EMERALD_TIER_I_DELAY = "emerald.tierI.interval";
     public static final String GENERATOR_EMERALD_TIER_I_AMOUNT = "emerald.tierI.amount";
     public static final String GENERATOR_EMERALD_TIER_I_SPAWN_LIMIT = "emerald.tierI.spawn-limit";
 
-    public static final String GENERATOR_EMERALD_TIER_II_DELAY = "emerald.tierII.delay";
+    public static final String GENERATOR_EMERALD_TIER_II_DELAY = "emerald.tierII.interval";
     public static final String GENERATOR_EMERALD_TIER_II_AMOUNT = "emerald.tierII.amount";
     public static final String GENERATOR_EMERALD_TIER_II_SPAWN_LIMIT = "emerald.tierII.spawn-limit";
     public static final String GENERATOR_EMERALD_TIER_II_START = "emerald.tierII.start";
 
-    public static final String GENERATOR_EMERALD_TIER_III_DELAY = "emerald.tierIII.delay";
+    public static final String GENERATOR_EMERALD_TIER_III_DELAY = "emerald.tierIII.interval";
     public static final String GENERATOR_EMERALD_TIER_III_AMOUNT = "emerald.tierIII.amount";
     public static final String GENERATOR_EMERALD_TIER_III_SPAWN_LIMIT = "emerald.tierIII.spawn-limit";
     public static final String GENERATOR_EMERALD_TIER_III_START = "emerald.tierIII.start";

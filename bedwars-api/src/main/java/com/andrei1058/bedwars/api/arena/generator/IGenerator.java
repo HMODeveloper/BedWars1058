@@ -75,9 +75,9 @@ public interface IGenerator {
     void rotate();
 
     /**
-     * Change item spawn delay. In seconds.
+     * Set the item spawn interval in seconds.
      */
-    void setDelay(int delay);
+    void setInterval(int interval);
 
     /**
      * Set how many items should the generator spawn at once.
@@ -140,9 +140,9 @@ public interface IGenerator {
     int getAmount();
 
     /**
-     * Get spawn rate delay.
+     * Get the item spawn interval in seconds.
      */
-    int getDelay();
+    int getInterval();
 
     /**
      * Get seconds before next item spawn.

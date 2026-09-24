@@ -25,47 +25,94 @@ import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.plugin.Plugin;
+
 public class GeneratorsConfig extends ConfigManager {
+
+    private static final String INTERVAL_VERSION = "generator-interval-version";
 
     public GeneratorsConfig(Plugin plugin, String name, String dir) {
         super(plugin, name, dir);
-
         YamlConfiguration yml = getYml();
+        boolean migrated = migrateIntervals(yml);
+
+        if (migrated) {
+            Path file = new java.io.File(dir, name + ".yml").toPath();
+            Path backup = file.resolveSibling(file.getFileName() + ".pre-interval.bak");
+            try {
+                if (!Files.exists(backup)) Files.copy(file, backup);
+                Path temporary = Files.createTempFile(file.getParent(), name + "-interval-", ".tmp");
+                try {
+                    Files.write(temporary, yml.saveToString().getBytes(StandardCharsets.UTF_8));
+                    Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+                } finally {
+                    Files.deleteIfExists(temporary);
+                }
+                plugin.getLogger().info("Migrated generator delays to intervals; backup: " + backup);
+            } catch (IOException ex) {
+                throw new IllegalStateException("Could not migrate " + file + "; existing configuration is unchanged", ex);
+            }
+        }
+
         yml.options().header(plugin.getDescription().getName() + " by andrei1058." +
-                "\ngenerators.yml Documentation: https://gitlab.com/andrei1058/BedWars1058/wikis/generators-configuration\n");
+                "\ngenerators.yml uses interval values in seconds.\n");
         yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_DELAY, 2);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_AMOUNT, 2);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_AMOUNT, 5);
         yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_DELAY, 6);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_AMOUNT, 2);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT, 32);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT, 7);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_AMOUNT, 1);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT, 48);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT, 16);
         yml.addDefault(ConfigPath.GENERATOR_STACK_ITEMS, false);
         yml.addDefault(ConfigPath.GENERATOR_ENABLE_GEN_SPLIT, true);
-        yml.addDefault(ConfigPath.GENERATOR_GEN_SPLIT_RADIUS, 1.5D);
+        yml.addDefault(ConfigPath.GENERATOR_GEN_SPLIT_RADIUS, 2D);
 
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY, 30);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_AMOUNT, 1);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_SPAWN_LIMIT, 4);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_I_SPAWN_LIMIT, 8);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_DELAY, 20);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_AMOUNT, 1);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT, 6);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START, 360);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_SPAWN_LIMIT, 8);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START, 240);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_DELAY, 15);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_AMOUNT, 1);
         yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_SPAWN_LIMIT, 8);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START, 1080);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START, 720);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_I_DELAY, 70);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_I_AMOUNT, 1);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_I_SPAWN_LIMIT, 4);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_DELAY, 50);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_AMOUNT, 1);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_SPAWN_LIMIT, 6);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_START, 720);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_START, 480);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_DELAY, 30);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_AMOUNT, 1);
         yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_SPAWN_LIMIT, 8);
-        yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_START, 1440);
-        yml.options().copyDefaults(true);
+        yml.addDefault("Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_START, 960);
         save();
+    }
+
+    static boolean migrateIntervals(YamlConfiguration yml) {
+        if (yml.getInt(INTERVAL_VERSION) >= 1) return false;
+        List<String> delayPaths = new ArrayList<>();
+        for (String path : yml.getKeys(true)) {
+            if (path.endsWith(".delay")) delayPaths.add(path);
+        }
+        for (String delayPath : delayPaths) {
+            int delay = yml.getInt(delayPath);
+            if (delay < 0 || delay == Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Generator delay cannot be migrated at " + delayPath);
+            }
+            yml.set(delayPath.substring(0, delayPath.length() - 6) + ".interval", delay + 1);
+            yml.set(delayPath, null);
+        }
+        yml.set(INTERVAL_VERSION, 1);
+        return true;
     }
 }

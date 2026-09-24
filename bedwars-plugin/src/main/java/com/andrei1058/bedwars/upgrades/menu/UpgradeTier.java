@@ -151,16 +151,20 @@ public class UpgradeTier {
                     if (genType == null) {
                         BedWars.plugin.getLogger().warning("Invalid generator type " + data[0] + " at upgrades2: " + parentName + "." + name);
                     }
-                    int spawn, amount, limit;
+                    int interval, amount, limit;
                     try {
-                        spawn = Integer.parseInt(data[1]);
+                        interval = Integer.parseInt(data[1]);
                         amount = Integer.parseInt(data[2]);
                         limit = Integer.parseInt(data[3]);
                     } catch (Exception ex) {
                         BedWars.plugin.getLogger().warning("Invalid generator configuration " + data[0] + " at upgrades2: " + parentName + "." + name);
                         continue;
                     }
-                    ua = new GeneratorEditAction(genType, amount, spawn, limit);
+                    if (interval < 1) {
+                        BedWars.plugin.getLogger().warning("Generator interval must be at least 1 at upgrades2: " + parentName + "." + name);
+                        continue;
+                    }
+                    ua = new GeneratorEditAction(genType, amount, interval, limit);
                     break;
                 case "dragon":
                     if (data.length < 1) {

@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 public class GeneratorEditAction implements UpgradeAction {
 
     private final int amount;
-    private final int delay;
+    private final int interval;
     private final int limit;
     private final ApplyType type;
 
-    public GeneratorEditAction(ApplyType type, int amount, int delay, int limit) {
+    public GeneratorEditAction(ApplyType type, int amount, int interval, int limit) {
         this.type = type;
         this.amount = amount;
-        this.delay = delay;
+        this.interval = interval;
         this.limit = limit;
     }
 
@@ -76,7 +76,7 @@ public class GeneratorEditAction implements UpgradeAction {
         }
         for (IGenerator g : generator){
             g.setAmount(amount);
-            g.setDelay(delay);
+            g.setInterval(interval);
             g.setSpawnLimit(limit);
         }
     }

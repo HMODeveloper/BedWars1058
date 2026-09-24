@@ -24,14 +24,26 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.configuration.ConfigManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.andrei1058.bedwars.BedWars.getForCurrentVersion;
 import static com.andrei1058.bedwars.BedWars.plugin;
 
 public class UpgradesConfig extends ConfigManager {
+
+    private static final String INTERVAL_VERSION = "generator-edit-interval-version";
+    private static final Pattern GENERATOR_EDIT = Pattern.compile("^(\\s*generator-edit\\s*:\\s*[^,]+,)([+-]?\\d+)(,[+-]?\\d+,[+-]?\\d+(?:,.*)?\\s*)$", Pattern.CASE_INSENSITIVE);
 
     public UpgradesConfig(String name, String dir) {
         super(plugin, name, dir);
@@ -82,26 +94,26 @@ public class UpgradesConfig extends ConfigManager {
             addDefaultDisplayItem("upgrade-miner.tier-2", getForCurrentVersion("GOLD_PICKAXE", "GOLD_PICKAXE", "GOLDEN_PICKAXE"), 0, 2, false);            yml.addDefault("upgrade-miner.tier-2.receive", Collections.singletonList("player-effect: FAST_DIGGING,1,0,team"));
 
             yml.addDefault("upgrade-forge.tier-1.currency", "diamond");
-            yml.addDefault("upgrade-forge.tier-1.cost", 2);
+            yml.addDefault("upgrade-forge.tier-1.cost", 4);
             addDefaultDisplayItem("upgrade-forge.tier-1", "FURNACE", 0, 1, false);
-            yml.addDefault("upgrade-forge.tier-1.receive", Arrays.asList("generator-edit: iron,2,2,41", "generator-edit: gold,3,1,14"));
+            yml.addDefault("upgrade-forge.tier-1.receive", Arrays.asList("generator-edit: iron,2,8,192", "generator-edit: gold,4,1,24"));
 
             yml.addDefault("upgrade-forge.tier-2.currency", "diamond");
-            yml.addDefault("upgrade-forge.tier-2.cost", 4);
+            yml.addDefault("upgrade-forge.tier-2.cost", 8);
             addDefaultDisplayItem("upgrade-forge.tier-2", "FURNACE", 0, 2, false);
-            yml.addDefault("upgrade-forge.tier-2.receive", Arrays.asList("generator-edit: iron,1,2,48", "generator-edit: gold,3,2,21"));
+            yml.addDefault("upgrade-forge.tier-2.receive", Arrays.asList("generator-edit: iron,1,5,256", "generator-edit: gold,3,1,32"));
 
             yml.addDefault("upgrade-forge.tier-3.currency", "diamond");
-            yml.addDefault("upgrade-forge.tier-3.cost", 6);
+            yml.addDefault("upgrade-forge.tier-3.cost", 12);
             addDefaultDisplayItem("upgrade-forge.tier-3", "FURNACE", 0, 3, false);
-            yml.addDefault("upgrade-forge.tier-3.receive", Arrays.asList("generator-edit: iron,1,2,64", "generator-edit: gold,3,2,29",
-                    "generator-edit: emerald,10,1,10"));
+            yml.addDefault("upgrade-forge.tier-3.receive", Arrays.asList("generator-edit: iron,1,5,320", "generator-edit: gold,3,1,48",
+                    "generator-edit: emerald,30,1,4"));
 
             yml.addDefault("upgrade-forge.tier-4.currency", "diamond");
-            yml.addDefault("upgrade-forge.tier-4.cost", 8);
+            yml.addDefault("upgrade-forge.tier-4.cost", 16);
             addDefaultDisplayItem("upgrade-forge.tier-4", "FURNACE", 0, 4, false);
-            yml.addDefault("upgrade-forge.tier-4.receive", Arrays.asList("generator-edit: iron,1,4,120", "generator-edit: gold,2,4,80",
-                    "generator-edit: emerald,10,2,20"));
+            yml.addDefault("upgrade-forge.tier-4.receive", Arrays.asList("generator-edit: iron,1,8,384", "generator-edit: gold,2,1,64",
+                    "generator-edit: emerald,20,1,8"));
 
             yml.addDefault("upgrade-heal-pool.tier-1.currency", "diamond");
             yml.addDefault("upgrade-heal-pool.tier-1.cost", 1);
@@ -151,7 +163,54 @@ public class UpgradesConfig extends ConfigManager {
             addDefaultDisplayItem("separator-back", "ARROW", 0, 1, false);
         }
         yml.options().copyDefaults(true);
-        save();
+        if (isFirstTime()) {
+            yml.set(INTERVAL_VERSION, 1);
+            save();
+        } else if (migrateIntervals(yml)) {
+            Path file = new File(dir, name + ".yml").toPath();
+            Path backup = file.resolveSibling(file.getFileName() + ".pre-interval.bak");
+            try {
+                if (!Files.exists(backup)) Files.copy(file, backup);
+                Path temporary = Files.createTempFile(file.getParent(), name + "-interval-", ".tmp");
+                try {
+                    Files.write(temporary, yml.saveToString().getBytes(StandardCharsets.UTF_8));
+                    Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+                } finally {
+                    Files.deleteIfExists(temporary);
+                }
+                plugin.getLogger().info("Migrated generator-edit delays to intervals; backup: " + backup);
+            } catch (IOException ex) {
+                throw new IllegalStateException("Could not migrate " + file + "; existing configuration is unchanged", ex);
+            }
+        } else {
+            save();
+        }
+    }
+
+    static boolean migrateIntervals(YamlConfiguration yml) {
+        if (yml.getInt(INTERVAL_VERSION) >= 1) return false;
+        for (String upgrade : yml.getKeys(false)) {
+            if (!upgrade.startsWith("upgrade-") || !yml.isConfigurationSection(upgrade)) continue;
+            for (String tier : yml.getConfigurationSection(upgrade).getKeys(false)) {
+                String path = upgrade + "." + tier + ".receive";
+                if (!yml.isList(path)) continue;
+                List<String> actions = yml.getStringList(path);
+                List<String> migrated = new ArrayList<>(actions.size());
+                for (String action : actions) {
+                    Matcher matcher = GENERATOR_EDIT.matcher(action);
+                    if (!matcher.matches()) {
+                        migrated.add(action);
+                        continue;
+                    }
+                    int oldDelay = Integer.parseInt(matcher.group(2));
+                    if (oldDelay < 0 || oldDelay == Integer.MAX_VALUE) throw new IllegalArgumentException("Generator delay cannot be migrated at " + path);
+                    migrated.add(matcher.group(1) + (oldDelay + 1) + matcher.group(3));
+                }
+                if (!actions.equals(migrated)) yml.set(path, migrated);
+            }
+        }
+        yml.set(INTERVAL_VERSION, 1);
+        return true;
     }
 
     private void addDefaultDisplayItem(String path, String material, int data, int amount, boolean enchanted) {
