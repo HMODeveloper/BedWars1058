@@ -285,17 +285,17 @@ public class ShopManager extends ConfigManager {
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", 20, "tier1",
                     BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 1, "emerald", false, false);
             addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", "tier1", "jump", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
-                    0, 1, "", "JUMP 45 5", "Jump Potion");
+                    0, 1, "", "JUMP 45 4", "");
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", 19, "tier1",
                     BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 1, "emerald", false, false);
             addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", "tier1", "speed", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
-                    0, 1, "", "SPEED 45 2", "Speed Potion");
+                    0, 1, "", "SPEED 45 1", "");
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", 21, "tier1",
                     BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 2, "emerald", false, false);
             addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", "tier1", "invisibility", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
-                    0, 1, "", "INVISIBILITY 30 1", "Invisibility Potion");
+                    0, 1, "", "INVISIBILITY 30 0", "");
 
             //UTILITY CATEGORY
             addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, 7, BedWars.getForCurrentVersion("TNT", "TNT", "TNT"), 0, 1, false);
@@ -380,9 +380,26 @@ public class ShopManager extends ConfigManager {
             BedWars.plugin.getLogger().severe("Invalid material at " + ConfigPath.SHOP_SPECIAL_SILVERFISH_MATERIAL);
         }
 
+        migratePotionDefault(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", "JUMP 45 5", "JUMP 45 4");
+        migratePotionDefault(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", "SPEED 45 2", "SPEED 45 1");
+        migratePotionDefault(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", "INVISIBILITY 30 1", "INVISIBILITY 30 0");
+
         getYml().options().copyDefaults(true);
         save();
     }
+    private void migratePotionDefault(String category, String content, String oldValue, String newValue) {
+        String base = category + ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + content
+                + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + ".tier1"
+                + "." + ConfigPath.SHOP_CONTENT_BUY_ITEMS_PATH + "." + content.replace("-potion", "");
+        if (oldValue.equals(getYml().getString(base + ".potion"))) {
+            getYml().set(base + ".potion", newValue);
+        }
+        String oldName = getYml().getString(base + ".name");
+        if ("Jump Potion".equals(oldName) || "Speed Potion".equals(oldName) || "Invisibility Potion".equals(oldName)) {
+            getYml().set(base + ".name", null);
+        }
+    }
+
 
     private void loadShop() {
         //Quick Buy Button

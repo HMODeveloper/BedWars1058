@@ -1021,8 +1021,8 @@ public class SimplifiedChinese extends Language {
 
         addCategoryMessages(yml, ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "&8药水", "&a药水", Collections.singletonList("&e点击查看！"));
 
-        addContentMessages(yml, "speed-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}速度 II 药水（45 秒）", Arrays.asList("&7花费：{cost} {currency}", "", "{quick_buy}", "{buy_status}"));
-        addContentMessages(yml, "jump-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}跳跃提升 V 药水（45 秒）", Arrays.asList("&7花费：{cost} {currency}", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "speed-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}速度 {level} 药水（{duration} 秒）", Arrays.asList("&7花费：{cost} {currency}", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "jump-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}跳跃提升 {level} 药水（{duration} 秒）", Arrays.asList("&7花费：{cost} {currency}", "", "{quick_buy}", "{buy_status}"));
         addContentMessages(yml, "invisibility", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}隐身药水（30 秒）", Arrays.asList("&7花费：{cost} {currency}", "", "{quick_buy}", "{buy_status}"));
 
         addCategoryMessages(yml, ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "&8实用工具", "&a实用工具", Collections.singletonList("&e点击查看！"));

@@ -25,6 +25,8 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.arena.shop.IBuyItem;
 import com.andrei1058.bedwars.api.arena.team.TeamEnchant;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Messages;
+import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.configuration.Sounds;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,6 +41,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import static com.andrei1058.bedwars.BedWars.nms;
+import static com.andrei1058.bedwars.api.language.Language.getMsg;
 import static com.andrei1058.bedwars.BedWars.plugin;
 
 @SuppressWarnings("WeakerAccess")
@@ -49,6 +52,7 @@ public class BuyItem implements IBuyItem {
     private boolean permanent = false;
     private boolean unbreakable = false;
     private boolean loaded = false;
+    private boolean localizedPotionName = false;
     private final String upgradeIdentifier;
 
     /**
@@ -70,9 +74,11 @@ public class BuyItem implements IBuyItem {
         if (yml.get(path + ".name") != null) {
             ItemMeta im = itemStack.getItemMeta();
             if (im != null) {
-                im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r"+yml.getString(path + ".name")));
+                im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r" + yml.getString(path + ".name")));
                 itemStack.setItemMeta(im);
             }
+        } else if (itemStack.getType() == Material.POTION) {
+            localizedPotionName = true;
         }
 
         if (yml.get(path + ".enchants") != null && itemStack.getItemMeta() != null) {
@@ -181,12 +187,38 @@ public class BuyItem implements IBuyItem {
         return 0;
     }
 
+    private void localizePotionName(Player player, ItemStack item) {
+        if (!localizedPotionName || !(item.getItemMeta() instanceof PotionMeta)) return;
+        String marker = ".category-content.";
+        int markerIndex = upgradeIdentifier.indexOf(marker);
+        if (markerIndex < 0) return;
+        String category = upgradeIdentifier.substring(0, markerIndex);
+        String content = upgradeIdentifier.substring(markerIndex + marker.length());
+        String path = Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", category).replace("%content%", content);
+        String name = getMsg(player, path);
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
+        if (meta.getCustomEffects().isEmpty()) return;
+        PotionEffect effect = meta.getCustomEffects().get(0);
+        name = name.replace("{color}", "").replace("{tier}", "")
+                .replace("{level}", roman(effect.getAmplifier() + 1))
+                .replace("{duration}", String.valueOf(effect.getDuration() / 20));
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        item.setItemMeta(itemMeta);
+    }
+
+    private String roman(int number) {
+        String[] values = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+        return number >= 0 && number < values.length ? values[number] : String.valueOf(number);
+    }
+
     /**
      * Give to a player
      */
     public void give(Player player, IArena arena) {
 
         ItemStack i = itemStack.clone();
+        localizePotionName(player, i);
         BedWars.debug("Giving BuyItem: " + getUpgradeIdentifier() + " to: " + player.getName());
 
         if (autoEquip && nms.isArmor(itemStack)) {

@@ -43,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -377,6 +378,18 @@ public class CategoryContent implements ICategoryContent {
         ShopCache sc = ShopCache.getShopCache(player.getUniqueId());
         return sc == null ? null : getItemStack(player, sc);
     }
+    private String replacePotionPlaceholders(String text, IContentTier tier) {
+        if (!text.contains("{duration}") && !text.contains("{level}")) return text;
+        if (tier.getBuyItemsList().isEmpty()) return text;
+        ItemStack potion = tier.getBuyItemsList().get(0).getItemStack();
+        if (potion == null || !(potion.getItemMeta() instanceof PotionMeta)) return text;
+        PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        if (meta.getCustomEffects().isEmpty()) return text;
+        org.bukkit.potion.PotionEffect effect = meta.getCustomEffects().get(0);
+        return text.replace("{duration}", String.valueOf(effect.getDuration() / 20))
+                .replace("{level}", getRomanNumber(effect.getAmplifier() + 1));
+    }
+
 
     @Override
     public boolean hasQuick(Player player) {
@@ -414,9 +427,9 @@ public class CategoryContent implements ICategoryContent {
             String buyStatus;
 
             if (isPermanent() && shopCache.hasCachedItem(this) && shopCache.getCachedItem(this).getTier() == getContentTiers().size()) {
-                if (!(nms.isArmor(i))){
-                    buyStatus = getMsg(player, Messages.SHOP_LORE_STATUS_MAXED);  //ARMOR
-                }else {
+                if (!(nms.isArmor(i))) {
+                    buyStatus = getMsg(player, Messages.SHOP_LORE_STATUS_MAXED);
+                } else {
                     buyStatus = getMsg(player, Messages.SHOP_LORE_STATUS_ARMOR);
                 }
             } else if (!canAfford) {
@@ -425,8 +438,8 @@ public class CategoryContent implements ICategoryContent {
                 buyStatus = getMsg(player, Messages.SHOP_LORE_STATUS_CAN_BUY);
             }
 
-
-            im.setDisplayName(getMsg(player, itemNamePath).replace("{color}", color).replace("{tier}", tier));
+            im.setDisplayName(replacePotionPlaceholders(getMsg(player, itemNamePath), ct)
+                    .replace("{color}", color).replace("{tier}", tier));
 
             List<String> lore = new ArrayList<>();
             for (String s : Language.getList(player, itemLorePath)) {
@@ -441,7 +454,8 @@ public class CategoryContent implements ICategoryContent {
                         s = getMsg(player, Messages.SHOP_LORE_QUICK_ADD);
                     }
                 }
-                s = s.replace("{tier}", tier).replace("{color}", color).replace("{cost}", cColor + String.valueOf(ct.getPrice()))
+                s = replacePotionPlaceholders(s, ct).replace("{tier}", tier).replace("{color}", color)
+                        .replace("{cost}", cColor + String.valueOf(ct.getPrice()))
                         .replace("{currency}", cColor + translatedCurrency).replace("{buy_status}", buyStatus);
                 lore.add(s);
             }

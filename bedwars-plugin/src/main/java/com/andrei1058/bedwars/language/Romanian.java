@@ -1004,9 +1004,9 @@ public class Romanian extends Language {
         addContentMessages(yml, "bow3", ConfigPath.SHOP_PATH_CATEGORY_RANGED, "{color}Arc (Putere I, Împingere I)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
 
         addCategoryMessages(yml, ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "&8Poțiuni", "&aPotțiuni", Collections.singletonList("&eClick pentru a afișa!"));
-        addContentMessages(yml, "speed-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Viteză II (45 secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
-        addContentMessages(yml, "jump-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Săritură V (45 secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
-        addContentMessages(yml, "invisibility", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Invizibilitate (30 secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "speed-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Viteză {level} ({duration} secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "jump-potion", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Săritură {level} ({duration} secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "invisibility", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "{color}Invizibilitate ({duration} secunde)", Arrays.asList("&7Preț: {cost} {currency}", "", "{quick_buy}", "{buy_status}"));
 
         addCategoryMessages(yml, ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "&8Utilaje", "&aUtilaje", Collections.singletonList("&eClick pentru a afișa!"));
         addContentMessages(yml, "golden-apple", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Măr Auriu", Arrays.asList("&7Preț: {cost} {currency}", "", "&7Vindecător bine rotunjit.", "", "{quick_buy}", "{buy_status}"));
