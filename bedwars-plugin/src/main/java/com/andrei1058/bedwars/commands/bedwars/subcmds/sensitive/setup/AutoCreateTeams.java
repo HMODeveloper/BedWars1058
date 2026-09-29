@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -61,7 +63,7 @@ public class AutoCreateTeams extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            s.sendMessage("§c ▪ §7You're not in a setup session!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_NOT_IN_SESSION));
             return true;
         }
         if (ss.getSetupType() == SetupType.ASSISTED) {
@@ -72,20 +74,20 @@ public class AutoCreateTeams extends SubCommand {
                     }
                     if (ss.getConfig().getYml().get("waiting.Pos1") == null) {
                         s.sendMessage("");
-                        s.sendMessage("§6§lWAITING LOBBY REMOVAL:");
-                        s.sendMessage("§fIf you'd like the lobby to disappear when the game starts,");
-                        s.sendMessage("§fplease use the following commands like a world edit selection.");
-                        p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/" + BedWars.mainCmd + " waitingPos 1", "§dSet pos 1", "/" + getParent().getName() + " waitingPos 1", ClickEvent.Action.RUN_COMMAND));
-                        p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/" + BedWars.mainCmd + " waitingPos 2", "§dSet pos 2", "/" + getParent().getName() + " waitingPos 2", ClickEvent.Action.RUN_COMMAND));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_HEADER));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_DESCRIPTION));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_SELECTION));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "1"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "1"), "/" + getParent().getName() + " waitingPos 1", ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "2"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "2"), "/" + getParent().getName() + " waitingPos 2", ClickEvent.Action.RUN_COMMAND));
                         s.sendMessage("");
-                        s.sendMessage("§7This step is OPTIONAL. If you wan to skip it do §6/" + BedWars.mainCmd);
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_OPTIONAL).replace("{command}", BedWars.mainCmd));
                     }
                     return true;
                 }
                 List<String> found = new ArrayList<>();
                 World w = p.getWorld();
                 if (ss.getConfig().getYml().get("Team") == null) {
-                    p.sendMessage("§6 ▪ §7Searching for teams. This may cause lag.");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_SEARCH));
                     for (int x = -200; x < 200; x++) {
                         for (int y = 50; y < 130; y++) {
                             for (int z = -200; z < 200; z++) {
@@ -117,10 +119,10 @@ public class AutoCreateTeams extends SubCommand {
                     }
                 }
                 if (found.isEmpty()) {
-                    p.sendMessage("§6 ▪ §7No new teams were found.\n§6 ▪ §7Manually create teams with: §6/" + BedWars.mainCmd + " createTeam");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_NONE).replace("{command}", BedWars.mainCmd));
                 } else {
                     if (timeOut.containsKey(p)) {
-                        p.sendMessage("§c ▪ §7Time out. Type again to search for teams.");
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_TIMEOUT));
                         timeOut.remove(p);
                         return true;
                     } else {
@@ -131,12 +133,12 @@ public class AutoCreateTeams extends SubCommand {
                     } else {
                         teamsFound13.put(p, found);
                     }
-                    p.sendMessage("§6§lNEW TEAMS FOUND:");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_HEADER));
                     for (String tf : found) {
                         String name = TeamColor.enName(tf);
-                        p.sendMessage("§f ▪ " + TeamColor.getChatColor(name) + name.replace("_", " "));
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_ENTRY).replace("{team}", TeamColor.getChatColor(name) + name.replace("_", " ")));
                     }
-                    p.spigot().sendMessage(Misc.msgHoverClick("§6 ▪ §7§lClick here to create found teams.", "§fClick to create found teams!", "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+                    p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM), Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM_HOVER), "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
                 }
             } else {
                 if (timeOut.containsKey(p) && timeOut.get(p) >= System.currentTimeMillis() && teamsFoundOld.containsKey(p)) {
@@ -145,20 +147,20 @@ public class AutoCreateTeams extends SubCommand {
                     }
                     if (ss.getConfig().getYml().get("waiting.Pos1") == null) {
                         s.sendMessage("");
-                        s.sendMessage("§6§lWAITING LOBBY REMOVAL:");
-                        s.sendMessage("§fIf you'd like the lobby to disappear when the game starts,");
-                        s.sendMessage("§fplease use the following commands like a world edit selection.");
-                        p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/" + BedWars.mainCmd + " waitingPos 1", "§dSet pos 1", "/" + getParent().getName() + " waitingPos 1", ClickEvent.Action.RUN_COMMAND));
-                        p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/" + BedWars.mainCmd + " waitingPos 2", "§dSet pos 2", "/" + getParent().getName() + " waitingPos 2", ClickEvent.Action.RUN_COMMAND));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_HEADER));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_DESCRIPTION));
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_SELECTION));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "1"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "1"), "/" + getParent().getName() + " waitingPos 1", ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "2"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "2"), "/" + getParent().getName() + " waitingPos 2", ClickEvent.Action.RUN_COMMAND));
                         s.sendMessage("");
-                        s.sendMessage("§7This step is OPTIONAL. If you wan to skip it do §6/" + BedWars.mainCmd);
+                        s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_OPTIONAL).replace("{command}", BedWars.mainCmd));
                     }
                     return true;
                 }
                 List<Byte> found = new ArrayList<>();
                 World w = p.getWorld();
                 if (ss.getConfig().getYml().get("Team") == null) {
-                    p.sendMessage("§6 ▪ §7Searching for teams. This may cause lag.");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_SEARCH));
                     for (int x = -200; x < 200; x++) {
                         for (int y = 50; y < 130; y++) {
                             for (int z = -200; z < 200; z++) {
@@ -192,10 +194,10 @@ public class AutoCreateTeams extends SubCommand {
                     }
                 }
                 if (found.isEmpty()) {
-                    p.sendMessage("§6 ▪ §7No new teams were found.\n§6 ▪ §7Manually create teams with: §6/" + BedWars.mainCmd + " createTeam");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_NONE).replace("{command}", BedWars.mainCmd));
                 } else {
                     if (timeOut.containsKey(p)) {
-                        p.sendMessage("§c ▪ §7Time out. Type again to search for teams.");
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_TIMEOUT));
                         timeOut.remove(p);
                         return true;
                     } else {
@@ -206,12 +208,12 @@ public class AutoCreateTeams extends SubCommand {
                     } else {
                         teamsFoundOld.put(p, found);
                     }
-                    p.sendMessage("§6§lNEW TEAMS FOUND:");
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_HEADER));
                     for (Byte tf : found) {
                         String name = TeamColor.enName(tf);
-                        p.sendMessage("§f ▪ " + TeamColor.getChatColor(name) + name.replace('_', ' '));
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_ENTRY).replace("{team}", TeamColor.getChatColor(name) + name.replace('_', ' ')));
                     }
-                    p.spigot().sendMessage(Misc.msgHoverClick("§6 ▪ §7§lClick here to create found teams.", "§fClick to create found teams!", "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+                    p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM), Language.getMsg(p, Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM_HOVER), "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
                 }
             }
         } else return false;

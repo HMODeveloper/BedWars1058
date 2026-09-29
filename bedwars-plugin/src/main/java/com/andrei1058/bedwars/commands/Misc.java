@@ -45,7 +45,8 @@ public class Misc {
      *
      * @since api v6
      */
-    public static void createArmorStand(String name, @NotNull Location location, String configLoc) {
+
+    public static void createArmorStand(String name, @NotNull Location location, String configLoc, String kind) {
         ArmorStand a = (ArmorStand) location.getWorld().spawnEntity(location.getBlock().getLocation().add(0.5, 2, 0.5), EntityType.ARMOR_STAND);
         a.setVisible(false);
         a.setMarker(true);
@@ -56,38 +57,23 @@ public class Misc {
         if (configLoc != null) {
             a.setMetadata("bw1058-loc", new FixedMetadataValue(BedWars.plugin, configLoc));
         }
+        if (kind != null) {
+            a.setMetadata("bw1058-kind", new FixedMetadataValue(BedWars.plugin, kind));
+        }
     }
 
     /**
      * Remove an armor stand
      */
-    public static void removeArmorStand(String contains, @NotNull Location location, String configLoc) {
+    public static void removeArmorStand(String kind, @NotNull Location location, String configLoc) {
         for (Entity e : location.getWorld().getNearbyEntities(location, 1, 3, 1)) {
-            if (e.hasMetadata("bw1058-setup")) {
-                if (e.hasMetadata("bw1058-loc")) {
-                    if (e.getMetadata("bw1058-loc").get(0).asString().equalsIgnoreCase(configLoc)) {
-                        if (contains != null){
-                            if (!contains.isEmpty()){
-                                if (ChatColor.stripColor(e.getCustomName()).contains(contains)){
-                                    e.remove();
-                                    return;
-                                }
-                            }
-                        }
-                        e.remove();
-                    }
-                } else {
-                    e.remove();
-                }
-                continue;
-            }
-            if (e.getType() == EntityType.ARMOR_STAND) {
-                if (!((ArmorStand) e).isVisible()) {
-                    if (contains != null && e.getCustomName().contains(contains)) {
-                        e.remove();
-                    }
-                }
-            }
+            if (!e.hasMetadata("bw1058-setup")) continue;
+            if (configLoc != null && (!e.hasMetadata("bw1058-loc") ||
+                    !e.getMetadata("bw1058-loc").get(0).asString().equalsIgnoreCase(configLoc))) continue;
+            if (kind != null && (!e.hasMetadata("bw1058-kind") ||
+                    !e.getMetadata("bw1058-kind").get(0).asString().equalsIgnoreCase(kind))) continue;
+            e.remove();
+            return;
         }
     }
 

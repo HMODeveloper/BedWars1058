@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
 import net.md_5.bungee.api.ChatColor;
@@ -49,14 +51,13 @@ public class SetSpectatorPos extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage("§c ▪ §7You're not in a setup session!");
             return false;
         }
         if (args.length != 0) {
-            p.sendMessage(ss.getPrefix() + ChatColor.RED + "Usage: /" + mainCmd + " " + getSubCommandName());
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPECTATOR_USAGE).replace("{command}", mainCmd).replace("{subcommand}", getSubCommandName()));
         } else {
             ss.getConfig().saveArenaLoc(ConfigPath.ARENA_SPEC_LOC, p.getLocation());
-            p.sendMessage(ss.getPrefix() + "Spectator location set!");
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPECTATOR_SET));
         }
         return true;
     }

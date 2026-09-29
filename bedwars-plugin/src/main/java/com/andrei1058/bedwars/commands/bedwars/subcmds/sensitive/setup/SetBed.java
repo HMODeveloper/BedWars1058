@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -58,17 +60,16 @@ public class SetBed extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage("§c ▪ §7You're not in a setup session!");
             return false;
         }
         if (args.length == 0) {
             String foundTeam = ss.getNearestTeam();
             if (foundTeam.isEmpty()) {
                 p.sendMessage("");
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "Could not find any nearby team.");
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Make sure you set the team's spawn first!", ChatColor.WHITE + "Set a team bed.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Or if you set the spawn and it wasn't found automatically try using: /bw " + getSubCommandName() + " <team>", "Add a team bed.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Could not find any nearby team.", 5, 60, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND));
+                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SET_SPAWN_FIRST), Language.getMsg(p, Messages.COMMAND_SETUP_BED_SPAWN_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_MANUAL_HINT).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_SETUP_BED_MANUAL_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND_TITLE), 5, 60, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
                 ss.displayAvailableTeams();
 
@@ -78,17 +79,17 @@ public class SetBed extends SubCommand {
         } else {
             if (!(BedWars.nms.isBed(p.getLocation().clone().add(0, -0.5, 0).getBlock().getType()) || BedWars.nms.isBed(p.getLocation().clone().add(0, 0.5, 0).getBlock().getType())
                     || BedWars.nms.isBed(p.getLocation().clone().getBlock().getType()))) {
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "You must stay on a bed while using this command!");
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "You must stay on a bed.", 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_BED_STAND_ON_BED));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_BED_STAND_ON_BED_TITLE), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
                 return true;
             }
             if (ss.getConfig().getYml().get("Team." + args[0]) == null) {
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "This team doesn't exist!");
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_NOT_FOUND));
                 if (ss.getConfig().getYml().get("Team") != null) {
-                    p.sendMessage(ss.getPrefix() + "Available teams: ");
+                    p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_AVAILABLE_TEAMS));
                     for (String team : Objects.requireNonNull(ss.getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
-                        p.spigot().sendMessage(Misc.msgHoverClick(ChatColor.GOLD + " " + '▪' + " " + ss.getTeamColor(team) + team, ChatColor.WHITE + "Set bed for " + ss.getTeamColor(team) + team, "/" + mainCmd + " setBed " + team, ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_ENTRY).replace("{team}", ss.getTeamColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_BED_TEAM_HOVER).replace("{team}", ss.getTeamColor(team) + team), "/" + mainCmd + " setBed " + team, ClickEvent.Action.RUN_COMMAND));
                     }
                 }
             } else {
@@ -96,11 +97,11 @@ public class SetBed extends SubCommand {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Bed") != null) {
                     removeArmorStand("bed", ss.getConfig().getArenaLoc("Team." + args[0] + ".Bed"), null);
                 }
-                createArmorStand(team + " " + ChatColor.GOLD + "BED SET", p.getLocation().add(0.5, 0, 0.5), null);
+                createArmorStand(Language.getMsg(p, Messages.COMMAND_SETUP_BED_HOLOGRAM).replace("{team}", team), p.getLocation().add(0.5, 0, 0.5), null, "bed");
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Bed", p.getLocation());
-                p.sendMessage(ss.getPrefix() + "Bed set for: " + team);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_BED_SET).replace("{team}", team));
 
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + "Bed set for: " + team, 5, 40, 5);
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_BED_SET_TITLE).replace("{team}", team), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
 
                 if (ss.getSetupType() == SetupType.ASSISTED) {

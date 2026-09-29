@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
@@ -58,25 +60,24 @@ public class SetSpawn extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage("§c ▪ §7You're not in a setup session!");
             return false;
         }
         if (args.length < 1) {
-            p.sendMessage(ss.getPrefix() + ChatColor.RED + "Usage: /" + mainCmd + " setSpawn <team>");
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_USAGE).replace("{command}", mainCmd));
             if (ss.getConfig().getYml().get("Team") != null) {
                 for (String team : Objects.requireNonNull(ss.getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
                     if (ss.getConfig().getYml().get("Team." + team + ".Spawn") == null) {
-                        p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Set spawn for: " + ss.getTeamColor(team) + team + " " + ChatColor.getLastColors(ss.getPrefix()) + "(click to set)", ChatColor.WHITE + "Set spawn for " + ss.getTeamColor(team) + team, "/" + mainCmd + " setSpawn " + team, ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_TEAM_ENTRY).replace("{team}", ss.getTeamColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_TEAM_HOVER).replace("{team}", ss.getTeamColor(team) + team), "/" + mainCmd + " setSpawn " + team, ClickEvent.Action.RUN_COMMAND));
                     }
                 }
             }
         } else {
             if (ss.getConfig().getYml().get("Team." + args[0]) == null) {
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "Could not find target team: " + ChatColor.RED + args[0]);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_TEAM_NOT_FOUND).replace("{team}", args[0]));
                 if (ss.getConfig().getYml().get("Team") != null) {
-                    p.sendMessage(ss.getPrefix() + "Teams list: ");
+                    p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_TEAMS_HEADER));
                     for (String team : Objects.requireNonNull(ss.getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
-                        p.spigot().sendMessage(Misc.msgHoverClick(ChatColor.GOLD + " " + '▪' + " " + ss.getTeamColor(team) + team + " " + ChatColor.getLastColors(ss.getPrefix()) + "(click to set)", ChatColor.WHITE + "Set spawn for " + ss.getTeamColor(team) + team, "/" + mainCmd + " setSpawn " + team, ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SELECT_ENTRY).replace("{team}", ss.getTeamColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_TEAM_HOVER).replace("{team}", ss.getTeamColor(team) + team), "/" + mainCmd + " setSpawn " + team, ClickEvent.Action.RUN_COMMAND));
                     }
                 }
             } else {
@@ -85,8 +86,8 @@ public class SetSpawn extends SubCommand {
                 }
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Spawn", p.getLocation());
                 String teamm = ss.getTeamColor(args[0]) + args[0];
-                p.sendMessage(ChatColor.GOLD + " " + '▪' + " " + "Spawn set for: " + teamm);
-                com.andrei1058.bedwars.commands.Misc.createArmorStand(teamm + " " + ChatColor.GOLD + "SPAWN SET", p.getLocation(), ss.getConfig().stringLocationArenaFormat(p.getLocation()));
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_SET).replace("{team}", teamm));
+                com.andrei1058.bedwars.commands.Misc.createArmorStand(Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_HOLOGRAM).replace("{team}", teamm), p.getLocation(), ss.getConfig().stringLocationArenaFormat(p.getLocation()), "spawn");
                 int radius = ss.getConfig().getInt(ConfigPath.ARENA_ISLAND_RADIUS);
                 Location l = p.getLocation();
                 for (int x = -radius; x < radius; x++) {
@@ -109,7 +110,7 @@ public class SetSpawn extends SubCommand {
                         }
                     }
                     if (remainging.toString().length() > 0) {
-                        p.sendMessage(ss.getPrefix() + "Remaining: " + remainging.toString());
+                        p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SPAWN_REMAINING).replace("{teams}", remainging.toString()));
                     }
                 }
             }

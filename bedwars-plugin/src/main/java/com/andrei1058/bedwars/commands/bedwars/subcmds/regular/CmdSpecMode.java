@@ -42,7 +42,7 @@ public class CmdSpecMode extends SubCommand {
         super(parent, name);
         setPriority(20);
         showInList(true);
-        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " specmode", "/" + getParent().getName() + " " + getSubCommandName(), "§fToggle between vanilla spectator and plugin spectator mode."));
+        setDisplayInfo(MainCommand.createTC(getMsg(null, Messages.COMMAND_SPEC_MODE_DISPLAY).replace("{command}", getParent().getName()), "/" + getParent().getName() + " " + getSubCommandName(), getMsg(null, Messages.COMMAND_SPEC_MODE_DISPLAY_HOVER)));
     }
 
     @Override

@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive;
 import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -44,7 +46,7 @@ public class Build extends SubCommand {
         setPriority(9);
         showInList(true);
         setPermission(Permissions.PERMISSION_BUILD);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + getParent().getName() + " "+getSubCommandName()+ "         §8 - §ebuild permission", "§fEnable or disable build session \n§fso you can break or place blocks.",
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_BUILD_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(null, Messages.COMMAND_BUILD_DISPLAY_HOVER),
                 "/" + getParent().getName() + " "+getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
@@ -54,10 +56,10 @@ public class Build extends SubCommand {
         Player p = (Player) s;
         if (!MainCommand.isLobbySet(p)) return true;
         if (isBuildSession(p)) {
-            p.sendMessage("§6 ▪ §7You can't place and break blocks anymore!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_BUILD_DISABLED));
             removeBuildSession(p);
         } else {
-            p.sendMessage("§6 ▪ §7You can place and break blocks now.");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_BUILD_ENABLED));
             addBuildSession(p);
         }
         return true;

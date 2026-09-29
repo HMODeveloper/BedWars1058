@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -55,7 +57,7 @@ public class SetType extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            s.sendMessage("§c ▪ §7You're not in a setup session!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_NOT_IN_SESSION));
             return true;
         }
         if (args.length == 0) {
@@ -81,7 +83,7 @@ public class SetType extends SubCommand {
                 ss.getConfig().set("maxInTeam", 4);
             }
             ss.getConfig().set("group", input);
-            p.sendMessage("§6 ▪ §7Arena group changed to: §d" + input);
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_TYPE_CHANGED).replace("{type}", input));
             if (ss.getSetupType() == SetupType.ASSISTED) {
                 Bukkit.dispatchCommand(p, getParent().getName());
             }
@@ -101,10 +103,10 @@ public class SetType extends SubCommand {
     }
 
     private void sendUsage(Player p) {
-        p.sendMessage("§9 ▪ §7Usage: " + getParent().getName() + " " + getSubCommandName() + " <type>");
-        p.sendMessage("§9Available types: ");
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_TYPE_USAGE).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()));
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_TYPE_AVAILABLE));
         for (String st : available) {
-            p.spigot().sendMessage(Misc.msgHoverClick("§1 ▪ §e" + st + " §7(click to set)", "§dClick to make the arena " + st, "/" + getParent().getName() + " " + getSubCommandName() + " " + st, ClickEvent.Action.RUN_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_TYPE_OPTION).replace("{type}", st), Language.getMsg(p, Messages.COMMAND_SETUP_TYPE_OPTION_HOVER).replace("{type}", st), "/" + getParent().getName() + " " + getSubCommandName() + " " + st, ClickEvent.Action.RUN_COMMAND));
         }
     }
 

@@ -22,8 +22,8 @@ public class CmdEchoTo extends SubCommand {
         super(parent, name);
         setPriority(22);
         showInList(true);
-        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName() + " §8- §eSend message to a specific arena",
-                "/" + getParent().getName() + " " + getSubCommandName(), "§fSend a message to all players in a specific arena.\n§fUsage: /bw echoto <arena> <message>"));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_ECHOTO_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_ECHOTO_HOVER).replace("{command}", getParent().getName())));
     }
 
     @Override
@@ -51,20 +51,18 @@ public class CmdEchoTo extends SubCommand {
             messageBuilder.append(args[i]).append(" ");
         }
         String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString().trim());
-        String prefix = "§8[§cOperator§8] §f";
-
-        sendMessageToArena(arena, prefix, message);
+        sendMessageToArena(arena, message);
         s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_ECHOTO_SENT).replace("{arena}", arena.getArenaName()));
 
         return true;
     }
 
-    private void sendMessageToArena(IArena arena, String prefix, String message) {
+    private void sendMessageToArena(IArena arena, String message) {
         for (Player player : arena.getPlayers()) {
-            player.sendMessage(prefix + message);
+            player.sendMessage(Language.getMsg(player, Messages.COMMAND_ECHO_PREFIX) + message);
         }
         for (Player spectator : arena.getSpectators()) {
-            spectator.sendMessage(prefix + message);
+            spectator.sendMessage(Language.getMsg(spectator, Messages.COMMAND_ECHO_PREFIX) + message);
         }
     }
 

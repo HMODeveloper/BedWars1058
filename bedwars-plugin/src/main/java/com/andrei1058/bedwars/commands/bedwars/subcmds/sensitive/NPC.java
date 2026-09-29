@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -54,18 +56,13 @@ import static com.andrei1058.bedwars.BedWars.mainCmd;
 
 public class NPC extends SubCommand {
 
-    //main usage
-    private final List<BaseComponent> MAIN_USAGE = Arrays.asList(Misc.msgHoverClick("§f\n§c▪ §7Usage: §e/" + mainCmd + " " + getSubCommandName() + " add", "§fUse this command to create a join NPC.\n§fClick to see the syntax.", "/"+getParent().getName()+" "+getSubCommandName()+" add", ClickEvent.Action.RUN_COMMAND),
-            Misc.msgHoverClick("§c▪ §7Usage: §e/" + mainCmd + " " + getSubCommandName() + " remove", "§fStay in front of a NPC in order to remove it.", "/"+getParent().getName()+" "+getSubCommandName()+" remove", ClickEvent.Action.SUGGEST_COMMAND));
-    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-    private final List<BaseComponent> ADD_USAGE = Arrays.asList(Misc.msgHoverClick("f\n§c▪ §7Usage: §e§o/" + getParent().getName() + " " + getSubCommandName() + " add <skin> <arenaGroup> <§7line1§9\\n§7line2§e>\n§7You can use §e{players} §7for the players count in this arena §7group.", "Click to use.", "/"+getParent().getName()+" "+getSubCommandName()+" add", ClickEvent.Action.SUGGEST_COMMAND));
 
     public NPC(ParentCommand parent, String name) {
         super(parent, name);
         showInList(true);
         setPriority(12);
         setPermission(Permissions.PERMISSION_NPC);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + getParent().getName() + " " + getSubCommandName() + "         §8   - §ecreate a join NPC", "§fCreate a join NPC  \n§fClick for more details.",
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_NPC_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(null, Messages.COMMAND_NPC_DISPLAY_HOVER),
                 "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
@@ -75,16 +72,12 @@ public class NPC extends SubCommand {
         if (!JoinNPC.isCitizensSupport()) return false;
         Player p = (Player) s;
         if (args.length < 1) {
-            for (BaseComponent bc : MAIN_USAGE){
-                p.spigot().sendMessage(bc);
-            }
+            sendMainUsage(p);
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
             if (args.length < 4) {
-                for (BaseComponent bc : ADD_USAGE){
-                    p.spigot().sendMessage(bc);
-                }
+                p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_NPC_ADD_USAGE).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_NPC_ADD_HOVER), "/"+getParent().getName()+" "+getSubCommandName()+" add", ClickEvent.Action.SUGGEST_COMMAND));
                 return true;
             }
 
@@ -98,27 +91,24 @@ public class NPC extends SubCommand {
             net.citizensnpcs.api.npc.NPC npc = JoinNPC.spawnNPC(p.getLocation(), name, args[2], args[1], null);
             assert npc != null;
             npcs.add(BedWars.config.stringLocationConfigFormat(p.getLocation()) + "," + args[1] + "," + name + "," + args[2] + "," + npc.getId());
-            String NPC_SET = "§a§c▪ §bNPC: %name% §bwas set!";
-            p.sendMessage(NPC_SET.replace("%name%", name.replace("&", "§").replace("\\\\n", " ")));
-            p.sendMessage("§a§c▪ §bTarget groups: " + ChatColor.GOLD + args[2]);
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_CREATED).replace("{name}", name.replace("&", "§").replace("\\\\n", " ")));
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_TARGET_GROUPS).replace("{groups}", args[2]));
             BedWars.config.set(ConfigPath.GENERAL_CONFIGURATION_NPC_LOC_STORAGE, npcs);
 
         } else if (args[0].equalsIgnoreCase("remove")) {
 
             List<Entity> e = p.getNearbyEntities(4, 4, 4);
-            String NO_NPCS = "§c▪ §bThere isn't any NPC nearby.";
             if (e.isEmpty()) {
-                p.sendMessage(NO_NPCS);
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_NONE_NEARBY));
                 return true;
             }
             if (BedWars.config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_NPC_LOC_STORAGE) == null) {
-                String NO_SET = "§c▪ §bThere isn't any NPC set yet!";
-                p.sendMessage(NO_SET);
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_NONE_SET));
                 return true;
             }
             net.citizensnpcs.api.npc.NPC npc = getTarget(p);
             if (npc == null) {
-                p.sendMessage(NO_NPCS);
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_NONE_NEARBY));
                 return true;
             }
             List<String> locations = BedWars.config.getYml().getStringList(ConfigPath.GENERAL_CONFIGURATION_NPC_LOC_STORAGE);
@@ -139,14 +129,16 @@ public class NPC extends SubCommand {
             }
             BedWars.config.set(ConfigPath.GENERAL_CONFIGURATION_NPC_LOC_STORAGE, locations);
             npc.destroy();
-            String NPC_REMOVED = "§c▪ §bThe target NPC was removed!";
-            p.sendMessage(NPC_REMOVED);
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_NPC_REMOVED));
         } else {
-            for (BaseComponent bc : MAIN_USAGE){
-                p.spigot().sendMessage(bc);
-            }
+            sendMainUsage(p);
         }
         return true;
+    }
+
+    private void sendMainUsage(Player p) {
+        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_NPC_MAIN_ADD_USAGE).replace("{command}", mainCmd).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_NPC_MAIN_ADD_HOVER), "/"+getParent().getName()+" "+getSubCommandName()+" add", ClickEvent.Action.RUN_COMMAND));
+        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_NPC_MAIN_REMOVE_USAGE).replace("{command}", mainCmd).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_NPC_MAIN_REMOVE_HOVER), "/"+getParent().getName()+" "+getSubCommandName()+" remove", ClickEvent.Action.SUGGEST_COMMAND));
     }
 
     @Override

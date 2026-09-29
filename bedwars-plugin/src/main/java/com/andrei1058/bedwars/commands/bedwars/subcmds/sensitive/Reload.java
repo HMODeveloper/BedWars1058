@@ -26,6 +26,7 @@ import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigManager;
 import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -44,8 +45,8 @@ public class Reload extends SubCommand {
         setPriority(11);
         showInList(true);
         setPermission(Permissions.PERMISSION_RELOAD);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + getParent().getName() + " "+getSubCommandName()+"       §8 - §ereload messages",
-                "§fReload messages.\n§cNot recommended!", "/"+ getParent().getName() + " "+getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_RELOAD_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                Language.getMsg(null, Messages.COMMAND_RELOAD_DISPLAY_HOVER), "/"+ getParent().getName() + " "+getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
     @Override
@@ -59,15 +60,15 @@ public class Reload extends SubCommand {
         for (IArena arena : api.getArenaUtil().getArenas()) {
             ConfigManager config = arena.getConfig();
             config.reload();
-            s.sendMessage("§6 ▪ §7Arena config: "+config.getName()+" reloaded!");
+            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_ARENA).replace("{config}", config.getName()));
         }
         for (ConfigManager configManager : api.getConfigs().allConfigs()) {
             configManager.reload();
-            s.sendMessage("§6 ▪ §7"+configManager.getName()+" reloaded!");
+            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_CONFIG).replace("{config}", configManager.getName()));
         }
         for (Language l : Language.getLanguages()){
             l.reload();
-            s.sendMessage("§6 ▪ §7"+l.getLangName()+" reloaded!");
+            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_LANGUAGE).replace("{language}", l.getLangName()));
         }
         return true;
     }

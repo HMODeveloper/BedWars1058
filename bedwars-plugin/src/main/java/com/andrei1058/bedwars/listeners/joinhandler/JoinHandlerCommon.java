@@ -22,6 +22,7 @@ package com.andrei1058.bedwars.listeners.joinhandler;
 
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,12 +41,15 @@ public class JoinHandlerCommon implements Listener {
         if (player == null) return;
         //TODO IMPROVE, ADD MORE DETAILS
         if (player.getName().equalsIgnoreCase("andrei1058") || player.getName().equalsIgnoreCase("andreea1058") || player.getName().equalsIgnoreCase("Dani3l_FTW")) {
-            player.sendMessage("§8[§f" + BedWars.plugin.getName() + " v" + BedWars.plugin.getDescription().getVersion() + "§8]§7§m---------------------------");
+            String header = Language.getMsg(player, Messages.CUSTOMER_DETAILS_HEADER)
+                    .replace("{plugin}", BedWars.plugin.getName())
+                    .replace("{version}", BedWars.plugin.getDescription().getVersion());
+            player.sendMessage(header);
             player.sendMessage("");
-            player.sendMessage("§7User ID: §f%%__USER__%%");
-            player.sendMessage("§7Download ID: §f%%__NONCE__%%");
+            player.sendMessage(Language.getMsg(player, Messages.CUSTOMER_DETAILS_USER_ID));
+            player.sendMessage(Language.getMsg(player, Messages.CUSTOMER_DETAILS_DOWNLOAD_ID));
             player.sendMessage("");
-            player.sendMessage("§8[§f" + BedWars.plugin.getName() + "§8]§7§m---------------------------");
+            player.sendMessage(header);
         }
     }
 

@@ -25,6 +25,8 @@ import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -59,29 +61,28 @@ public class SetShop extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage("§c ▪ §7You're not in a setup session!");
             return false;
         }
         if (args.length == 0) {
             String foundTeam = ss.getNearestTeam();
             if (foundTeam.isEmpty()) {
                 p.sendMessage("");
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "Could not find any nearby team.");
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Make sure you set the team's spawn first!", ChatColor.WHITE + "Set a team spawn.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Or if you set the spawn and it wasn't found automatically try using: /bw " + getSubCommandName() + " <team>", "Set a team shop.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Other use: /bw setShop <teamName>", "Set a team shop.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Could not find any nearby team.", 0, 60, 10);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND));
+                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SET_SPAWN_FIRST), Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SPAWN_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_MANUAL_HINT).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_OTHER_USAGE), Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND_TITLE), 0, 60, 10);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
             } else {
                 Bukkit.dispatchCommand(s, getParent().getName() + " " + getSubCommandName() + " " + foundTeam);
             }
         } else {
             if (ss.getConfig().getYml().get("Team." + args[0]) == null) {
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "This team doesn't exist!");
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_NOT_FOUND));
                 if (ss.getConfig().getYml().get("Team") != null) {
-                    p.sendMessage(ss.getPrefix() + "Available teams: ");
+                    p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_AVAILABLE_TEAMS));
                     for (String team : Objects.requireNonNull(ss.getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
-                        p.spigot().sendMessage(Misc.msgHoverClick(ChatColor.GOLD + " " + '▪' + " " + ss.getTeamColor(team) + team + ChatColor.GRAY + " (click to set)", ChatColor.GRAY + "Set shop for " + TeamColor.getChatColor(Objects.requireNonNull(ss.getConfig().getYml().getString("Team." + team + ".Color"))) + team, "/" + mainCmd + " setShop " + team, ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SELECT_ENTRY).replace("{team}", ss.getTeamColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_TEAM_HOVER).replace("{team}", TeamColor.getChatColor(Objects.requireNonNull(ss.getConfig().getYml().getString("Team." + team + ".Color"))) + team), "/" + mainCmd + " setShop " + team, ClickEvent.Action.RUN_COMMAND));
                     }
                 }
             } else {
@@ -89,9 +90,9 @@ public class SetShop extends SubCommand {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Shop") != null) {
                     removeArmorStand("shop", ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), ss.getConfig().getString("Team." + args[0] + ".Shop"));
                 }
-                createArmorStand(teamm + " " + ChatColor.GOLD + "SHOP SET", p.getLocation(), ss.getConfig().stringLocationArenaFormat(p.getLocation()));
+                createArmorStand(Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_HOLOGRAM).replace("{team}", teamm), p.getLocation(), ss.getConfig().stringLocationArenaFormat(p.getLocation()), "shop");
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Shop", p.getLocation());
-                p.sendMessage(ss.getPrefix() + "Shop set for: " + teamm);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_SHOP_SET).replace("{team}", teamm));
                 if (ss.getSetupType() == SetupType.ASSISTED) {
                     Bukkit.dispatchCommand(p, getParent().getName());
                 }

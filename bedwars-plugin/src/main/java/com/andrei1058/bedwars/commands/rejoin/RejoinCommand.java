@@ -39,7 +39,7 @@ public class RejoinCommand extends BukkitCommand {
     @Override
     public boolean execute(CommandSender s, String st, String[] args) {
         if (s instanceof ConsoleCommandSender) {
-            s.sendMessage("This command is for players!");
+            s.sendMessage(Language.getMsg(null, Messages.COMMAND_NOT_PLAYER));
             return true;
         }
 

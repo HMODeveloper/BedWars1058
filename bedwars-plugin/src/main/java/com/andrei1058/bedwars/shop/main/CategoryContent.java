@@ -121,16 +121,12 @@ public class CategoryContent implements ICategoryContent {
         }
 
         itemNamePath = Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", categoryName).replace("%content%", contentName);
-        for (Language lang : Language.getLanguages()) {
-            if (!lang.exists(itemNamePath)) {
-                lang.set(itemNamePath, "&cName not set");
-            }
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedName(itemNamePath);
         }
         itemLorePath = Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", categoryName).replace("%content%", contentName);
-        for (Language lang : Language.getLanguages()) {
-            if (!lang.exists(itemLorePath)) {
-                lang.set(itemLorePath, "&cLore not set");
-            }
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedLore(itemLorePath);
         }
 
         identifier = path;
@@ -596,7 +592,7 @@ public class CategoryContent implements ICategoryContent {
     public static void takeMoney(Player player, Material currency, int amount) {
         if (currency == Material.AIR) {
             if (!BedWars.getEconomy().isEconomy()) {
-                player.sendMessage("§4§lERROR: This requires Vault Support! Please install Vault plugin!");
+                player.sendMessage(getMsg(player, Messages.SHOP_VAULT_REQUIRED));
                 return;
             }
             BedWars.getEconomy().buyAction(player, amount);

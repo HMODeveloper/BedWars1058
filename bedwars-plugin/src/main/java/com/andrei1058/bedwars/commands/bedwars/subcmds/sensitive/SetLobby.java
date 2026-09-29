@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -44,8 +46,8 @@ public class SetLobby extends SubCommand {
         setPriority(1);
         showInList(true);
         setPermission(Permissions.PERMISSION_SETUP_ARENA);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/"+MainCommand.getInstance().getName()+" "+getSubCommandName()+ (config.getLobbyWorldName().isEmpty() ? " §c(not set)" : " §a(set)"),
-                "§aSet the main lobby. §fThis is required but\n§fif you are going to use the server in §eBUNGEE §fmode\n§fthe lobby location will §enot §fbe used.\n§eType again to replace the old spawn location.",
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_SET_LOBBY_DISPLAY).replace("{command}", MainCommand.getInstance().getName()).replace("{status}", Language.getMsg(null, config.getLobbyWorldName().isEmpty() ? Messages.COMMAND_SET_LOBBY_NOT_SET : Messages.COMMAND_SET_LOBBY_SET)),
+                Language.getMsg(null, Messages.COMMAND_SET_LOBBY_DISPLAY_HOVER),
                 "/"+getParent().getName()+" "+getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
@@ -54,11 +56,11 @@ public class SetLobby extends SubCommand {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
         if (SetupSession.isInSetupSession(p.getUniqueId())){
-            p.sendMessage("§6 ▪ §4This command can't be used in arenas. It is meant for the main lobby!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SET_LOBBY_IN_ARENA));
             return true;
         }
         config.saveConfigLoc("lobbyLoc", p.getLocation());
-        p.sendMessage("§6 ▪ §7Lobby location set!");
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_SET_LOBBY_SUCCESS));
         config.reload();
         BedWars.setLobbyWorld(p.getLocation().getWorld().getName());
         return true;

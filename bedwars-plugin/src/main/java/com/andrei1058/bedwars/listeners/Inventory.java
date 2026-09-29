@@ -53,7 +53,7 @@ public class Inventory implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (nms.getInventoryName(e).equalsIgnoreCase(SetupSession.getInvName())) {
+        if (nms.getInventoryName(e).equalsIgnoreCase(SetupSession.getInvName(p))) {
             SetupSession ss = SetupSession.getSession(p.getUniqueId());
             if (ss != null) {
                 if (ss.getSetupType() == null)
@@ -187,7 +187,7 @@ public class Inventory implements Listener {
         }
 
         /* Check setup gui items */
-        if (SetupSession.isInSetupSession(p.getUniqueId()) && nms.getInventoryName(e).equalsIgnoreCase(SetupSession.getInvName())) {
+        if (SetupSession.isInSetupSession(p.getUniqueId()) && nms.getInventoryName(e).equalsIgnoreCase(SetupSession.getInvName(p))) {
             SetupSession ss = SetupSession.getSession(p.getUniqueId());
             if (e.getSlot() == SetupSession.getAdvancedSlot()) {
                 Objects.requireNonNull(ss).setSetupType(SetupType.ADVANCED);
@@ -195,7 +195,7 @@ public class Inventory implements Listener {
                 Objects.requireNonNull(ss).setSetupType(SetupType.ASSISTED);
             }
             if (!Objects.requireNonNull(ss).startSetup()) {
-                ss.getPlayer().sendMessage(ChatColor.RED + "Could not start setup session. Pleas check the console.");
+                ss.getPlayer().sendMessage(Language.getMsg(p, Messages.SETUP_START_FAILED));
             }
             p.closeInventory();
             return;

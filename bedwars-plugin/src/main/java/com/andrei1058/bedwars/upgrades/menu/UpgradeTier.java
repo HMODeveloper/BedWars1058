@@ -52,11 +52,15 @@ public class UpgradeTier {
     public UpgradeTier(String parentName, String name, ItemStack displayItem, int cost, Material currency) {
         this.displayItem = BedWars.nms.addCustomData(displayItem, "MCONT_" + parentName);
         this.name = name;
-        Language.saveIfNotExists(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", parentName.replace("upgrade-", "")).replace("{tier}", name), "&cName not set");
-        Language.saveIfNotExists(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", parentName.replace("upgrade-", "")).replace("{tier}", name), Collections.singletonList("&cLore not set"));
+        String itemNamePath = Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", parentName.replace("upgrade-", "")).replace("{tier}", name);
+        String itemLorePath = Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", parentName.replace("upgrade-", "")).replace("{tier}", name);
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedName(itemNamePath);
+            language.ensureLocalizedLore(itemLorePath);
+        }
+
         this.cost = cost;
         this.currency = currency;
-
         for (String action : UpgradesManager.getConfiguration().getYml().getStringList(parentName + "." + name + ".receive")) {
             String[] type = action.trim().split(":");
             if (type.length < 2) continue;

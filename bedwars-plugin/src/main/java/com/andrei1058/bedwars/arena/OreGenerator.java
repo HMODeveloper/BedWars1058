@@ -39,7 +39,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
@@ -211,9 +210,7 @@ public class OreGenerator implements IGenerator {
         for (int temp = amount; temp > 0; temp--) {
             ItemStack itemStack = new ItemStack(ore);
             if (!stack) {
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setDisplayName("custom" + dropID++);
-                itemStack.setItemMeta(itemMeta);
+                itemStack = nms.setTag(itemStack, "bw1058-generator-drop", String.valueOf(dropID++));
             }
             Item item = location.getWorld().dropItem(location, itemStack);
             item.setVelocity(new Vector(0, 0, 0));

@@ -68,10 +68,11 @@ public class PartyCommand extends BukkitCommand {
                         p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_INVITE_DENIED_CANNOT_INVITE_YOURSELF));
                         return true;
                     }
+                    Player invited = Bukkit.getPlayer(args[1]);
                     p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_INVITE_SENT).replace("{playername}", p.getName()).replace("{player}", args[1]));
-                    TextComponent tc = new TextComponent(getMsg(p, Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG).replace("{player}", p.getName()));
+                    TextComponent tc = new TextComponent(getMsg(invited, Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG).replace("{player}", p.getName()));
                     tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + p.getName()));
-                    Bukkit.getPlayer(args[1]).spigot().sendMessage(tc);
+                    invited.spigot().sendMessage(tc);
                     if (partySessionRequest.containsKey(p.getUniqueId())) {
                         partySessionRequest.replace(p.getUniqueId(), Bukkit.getPlayer(args[1]).getUniqueId());
                     } else {
@@ -83,6 +84,7 @@ public class PartyCommand extends BukkitCommand {
                 break;
             case "accept":
                 if (args.length < 2) {
+                    p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_USAGE));
                     return true;
                 }
                 if (getParty().hasParty(p)) {
@@ -102,12 +104,12 @@ public class PartyCommand extends BukkitCommand {
                     if (getParty().hasParty(Bukkit.getPlayer(args[1]))) {
                         getParty().addMember(Bukkit.getPlayer(args[1]), p);
                         for (Player on : getParty().getMembers(Bukkit.getPlayer(args[1]))) {
-                            on.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("{playername}", p.getName()).replace("{player}", p.getDisplayName()));
+                            on.sendMessage(getMsg(on, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("{playername}", p.getName()).replace("{player}", p.getDisplayName()));
                         }
                     } else {
                         getParty().createParty(Bukkit.getPlayer(args[1]), p);
                         for (Player on : getParty().getMembers(Bukkit.getPlayer(args[1]))) {
-                            on.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("{playername}", p.getName()).replace("{player}", p.getDisplayName()));
+                            on.sendMessage(getMsg(on, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("{playername}", p.getName()).replace("{player}", p.getDisplayName()));
                         }
                     }
                 } else {

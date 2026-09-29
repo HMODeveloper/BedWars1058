@@ -21,6 +21,8 @@
 package com.andrei1058.bedwars.maprestore.internal;
 
 import com.andrei1058.bedwars.BedWars;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.server.ISetupSession;
@@ -151,13 +153,13 @@ public class InternalAdapter extends RestoreAdapter {
                 try {
                     File level = new File(Bukkit.getWorldContainer(), s.getWorldName() + "/region");
                     if (level.exists()) {
-                        s.getPlayer().sendMessage(ChatColor.GREEN + "Loading " + s.getWorldName() + " from Bukkit worlds container.");
+                        s.getPlayer().sendMessage(Language.getMsg(s.getPlayer(), Messages.RESTORE_LOAD_WORLD).replace("{world}", s.getWorldName()));
                         deleteWorldTrash(s.getWorldName());
                         World w = Bukkit.createWorld(wc);
                         w.setKeepSpawnInMemory(true);
                     } else {
                         try {
-                            s.getPlayer().sendMessage(ChatColor.GREEN + "Creating a new void map: " + s.getWorldName());
+                            s.getPlayer().sendMessage(Language.getMsg(s.getPlayer(), Messages.RESTORE_CREATE_VOID_MAP).replace("{world}", s.getWorldName()));
                             World w = Bukkit.createWorld(wc);
                             w.setKeepSpawnInMemory(true);
                             Bukkit.getScheduler().runTaskLater(plugin, s::teleportPlayer, 20L);

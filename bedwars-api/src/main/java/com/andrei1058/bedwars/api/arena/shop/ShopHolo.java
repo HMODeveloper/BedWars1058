@@ -45,8 +45,9 @@ public class ShopHolo {
 
     public ShopHolo(String iso, ArmorStand a1, ArmorStand a2, Location l, IArena a) {
         this.l = l;
+        this.iso = iso == null ? "" : iso;
         for (ShopHolo sh : getShopHolo()) {
-            if (sh.l == l && sh.iso.equalsIgnoreCase(iso)) {
+            if (sh.l == l && sh.iso.equalsIgnoreCase(this.iso)) {
                 if (a1 != null) a1.remove();
                 if (a2 != null) a2.remove();
                 return;
@@ -54,37 +55,34 @@ public class ShopHolo {
         }
         this.a1 = a1;
         this.a2 = a2;
-        this.iso = iso;
         this.a = a;
         if (a1 != null) a1.setMarker(true);
         if (a2 != null) a2.setMarker(true);
         shopHolo.add(this);
-        if (api == null) api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
+        if (api == null && Bukkit.getServer().getServicesManager().getRegistration(BedWars.class) != null) {
+            api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
+        }
     }
 
     public void update() {
-        if (l == null) {
-            Bukkit.broadcastMessage("LOCATION IS NULL");
-        }
+        if (api == null || l == null || l.getWorld() == null) return;
         for (Player p2 : l.getWorld().getPlayers()) {
-            if (Language.getPlayerLanguage(p2).getIso().equalsIgnoreCase(iso)) continue;
-            if (a1 != null) {
-                api.getVersionSupport().hideEntity(a1, p2);
-            }
-            if (a2 != null) {
-                api.getVersionSupport().hideEntity(a2, p2);
-            }
+            Language playerLanguage = Language.getPlayerLanguage(p2);
+            if (playerLanguage != null && playerLanguage.getIso().equalsIgnoreCase(iso)) continue;
+            if (a1 != null) api.getVersionSupport().hideEntity(a1, p2);
+            if (a2 != null) api.getVersionSupport().hideEntity(a2, p2);
         }
     }
 
     public void updateForPlayer(Player p, String lang) {
+        if (api == null || p == null) return;
+        if (lang == null) {
+            Language playerLanguage = Language.getPlayerLanguage(p);
+            lang = playerLanguage == null ? "" : playerLanguage.getIso();
+        }
         if (lang.equalsIgnoreCase(iso)) return;
-        if (a1 != null) {
-            api.getVersionSupport().hideEntity(a1, p);
-        }
-        if (a2 != null) {
-            api.getVersionSupport().hideEntity(a2, p);
-        }
+        if (a1 != null) api.getVersionSupport().hideEntity(a1, p);
+        if (a2 != null) api.getVersionSupport().hideEntity(a2, p);
     }
 
     public static void clearForArena(IArena a) {

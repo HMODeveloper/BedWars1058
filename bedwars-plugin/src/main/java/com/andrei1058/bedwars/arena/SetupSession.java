@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.arena;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.events.server.SetupSessionCloseEvent;
 import com.andrei1058.bedwars.api.events.server.SetupSessionStartEvent;
 import com.andrei1058.bedwars.api.server.ISetupSession;
@@ -82,8 +84,8 @@ public class SetupSession implements ISetupSession {
     /**
      * Gets the setup type gui inv name
      */
-    public static String getInvName() {
-        return "§8Choose a setup method";
+    public static String getInvName(Player player) {
+        return Language.getMsg(player, Messages.SETUP_GUI_TITLE);
     }
 
     /**
@@ -123,25 +125,25 @@ public class SetupSession implements ISetupSession {
      * @return return is broken. do not use it.
      */
     public boolean startSetup() {
-        getPlayer().sendMessage("§6 ▪ §7Loading " + getWorldName());
+        getPlayer().sendMessage(Language.getMsg(player, Messages.SETUP_LOADING).replace("{arena}", getWorldName()));
         cm = new ArenaConfig(BedWars.plugin, getWorldName(), plugin.getDataFolder().getPath() + "/Arenas");
         BedWars.getAPI().getRestoreAdapter().onSetupSessionStart(this);
         return true;
     }
 
     private static void openGUI(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 9, getInvName());
+        Inventory inv = Bukkit.createInventory(null, 9, getInvName(player));
         ItemStack assisted = new ItemStack(Material.GLOWSTONE_DUST);
         ItemMeta am = assisted.getItemMeta();
-        am.setDisplayName("§e§lASSISTED SETUP");
-        am.setLore(Arrays.asList("", "§aEasy and quick setup!", "§7For beginners and lazy staff :D", "", "§3Reduced options."));
+        am.setDisplayName(Language.getMsg(player, Messages.SETUP_GUI_ASSISTED_NAME));
+        am.setLore(Language.getList(player, Messages.SETUP_GUI_ASSISTED_LORE));
         assisted.setItemMeta(am);
         inv.setItem(getAssistedSlot(), assisted);
 
         ItemStack advanced = new ItemStack(Material.REDSTONE);
         ItemMeta amm = advanced.getItemMeta();
-        amm.setDisplayName("§c§lADVANCED SETUP");
-        amm.setLore(Arrays.asList("", "§aDetailed setup!", "§7For experienced staff :D", "", "§3Advanced options."));
+        amm.setDisplayName(Language.getMsg(player, Messages.SETUP_GUI_ADVANCED_NAME));
+        amm.setLore(Language.getList(player, Messages.SETUP_GUI_ADVANCED_LORE));
         advanced.setItemMeta(amm);
         inv.setItem(getAdvancedSlot(), advanced);
 
@@ -154,7 +156,7 @@ public class SetupSession implements ISetupSession {
     public void cancel() {
         getSetupSessions().remove(this);
         if (isStarted()) {
-            player.sendMessage("§6 ▪ §7" + getWorldName() + " setup cancelled!");
+            player.sendMessage(Language.getMsg(player, Messages.SETUP_CANCELLED).replace("{arena}", getWorldName()));
             done();
         }
     }
@@ -223,14 +225,14 @@ public class SetupSession implements ISetupSession {
         for (int x = 0; x < 10; x++) {
             getPlayer().sendMessage(" ");
         }
-        player.sendMessage(ChatColor.GREEN + "You were teleported to the " + ChatColor.GOLD + getWorldName() + ChatColor.GREEN + "'s spawn.");
+        player.sendMessage(Language.getMsg(player, Messages.SETUP_TELEPORTED).replace("{arena}", getWorldName()));
         if (getSetupType() == SetupType.ASSISTED && getConfig().getYml().get("waiting.Loc") == null) {
             player.sendMessage("");
-            player.sendMessage(ChatColor.GREEN + "Hello " + player.getDisplayName() + "!");
-            player.sendMessage(ChatColor.WHITE + "Please set the waiting spawn.");
-            player.sendMessage(ChatColor.WHITE + "It is the place where players will wait the game to start.");
-            player.spigot().sendMessage(Misc.msgHoverClick(ChatColor.BLUE + "     ▪     " + ChatColor.GOLD + "CLICK HERE TO SET THE WAITING LOBBY    " + ChatColor.BLUE + " ▪", ChatColor.LIGHT_PURPLE + "Click to set the waiting spawn.", "/" + BedWars.mainCmd + " setWaitingSpawn", ClickEvent.Action.RUN_COMMAND));
-            player.spigot().sendMessage(MainCommand.createTC(ChatColor.YELLOW + "Or type: " + ChatColor.GRAY + "/" + BedWars.mainCmd + " to see the command list.", "/" + BedWars.mainCmd + "", ChatColor.WHITE + "Show commands list."));
+            player.sendMessage(Language.getMsg(player, Messages.SETUP_GREETING).replace("{player}", player.getDisplayName()));
+            player.sendMessage(Language.getMsg(player, Messages.SETUP_WAITING_SPAWN_PROMPT));
+            player.sendMessage(Language.getMsg(player, Messages.SETUP_WAITING_SPAWN_EXPLANATION));
+            player.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(player, Messages.SETUP_WAITING_SPAWN_CLICK), Language.getMsg(player, Messages.SETUP_WAITING_SPAWN_HOVER), "/" + BedWars.mainCmd + " setWaitingSpawn", ClickEvent.Action.RUN_COMMAND));
+            player.spigot().sendMessage(MainCommand.createTC(Language.getMsg(player, Messages.SETUP_COMMAND_LIST_HINT).replace("{command}", BedWars.mainCmd), "/" + BedWars.mainCmd + "", Language.getMsg(player, Messages.SETUP_COMMAND_LIST_HOVER)));
         } else {
             Bukkit.dispatchCommand(player, BedWars.mainCmd + " cmds");
         }
@@ -248,32 +250,32 @@ public class SetupSession implements ISetupSession {
             for (String team : getTeams()) {
                 for (String gen : new String[]{"Iron", "Gold", "Emerald"}) {
                     if (getConfig().getYml().get("Team." + team + "." + gen) != null) {
-                        for (String loc : getConfig().getList("Team." + team + ".Iron")) {
-                            createArmorStand(ChatColor.GOLD + gen + " generator added for team: " + getTeamColor(team) + team, getConfig().convertStringToArenaLocation(loc), loc);
+                        for (String loc : getConfig().getList("Team." + team + "." + gen)) {
+                            createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_GENERATOR_MARKER).replace("{generator}", Language.getMsg(player, gen.equals("Iron") ? Messages.SETUP_GENERATOR_IRON : gen.equals("Gold") ? Messages.SETUP_GENERATOR_GOLD : Messages.SETUP_GENERATOR_EMERALD)).replace("{teamColor}", getTeamColor(team).toString()).replace("{team}", team), getConfig().convertStringToArenaLocation(loc), loc, gen.toLowerCase());
                         }
                     }
                     if (getConfig().getYml().get("Team." + team + ".Spawn") != null) {
-                        createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "SPAWN SET", getConfig().getArenaLoc("Team." + team + ".Spawn"), getConfig().getString("Team." + team + ".Spawn"));
+                        createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_SPAWN_MARKER).replace("{teamColor}", getTeamColor(team).toString()).replace("{team}", team), getConfig().getArenaLoc("Team." + team + ".Spawn"), getConfig().getString("Team." + team + ".Spawn"), "spawn");
                     }
                     if (getConfig().getYml().get("Team." + team + ".Bed") != null) {
-                        createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "BED SET", getConfig().getArenaLoc("Team." + team + ".Bed"), getConfig().getString("Team." + team + ".Bed"));
+                        createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_BED_MARKER).replace("{teamColor}", getTeamColor(team).toString()).replace("{team}", team), getConfig().getArenaLoc("Team." + team + ".Bed"), getConfig().getString("Team." + team + ".Bed"), "bed");
                     }
                 }
                 if (getConfig().getYml().get("Team." + team + ".Shop") != null) {
-                    createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "SHOP SET", getConfig().getArenaLoc("Team." + team + ".Shop"), null);
+                    createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_SHOP_MARKER).replace("{teamColor}", getTeamColor(team).toString()).replace("{team}", team), getConfig().getArenaLoc("Team." + team + ".Shop"), null, "shop");
                 }
                 if (getConfig().getYml().get("Team." + team + ".Upgrade") != null) {
-                    createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "UPGRADE SET", getConfig().getArenaLoc("Team." + team + ".Upgrade"), null);
+                    createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_UPGRADE_MARKER).replace("{teamColor}", getTeamColor(team).toString()).replace("{team}", team), getConfig().getArenaLoc("Team." + team + ".Upgrade"), null, "upgrade");
                 }
                 if (getConfig().getYml().get("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    createArmorStand(ChatColor.GOLD + "Kill drops " + team, getConfig().getArenaLoc("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    createArmorStand(Language.getMsg(player, Messages.SETUP_TEAM_KILL_DROPS_MARKER).replace("{team}", team), getConfig().getArenaLoc("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null, "kill-drops");
                 }
             }
 
             for (String type : new String[]{"Emerald", "Diamond"}) {
                 if (getConfig().getYml().get("generator." + type) != null) {
                     for (String loc : getConfig().getList("generator." + type)) {
-                        createArmorStand(ChatColor.GOLD + type + " SET", getConfig().convertStringToArenaLocation(loc), loc);
+                        createArmorStand(Language.getMsg(player, Messages.SETUP_GENERATOR_MARKER).replace("{generator}", Language.getMsg(player, type.equals("Emerald") ? Messages.SETUP_GENERATOR_EMERALD : Messages.SETUP_GENERATOR_DIAMOND)), getConfig().convertStringToArenaLocation(loc), loc, type.toLowerCase());
                     }
                 }
             }
@@ -328,7 +330,7 @@ public class SetupSession implements ISetupSession {
      */
     public void displayAvailableTeams() {
         if (getConfig().getYml().get("Team") != null) {
-            getPlayer().sendMessage(getPrefix() + "Available teams: ");
+            getPlayer().sendMessage(getPrefix() + Language.getMsg(player, Messages.SETUP_AVAILABLE_TEAMS));
             for (String team : Objects.requireNonNull(getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
                 getPlayer().sendMessage(getPrefix() + TeamColor.getChatColor(Objects.requireNonNull(getConfig().getYml().getString("Team." + team + ".Color"))) + team);
             }

@@ -376,12 +376,12 @@ public class MainConfig extends ConfigManager {
                         if (lang.equalsIgnoreCase(yml.getString("language"))) {
                             whatLang = f.getName().replace("messages_", "").replace(".yml", "");
                         }
-                        if (Language.getLang(lang) == null) new Language(BedWars.plugin, lang);
+                        if (Language.findLang(lang) == null) new Language(BedWars.plugin, lang);
                     }
                 }
             }
         }
-        Language def = Language.getLang(whatLang);
+        Language def = Language.findLang(whatLang);
 
         if (def == null) throw new IllegalStateException("Could not found default language: " + whatLang);
         Language.setDefaultLanguage(def);
@@ -389,7 +389,7 @@ public class MainConfig extends ConfigManager {
         //remove languages if disabled
         //server language can t be disabled
         for (String iso : yml.getStringList(ConfigPath.GENERAL_CONFIGURATION_DISABLED_LANGUAGES)) {
-            Language l = Language.getLang(iso);
+            Language l = Language.findLang(iso);
             if (l != null) {
                 if (l != def) Language.getLanguages().remove(l);
             }

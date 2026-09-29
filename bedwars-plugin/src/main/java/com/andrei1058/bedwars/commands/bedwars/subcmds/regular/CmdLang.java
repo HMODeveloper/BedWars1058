@@ -45,7 +45,7 @@ public class CmdLang extends SubCommand {
         super(parent, name);
         setPriority(18);
         showInList(false);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName(), "/" + getParent().getName() + " " + getSubCommandName(), "§fChange your language."));
+        setDisplayInfo(MainCommand.createTC(getMsg(null, Messages.COMMAND_LANG_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), "/" + getParent().getName() + " " + getSubCommandName(), getMsg(null, Messages.COMMAND_LANG_DISPLAY_HOVER)));
     }
 
     @Override

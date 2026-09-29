@@ -55,6 +55,361 @@ public class SimplifiedChinese extends Language {
         }
 
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）", "&2▪ &7/" + mainCmd + " specmode &3（旁观者）"));
+        yml.addDefault(Messages.SERVER_SPAWN_PROTECTION_WARNING, "server.properties 中启用了 spawn-protection，这可能会影响 BedWars 竞技场，建议将其设为 0。");
+        yml.addDefault(Messages.SERVER_MULTIVERSE_WARNING, "检测到 Multiverse-Core；请将其移除，或确保它不会修改 BedWars 地图。");
+        yml.addDefault(Messages.RESTORE_LOAD_WORLD, "正在从 Bukkit 世界容器加载 {world}。");
+        yml.addDefault(Messages.RESTORE_CREATE_VOID_MAP, "正在创建新的虚空地图：{world}");
+        yml.addDefault(Messages.CUSTOMER_DETAILS_HEADER, "&8[&f{plugin} v{version}&8]&7&m---------------------------");
+        yml.addDefault(Messages.CUSTOMER_DETAILS_USER_ID, "&7用户 ID：&f%%__USER__%%");
+        yml.addDefault(Messages.CUSTOMER_DETAILS_DOWNLOAD_ID, "&7下载 ID：&f%%__NONCE__%%");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_ARENA_NOT_FOUND, "&c▪ &7竞技场 {arena} 不存在！");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_ASSIGNED, "&6 ▪ &7已将 {arena} 加入分组：{group}");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_CREATED, "&6 ▪ &7分组已创建！");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_CREATE_HOVER, "创建竞技场分组。详情参见 Wiki。");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_CREATE_USAGE, "&6 ▪ &7/{command} {subcommand} create &o<分组名>");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_DEFAULT, "&6 ▪ &f默认");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_DELETED, "&6 ▪ &7分组已删除！");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8- &e点击查看详情");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_DISPLAY_HOVER, "&f管理竞技场分组。");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_ENTRY, "&6 ▪ &f{group}");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_EXISTS, "&c▪ &7该分组已存在！");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_HEADER, "&7可用竞技场分组：");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_LIST_HOVER, "查看可用分组。");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_LIST_USAGE, "&6 ▪ &7/{command} {subcommand} list");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_NOT_FOUND, "&c▪ &7该分组不存在！");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_REMOVE_HOVER, "删除竞技场分组。详情参见 Wiki。");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_REMOVE_USAGE, "&6 ▪ &7/{command} {subcommand} remove &o<分组名>");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_SET_HOVER, "设置竞技场分组。详情参见 Wiki。");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_SET_USAGE, "&6 ▪ &7/{command} {subcommand} set &o<竞技场名> <分组名>");
+        yml.addDefault(Messages.COMMAND_ARENA_GROUP_UNKNOWN, "&6 ▪ &7不存在名为 {group} 的分组。");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_DISPLAY, "&6 ▪ &7/{command} {subcommand} {countColor}（已设置 {count}）");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_DISPLAY_HOVER, "&f显示可用竞技场。");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_EMPTY, "&c没有可显示的竞技场。");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_ENTRY, "ID: &e{arena} &f分组：&e{group} &f人数：&e{players} &f状态：{status} &f世界已加载：&e{worldLoaded}");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_HEADER, " \n&1|| &3{plugin}&7 已创建的游戏：\n ");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_NEXT_PAGE, "&7输入 /&a{command} arenaList {page}&7 查看下一页。");
+        yml.addDefault(Messages.COMMAND_ARENA_LIST_SPACER, " ");
+        yml.addDefault(Messages.COMMAND_ARENA_USAGE, "&c▪ &7用法：&o/{command} {subcommand} <地图名>");
+        yml.addDefault(Messages.COMMAND_BUILD_DISABLED, "&6 ▪ &7你现在无法放置或破坏方块！");
+        yml.addDefault(Messages.COMMAND_BUILD_DISPLAY, "&6 ▪ &7/{command} {subcommand}         &8 - &e建造权限");
+        yml.addDefault(Messages.COMMAND_BUILD_DISPLAY_HOVER, "&f打开或关闭建造模式，\n&f以便放置或破坏方块。");
+        yml.addDefault(Messages.COMMAND_BUILD_ENABLED, "&6 ▪ &7你现在可以放置或破坏方块。");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_COPY_ERROR, "&c▪ &7复制地图配置时发生错误。请检查控制台。");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_DISABLE_FIRST, "&c▪ &7请先禁用 {arena}！");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_DISPLAY, "&6 ▪ &7/{command} {subcommand} &6<世界名> <新名称>");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_DISPLAY_HOVER, "&f复制已有竞技场。");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_EXISTS, "&c▪ &7{arena} 已存在！");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_SUCCESS, "&6 ▪ &7完成 :D。");
+        yml.addDefault(Messages.COMMAND_CLONE_ARENA_USAGE, "&c▪ &7用法：&o/{command} {subcommand} <地图名> <新竞技场名>");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_CONFIRM, "&6 ▪ &7请再次输入以确认。");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_DISPLAY, "&6 ▪ &7/{command} {subcommand} &6<世界名>");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_DISPLAY_HOVER, "&f删除地图及其配置。");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_NOT_FOUND, "&c▪ &7该竞技场不存在！");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_SUCCESS, "&c▪ &7已删除 {arena}！");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_USAGE, "&c▪ &7用法：&o/{command} delArena <地图名>");
+        yml.addDefault(Messages.COMMAND_DEL_ARENA_WORLD_NOT_FOUND, "&c▪ &7{arena} 不存在对应的世界文件夹！");
+        yml.addDefault(Messages.COMMAND_DISABLE_ARENA_ALREADY_DISABLED, "&c▪ &7该竞技场已禁用！");
+        yml.addDefault(Messages.COMMAND_DISABLE_ARENA_DISPLAY, "&6 ▪ &7/{command} {subcommand} &6<世界名>");
+        yml.addDefault(Messages.COMMAND_DISABLE_ARENA_DISPLAY_HOVER, "&f禁用竞技场。\n禁用前将移出竞技场中的玩家。");
+        yml.addDefault(Messages.COMMAND_DISABLE_ARENA_PLAYING, "&6 ▪ &7竞技场正在游戏，请在结束后禁用！");
+        yml.addDefault(Messages.COMMAND_DISABLE_ARENA_START, "&6 ▪ &7正在禁用竞技场……");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_ALREADY_ENABLED, "&c▪ &7该竞技场已启用！");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_DISPLAY, "&6 ▪ &7/{command} {subcommand} &6<世界名>");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_DISPLAY_HOVER, "&f启用竞技场。");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_QUEUED, "&c▪ &7该竞技场已在启用队列中！");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_START, "&6 ▪ &7正在启用竞技场……");
+        yml.addDefault(Messages.COMMAND_ENABLE_ARENA_USAGE, "&c▪ &7用法：&o/{command} enableRotation <地图名>");
+        yml.addDefault(Messages.COMMAND_LEVEL_DISPLAY, "§6 ▪ §7/{command} {subcommand} §8      - §e点击查看详情");
+        yml.addDefault(Messages.COMMAND_LEVEL_DISPLAY_HOVER, "§f管理玩家等级。");
+        yml.addDefault(Messages.COMMAND_LEVEL_INVALID_AMOUNT, "§c数量必须是整数！");
+        yml.addDefault(Messages.COMMAND_LEVEL_INVALID_LEVEL, "§c等级必须是整数！");
+        yml.addDefault(Messages.COMMAND_LEVEL_PLAYER_NOT_FOUND, "§c ▪ §7找不到玩家！");
+        yml.addDefault(Messages.COMMAND_LEVEL_REJOIN, "§6 ▪ §7玩家可能需要重新加入才能看到更新。");
+        yml.addDefault(Messages.COMMAND_LEVEL_SET_CONSOLE_USAGE, "§6bw level setLevel <玩家> <等级>");
+        yml.addDefault(Messages.COMMAND_LEVEL_SET_HOVER, "设置玩家等级。");
+        yml.addDefault(Messages.COMMAND_LEVEL_SET_SUCCESS, "§6 ▪ §7已将 {player} 的等级设置为：{level}");
+        yml.addDefault(Messages.COMMAND_LEVEL_SET_USAGE, "§6 ▪ §7用法：/bw level setLevel §o<玩家> <等级>");
+        yml.addDefault(Messages.COMMAND_LEVEL_XP_CONSOLE_USAGE, "§6bw level giveXp <玩家> <数量>");
+        yml.addDefault(Messages.COMMAND_LEVEL_XP_HOVER, "给玩家经验值。");
+        yml.addDefault(Messages.COMMAND_LEVEL_XP_SUCCESS, "§6 ▪ §7已给予 {player} {amount} 点经验值。");
+        yml.addDefault(Messages.COMMAND_LEVEL_XP_USAGE, "§6 ▪ §7用法：/bw level giveXp §o<玩家> <数量>");
+        yml.addDefault(Messages.COMMAND_NPC_ADD_HOVER, "点击使用。");
+        yml.addDefault(Messages.COMMAND_NPC_ADD_USAGE, "§f\n§c▪ §7用法：§e§o/{command} {subcommand} add <皮肤> <竞技场分组> <§7第一行§9\\n§7第二行§e>\n§7你可以用 §e{players} §7表示分组内的玩家数量。");
+        yml.addDefault(Messages.COMMAND_NPC_CREATED, "§a§c▪ §bNPC：{name} §b已设置！");
+        yml.addDefault(Messages.COMMAND_NPC_DISPLAY, "§6 ▪ §7/{command} {subcommand}         §8   - §e创建加入游戏的 NPC");
+        yml.addDefault(Messages.COMMAND_NPC_DISPLAY_HOVER, "§f创建用于加入游戏的 NPC。\n§f点击查看详情。");
+        yml.addDefault(Messages.COMMAND_NPC_MAIN_ADD_HOVER, "§f使用此命令创建加入游戏的 NPC。\n§f点击查看语法。");
+        yml.addDefault(Messages.COMMAND_NPC_MAIN_ADD_USAGE, "§f\n§c▪ §7用法：§e/{command} {subcommand} add");
+        yml.addDefault(Messages.COMMAND_NPC_MAIN_REMOVE_HOVER, "§f站在 NPC 前方将其移除。");
+        yml.addDefault(Messages.COMMAND_NPC_MAIN_REMOVE_USAGE, "§c▪ §7用法：§e/{command} {subcommand} remove");
+        yml.addDefault(Messages.COMMAND_NPC_NONE_NEARBY, "§c▪ §b附近没有 NPC。");
+        yml.addDefault(Messages.COMMAND_NPC_NONE_SET, "§c▪ §b尚未设置 NPC！");
+        yml.addDefault(Messages.COMMAND_NPC_REMOVED, "§c▪ §b已移除目标 NPC！");
+        yml.addDefault(Messages.COMMAND_NPC_TARGET_GROUPS, "§a§c▪ §b目标分组：§6{groups}");
+        yml.addDefault(Messages.COMMAND_RELOAD_ARENA, "§6 ▪ §7竞技场配置 {config} 已重新加载！");
+        yml.addDefault(Messages.COMMAND_RELOAD_CONFIG, "§6 ▪ §7{config} 已重新加载！");
+        yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY, "§6 ▪ §7/{command} {subcommand}       §8 - §e重新加载消息");
+        yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY_HOVER, "§f重新加载消息。\n§c不建议这样做！");
+        yml.addDefault(Messages.COMMAND_RELOAD_LANGUAGE, "§6 ▪ §7语言 {language} 已重新加载！");
+        yml.addDefault(Messages.COMMAND_SETUP_ALREADY_IN_SESSION, "§c ▪ §7你已在设置流程中！");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_CAPITALS, "§c▪ §c{arena}§7 不得包含大写字母！请将文件夹重命名为：§a{lowercase}");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_DISABLE_FIRST, "&c▪ &7请先禁用它！");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_DISPLAY, "§6 ▪ §7/{command} setupArena §6<世界名>");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_DISPLAY_HOVER, "§f创建或编辑竞技场。\n竞技场名称中不显示“_”和“-”。");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_SYMBOL, "§c▪ §7{arena} 不能包含此符号：§c+");
+        yml.addDefault(Messages.COMMAND_SETUP_ARENA_USAGE, "§c▪ §7用法：§o/{command} {subcommand} <地图名>");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM, "§6 ▪ §7§l点击此处创建找到的队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_CONFIRM_HOVER, "§f点击创建找到的队伍！");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_ENTRY, "§f ▪ {team}");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_FOUND_HEADER, "§6§l发现新队伍：");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_NONE, "§6 ▪ §7未找到新队伍。\n§6 ▪ §7可使用 §6/{command} createTeam 手动创建队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_SEARCH, "§6 ▪ §7正在查找队伍，可能会造成卡顿。");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_TIMEOUT, "§c ▪ §7查找超时。再次输入以重新查找队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_DESCRIPTION, "§f如果希望游戏开始时等待大厅消失，");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_HEADER, "§6§l移除等待大厅：");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_OPTIONAL, "§7此步骤可选。若要跳过，请输入 §6/{command}");
+        yml.addDefault(Messages.COMMAND_SETUP_AUTO_TEAMS_WAITING_SELECTION, "§f请使用下列命令，像使用 WorldEdit 一样选择区域。");
+        yml.addDefault(Messages.COMMAND_SETUP_AVAILABLE_TEAMS, "可用队伍：");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_HOLOGRAM, "{team} §6床已设置");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_MANUAL_HOVER, "设置队伍床。");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_SET, "已设置队伍 {team} 的床。");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_SET_TITLE, "§a已设置队伍 {team} 的床。");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_SPAWN_HOVER, "§f设置队伍床。");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_STAND_ON_BED, "§c使用此命令时你必须站在床上！");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_STAND_ON_BED_TITLE, "§c你必须站在床上。");
+        yml.addDefault(Messages.COMMAND_SETUP_BED_TEAM_HOVER, "§f设置队伍 {team} 的床。");
+        yml.addDefault(Messages.COMMAND_SETUP_BUILD_HEIGHT_SET, "§6 ▪ §7最高建造高度 Y 已设置为 §e{height}§7！");
+        yml.addDefault(Messages.COMMAND_SETUP_BUILD_HEIGHT_USAGE, "§c▪ §7用法：/{command} setMaxBuildHeight <整数>");
+        yml.addDefault(Messages.COMMAND_SETUP_CREATE_TEAM_COLORS, "§6 ▪ §7可用颜色：{colors}");
+        yml.addDefault(Messages.COMMAND_SETUP_CREATE_TEAM_CREATED, "§6 ▪ §7队伍 {team} §7已创建！");
+        yml.addDefault(Messages.COMMAND_SETUP_CREATE_TEAM_EXISTS, "§c▪ §7队伍 {team} 已存在！");
+        yml.addDefault(Messages.COMMAND_SETUP_CREATE_TEAM_INVALID_COLOR, "§c▪ §7颜色无效！");
+        yml.addDefault(Messages.COMMAND_SETUP_CREATE_TEAM_USAGE, "§c▪ §7用法：/{command} createTeam §o<名称> §o<颜色>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADDED, "{generator} 生成器已添加！");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADDED_TITLE, "§6{generator}§a 生成器已添加！");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_AUTO_HOVER, "添加队伍生成器。\n自动识别对应队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_AUTO_USAGE, "/bw addGenerator <铁/ 金/ 升级>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_HINT, "试试：/bw addGenerator <铁/ 金/ 升级> <队伍>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_HOLOGRAM, "§6已为队伍 {team} 添加 {generator} 生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_SET, "已为队伍 {team} 添加 {generator} 生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_TITLE, "§6{generator}§a 生成器已为队伍 {team}§a 添加！");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_ADVANCED_USAGE, "/bw addGenerator <铁/ 金/ 升级> <队伍>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_AUTO_USAGE, "/bw addGenerator（自动识别队伍）");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_CREATE_TEAM_HINT, "如果要创建队伍，请使用：/bw createTeam。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_EXISTS, "§c此生成器已设置！");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_EXISTS_TITLE, "§c此生成器已设置！");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_HOLOGRAM, "§6{generator} 已设置");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_OTHER_HINT, "其他用法：/bw addGenerator <绿宝石/ 钻石>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_OTHER_HOVER, "添加绿宝石或钻石生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_RESOURCE_USAGE, "/bw addGenerator <绿宝石/ 钻石>");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_HOLOGRAM, "§6已为队伍 {team} 设置生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_HOVER, "添加队伍生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_NOT_FOUND, "§c找不到队伍：{team}");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_SET, "已为队伍 {team} 设置生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_SET_TITLE, "§a已为队伍 {team} 设置生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_GENERATOR_TEAM_USAGE, "/bw addGenerator <队伍>");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_CREATE_TEAMS, "请先创建队伍！");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_CREATE_TEAMS_TITLE, "§c请先创建队伍！");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_HOLOGRAM, "§6队伍 {team} 的击杀掉落物");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_HOVER, "设置队伍击杀掉落物的位置。");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_SET, "已为队伍 {team} 设置击杀掉落物位置。");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_TEAM_ENTRY, "§6 ▪ 队伍 {team} 的击杀掉落物（点击设置）");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_TEAM_HOVER, "§f设置队伍 {team} 的击杀掉落物位置。");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_TEAM_SET, "已为队伍 {team} 设置击杀掉落物位置。");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_TEAM_SET_TITLE, "§a已为队伍 {team} 设置击杀掉落物位置。");
+        yml.addDefault(Messages.COMMAND_SETUP_KILL_DROPS_USAGE, "§c用法：/{command} setKillDrops <队伍名>");
+        yml.addDefault(Messages.COMMAND_SETUP_MAX_IN_TEAM_SET, "§6 ▪ §7每队最大人数已设置！");
+        yml.addDefault(Messages.COMMAND_SETUP_MAX_IN_TEAM_USAGE, "§c▪ §7用法：/{command} setMaxInTeam <整数>");
+        yml.addDefault(Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND, "§c附近没有找到队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND_TITLE, "§c附近没有找到队伍。");
+        yml.addDefault(Messages.COMMAND_SETUP_NOT_IN_SESSION, "§c ▪ §7你不在设置流程中！");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_NOT_FOUND, "附近未找到生成器（搜索范围 2×2）。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_NOT_FOUND_TITLE, "§c附近未找到生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_REMOVED_AT, "已移除位置 X:{x} Y:{y} Z:{z} 的 {generator} 生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_REMOVED_TITLE, "§a{generator} 生成器已移除。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_STAND_CLOSE, "你必须站在需要移除的生成器全息文字附近。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_GENERATOR_REMOVED_TITLE, "队伍 {team} 的 §a{generator} 生成器已移除。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED, "队伍 {team} 的生成器已移除！");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED_AT, "已移除位置 X:{x} Y:{y} Z:{z} 的队伍 {team} {generator} 生成器。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED_TITLE, "队伍 {team} 的生成器已移除。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_HOVER, "§7移除队伍 {team} §7（点击移除）");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_NOT_FOUND, "队伍 {team} 不存在。");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_NOT_FOUND_TITLE, "§c找不到队伍：{team}");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_SUCCESS, "已移除队伍：{team}");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_SUCCESS_TITLE, "§a已移除队伍：{team}");
+        yml.addDefault(Messages.COMMAND_SETUP_REMOVE_TEAM_USAGE, "§c用法：/{command} removeTeam <队伍名>");
+        yml.addDefault(Messages.COMMAND_SETUP_SAVE_ENABLE_HINT, "现在可以使用以下命令启用竞技场：");
+        yml.addDefault(Messages.COMMAND_SETUP_SAVE_ENABLE_HOVER, "§a启用此竞技场。");
+        yml.addDefault(Messages.COMMAND_SETUP_SAVE_ENABLE_OPTION, "§6/{command} enableArena {arena}§7（点击启用）");
+        yml.addDefault(Messages.COMMAND_SETUP_SAVE_SUCCESS, "竞技场修改已保存！");
+        yml.addDefault(Messages.COMMAND_SETUP_SHOP_HOLOGRAM, "{team} §6商店已设置");
+        yml.addDefault(Messages.COMMAND_SETUP_SHOP_HOVER, "设置队伍商店。");
+        yml.addDefault(Messages.COMMAND_SETUP_SHOP_OTHER_USAGE, "其他用法：/bw setShop <队伍名>");
+        yml.addDefault(Messages.COMMAND_SETUP_SHOP_SET, "已设置队伍 {team} 的商店。");
+        yml.addDefault(Messages.COMMAND_SETUP_SHOP_TEAM_HOVER, "§7设置队伍 {team} 的商店。");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_HOLOGRAM, "{team} §6出生点已设置");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_REMAINING, "剩余队伍：{teams}");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_SET, "§6 ▪ 已设置队伍 {team} 的出生点。");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_TEAMS_HEADER, "队伍列表：");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_TEAM_ENTRY, "设置队伍 {team} 的出生点（点击设置）");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_TEAM_HOVER, "§f设置队伍 {team} 的出生点。");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_TEAM_NOT_FOUND, "§c找不到目标队伍：§c{team}");
+        yml.addDefault(Messages.COMMAND_SETUP_SPAWN_USAGE, "§c用法：/{command} setSpawn <队伍>");
+        yml.addDefault(Messages.COMMAND_SETUP_SPECTATOR_SET, "旁观者出生点已设置！");
+        yml.addDefault(Messages.COMMAND_SETUP_SPECTATOR_USAGE, "§c用法：/{command} {subcommand}");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_ENTRY, "§6 ▪ {team}");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_MANUAL_HINT, "如果已设置出生点，但未自动找到队伍，请尝试：/bw {subcommand} <队伍>");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_NOT_FOUND, "§c该队伍不存在！");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_SELECT_ENTRY, "§6 ▪ {team} §7（点击设置）");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_SET_SPAWN_FIRST, "请先设置该队伍的出生点！");
+        yml.addDefault(Messages.COMMAND_SETUP_TEAM_SPAWN_HOVER, "§f设置队伍出生点。");
+        yml.addDefault(Messages.COMMAND_SETUP_TYPE_AVAILABLE, "§9可用类型：");
+        yml.addDefault(Messages.COMMAND_SETUP_TYPE_CHANGED, "§6 ▪ §7竞技场分组已更改为：§d{type}");
+        yml.addDefault(Messages.COMMAND_SETUP_TYPE_OPTION, "§1 ▪ §e{type} §7（点击设置）");
+        yml.addDefault(Messages.COMMAND_SETUP_TYPE_OPTION_HOVER, "§d点击将竞技场设为 {type} 类型。");
+        yml.addDefault(Messages.COMMAND_SETUP_TYPE_USAGE, "§9 ▪ §7用法：{command} {subcommand} <类型>");
+        yml.addDefault(Messages.COMMAND_SETUP_UPGRADE_HOLOGRAM, "{team} §6升级商店已设置");
+        yml.addDefault(Messages.COMMAND_SETUP_UPGRADE_HOVER, "设置队伍升级商店 NPC。");
+        yml.addDefault(Messages.COMMAND_SETUP_UPGRADE_SET, "已设置队伍 {team} 的升级商店 NPC。");
+        yml.addDefault(Messages.COMMAND_SETUP_UPGRADE_TEAM_HOVER, "§f队伍 {team} 的升级商店 NPC 已设置。");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_OPTION, "§c ▪ §7/{command} waitingPos {position}");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER, "§d设置位置 {position}");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_REMAINING, "§c ▪ §7设置剩余位置：");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_SET, "§6 ▪ §7位置 {position} 已设置！");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_TEAMS_REMINDER, "§6 ▪ §7请确认已设置队伍出生点！");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_POS_USAGE, "§c▪ §7用法：/{command} {subcommand} 1 或 2");
+        yml.addDefault(Messages.COMMAND_SETUP_WAITING_SPAWN_SET, "§6 ▪ §7已设置 §e{arena}§7 的等待出生点！");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_DISPLAY, "§6 ▪ §7/{command} setLobby{status}");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_DISPLAY_HOVER, "§a设置主大厅。§f此项必需，但如果服务器运行在 §eBUNGEE §f模式下，大厅位置将§e不会§f使用。\n§e再次输入可替换旧出生点。");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_IN_ARENA, "§6 ▪ §4此命令不能在竞技场使用，只能在主大厅使用！");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_NOT_SET, " §c（未设置）");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_SET, " §a（已设置）");
+        yml.addDefault(Messages.COMMAND_SET_LOBBY_SUCCESS, "§6 ▪ §7大厅位置已设置！");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISPLAY, "§e/bw toggleReady §7- 切换准备检查功能。");
+        yml.addDefault(Messages.COMMAND_ECHO_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8- &e向当前竞技场发送消息");
+        yml.addDefault(Messages.COMMAND_ECHO_HOVER, "&f向当前竞技场中的所有玩家发送消息。\n&f用法：/{command} echo <消息>");
+        yml.addDefault(Messages.COMMAND_ECHO_PREFIX, "&8[&c管理员&8] &f");
+        yml.addDefault(Messages.COMMAND_ECHOTO_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8- &e向指定竞技场发送消息");
+        yml.addDefault(Messages.COMMAND_ECHOTO_HOVER, "&f向指定竞技场中的所有玩家发送消息。\n&f用法：/{command} echoto <竞技场> <消息>");
+        yml.addDefault(Messages.COMMAND_ECHOALL_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8- &e向所有竞技场发送消息");
+        yml.addDefault(Messages.COMMAND_ECHOALL_HOVER, "&f向所有竞技场的玩家发送消息。\n&f用法：/{command} echoall <消息>");
+        yml.addDefault(Messages.COMMAND_FORCE_END_GAME_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8 - &e强制结束竞技场");
+        yml.addDefault(Messages.COMMAND_FORCE_END_GAME_DISPLAY_HOVER, "&f强制结束竞技场，不产生获胜者。\n&f权限：&c{permission}");
+        yml.addDefault(Messages.COMMAND_FORCE_END_GAME_NOT_PLAYING, "&c游戏尚未开始。");
+        yml.addDefault(Messages.COMMAND_FORCE_END_GAME_SUCCESS, "&a正在强制结束游戏……");
+        yml.addDefault(Messages.COMMAND_FORCE_START_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8 - &e强制开始竞技场");
+        yml.addDefault(Messages.COMMAND_FORCE_START_DISPLAY_HOVER, "&f强制开始竞技场。\n&f权限：&c{permission}");
+        yml.addDefault(Messages.COMMAND_START_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8 - &e将开始倒计时缩短至 5 秒");
+        yml.addDefault(Messages.COMMAND_START_DISPLAY_HOVER, "&f将竞技场的开始倒计时缩短至 5 秒。\n&f权限：&c{permission}");
+        yml.addDefault(Messages.COMMAND_READY_DISPLAY, "&e/{command} {subcommand} &7- 切换准备状态。");
+        yml.addDefault(Messages.COMMAND_GUI_DISPLAY, "&6 ▪ &7/{command} {subcommand}");
+        yml.addDefault(Messages.COMMAND_GUI_DISPLAY_HOVER, "&f打开竞技场菜单。");
+        yml.addDefault(Messages.COMMAND_JOIN_DISPLAY, "&6 ▪ &7/{command} {subcommand} &e<随机/竞技场/分组名>");
+        yml.addDefault(Messages.COMMAND_JOIN_DISPLAY_HOVER, "&f按名称或分组加入竞技场。\n&f/{command} join random - 随机加入竞技场。");
+        yml.addDefault(Messages.COMMAND_LANG_DISPLAY, "&6 ▪ &7/{command} {subcommand}");
+        yml.addDefault(Messages.COMMAND_LANG_DISPLAY_HOVER, "&f切换你的语言。");
+        yml.addDefault(Messages.COMMAND_LEAVE_DISPLAY, "&6 ▪ &7/{command} {subcommand}");
+        yml.addDefault(Messages.COMMAND_LEAVE_DISPLAY_HOVER, "&f离开竞技场。");
+        yml.addDefault(Messages.COMMAND_STATS_DISPLAY, "&6 ▪ &7/{command} {subcommand}");
+        yml.addDefault(Messages.COMMAND_STATS_DISPLAY_HOVER, "&f打开战绩菜单。");
+        yml.addDefault(Messages.COMMAND_SPEC_MODE_DISPLAY, "&6 ▪ &7/{command} specmode");
+        yml.addDefault(Messages.COMMAND_SPEC_MODE_DISPLAY_HOVER, "&f切换原版旁观模式与插件旁观模式。");
+        yml.addDefault(Messages.COMMAND_ADMIN_HEADER, "&8&l{dot} &6{plugin} v{version} &7- &c 管理员命令");
+        yml.addDefault(Messages.COMMAND_CONSOLE_SAFEMODE, "&f   bw safemode &e启用/禁用");
+        yml.addDefault(Messages.COMMAND_CONSOLE_NO_COMMANDS, "&f目前没有可用的控制台命令。");
+        yml.addDefault(Messages.COMMAND_LOBBY_NOT_SET, "&c❌ &7请先设置大厅位置！");
+        yml.addDefault(Messages.ARENA_UNEXPECTED_PLAYER_KICK, "你不应出现在这里。");
+        yml.addDefault(Messages.COMMAND_LIST_DISPLAY, "&6 ▪ &7/{command} {subcommand}         &8 - &e 查看玩家命令");
+        yml.addDefault(Messages.COMMAND_LIST_DISPLAY_HOVER, "&f查看玩家命令。");
+        yml.addDefault(Messages.COMMAND_LIST_SETUP_HEADER, "&7&l{dot}&6{plugin} v{version}&7- &a{world} 命令");
+        yml.addDefault(Messages.COMMAND_LIST_CREDITS, "&9&l{dot} &6{plugin} &7v{version} 由 andrei1058 开发");
+        yml.addDefault(Messages.COMMAND_LIST_CREDITS_HOVER, "&7竞技场：{arenaColor}{arenas}");
+        yml.addDefault(Messages.COMMAND_LIST_NOT_SET, "&c（未设置）");
+        yml.addDefault(Messages.COMMAND_LIST_SET, "&a（已设置）");
+        yml.addDefault(Messages.COMMAND_LIST_OPTIONAL, "&7&o可选");
+        yml.addDefault(Messages.COMMAND_LIST_ALL_SET, "&a（全部已设置）");
+        yml.addDefault(Messages.COMMAND_LIST_REMAINING, "&c（剩余：{remaining}&c）");
+        yml.addDefault(Messages.COMMAND_LIST_POS1_NOT_SET, "&c（位置 1 未设置）");
+        yml.addDefault(Messages.COMMAND_LIST_POS2_NOT_SET, "&c（位置 2 未设置）");
+        yml.addDefault(Messages.COMMAND_LIST_WAITING_SPAWN, "{dot}{strike}setWaitingSpawn&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_WAITING_POS, "{dot}{strike}waitingPos 1/2&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_SPAWN, "{dot}{strike}setSpawn <队伍名>&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_BED, "{dot}{strike}setBed&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_SHOP, "{dot}{strike}setShop&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_KILL_DROPS, "{dot}{strike}setKillDrops&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_UPGRADE, "{dot}{strike}setUpgrade&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_ADD_GENERATOR, "{dot}addGenerator {remaining}&e(&2绿宝石{iron} &b钻石{gold}&e)");
+        yml.addDefault(Messages.COMMAND_LIST_SET_SPECTATOR_SPAWN, "{dot}{strike}setSpectSpawn&r {status}");
+        yml.addDefault(Messages.COMMAND_LIST_AUTO_CREATE_TEAMS, "{dot}autoCreateTeams &e（自动识别）");
+        yml.addDefault(Messages.COMMAND_LIST_CREATE_TEAM, "{dot}createTeam <名称> <颜色> &e（已创建 {teams} 队）");
+        yml.addDefault(Messages.COMMAND_LIST_REMOVE_TEAM, "{dot}removeTeam <名称>");
+        yml.addDefault(Messages.COMMAND_LIST_REMOVE_GENERATOR, "{dot}removeGenerator");
+        yml.addDefault(Messages.COMMAND_LIST_SET_MAX_IN_TEAM, "{dot}setMaxInTeam <人数> （当前：{size}）");
+        yml.addDefault(Messages.COMMAND_LIST_ARENA_GROUP, "{dot}arenaGroup {group}");
+        yml.addDefault(Messages.COMMAND_LIST_SET_TYPE, "{dot}setType <类型> {group}");
+        yml.addDefault(Messages.COMMAND_LIST_SAVE, "{dot}save");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_WAITING_SPAWN, "&f设置玩家在游戏开始前的等待位置。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_WAITING_POS, "&f设置游戏开始后消失的等待大厅区域。\n&f请按 WorldEdit 区域选择方式选取。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SPECTATOR_SPAWN, "&f设置旁观者出生点。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_AUTO_CREATE_TEAMS, "&f根据岛屿颜色自动创建队伍。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_CREATE_TEAM, "&f创建队伍。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_REMOVE_TEAM, "&f按名称删除队伍。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_SPAWN, "&f设置队伍出生点。\n&f尚未设置出生点的队伍：\n{spawnNames}");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_BED, "&f设置队伍床的位置。\n&f无需指定队伍名称。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_SHOP, "&f设置队伍商店 NPC。\n&f无需指定队伍名称。\n&f仅在游戏开始后生成。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_UPGRADE, "&f设置队伍升级 NPC。\n&f无需指定队伍名称。\n&f仅在游戏开始后生成。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_KILL_DROPS, "&f设置击杀敌人后掉落物品的位置。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_ADD_GENERATOR_ADVANCED, "&f添加生成器出生点。\n&e/{command} addGenerator <Iron/ Gold/ Emerald, Diamond>\n&f站在钻石块上设置钻石生成器。\n&f站在绿宝石块上设置绿宝石生成器。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_ADD_GENERATOR_ASSISTED, "&f添加生成器出生点。\n&e站在队伍岛屿上设置队伍生成器。\n&f站在钻石块上设置钻石生成器。\n&f站在绿宝石块上设置绿宝石生成器。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_MAX_IN_TEAM, "&f设置每队最大人数。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_ARENA_GROUP, "&f设置竞技场分组。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SET_TYPE, "&f将竞技场加入分组。");
+        yml.addDefault(Messages.COMMAND_LIST_HOVER_SAVE, "&f保存竞技场并返回大厅。");
+        yml.addDefault(Messages.ARENA_LOAD_ALREADY_QUEUED, "&c尝试加载竞技场 {arena}，但它已在启用队列中。");
+        yml.addDefault(Messages.ARENA_LOAD_ALREADY_ENABLED, "&c尝试加载竞技场 {arena}，但它已启用。");
+        yml.addDefault(Messages.ARENA_LOAD_NO_TEAMS, "竞技场 {arena} 尚未设置任何队伍。");
+        yml.addDefault(Messages.ARENA_LOAD_NOT_ENOUGH_TEAMS, "&c竞技场 {arena} 至少需要设置两个队伍。");
+        yml.addDefault(Messages.ARENA_LOAD_WORLD_MISSING, "&c未找到名为 {arena} 的地图。");
+        yml.addDefault(Messages.ARENA_LOAD_INVALID_TEAM_COLOR, "&c竞技场 {arena} 的队伍 {team} 颜色无效。");
+        yml.addDefault(Messages.ARENA_LOAD_TEAM_SETTING_MISSING, "&c竞技场 {arena} 的队伍 {team} 尚未设置 {setting}。");
+        yml.addDefault(Messages.ARENA_LOAD_DIAMOND_GENERATOR_MISSING, "&c竞技场 {arena} 尚未设置钻石生成器。");
+        yml.addDefault(Messages.ARENA_LOAD_EMERALD_GENERATOR_MISSING, "&c竞技场 {arena} 尚未设置绿宝石生成器。");
+        yml.addDefault(Messages.ARENA_LOAD_WAITING_SPAWN_MISSING, "&c竞技场 {arena} 尚未设置等待出生点。");
+        yml.addDefault(Messages.SETUP_GUI_TITLE, "&8选择设置方式");
+        yml.addDefault(Messages.SETUP_GUI_ASSISTED_NAME, "&e&l引导式设置");
+        yml.addDefault(Messages.SETUP_GUI_ASSISTED_LORE, Arrays.asList("", "&a简单快速地设置！", "&7适合新手和想省事的管理员 :D", "", "&3精简设置选项。"));
+        yml.addDefault(Messages.SETUP_GUI_ADVANCED_NAME, "&c&l高级设置");
+        yml.addDefault(Messages.SETUP_GUI_ADVANCED_LORE, Arrays.asList("", "&a详细设置！", "&7适合熟悉配置的管理员 :D", "", "&3更多高级选项。"));
+        yml.addDefault(Messages.SETUP_LOADING, "&6 ▪ &7正在加载 {arena}");
+        yml.addDefault(Messages.SETUP_CANCELLED, "&6 ▪ &7已取消设置竞技场 {arena}！");
+        yml.addDefault(Messages.SETUP_TELEPORTED, "&a已将你传送到 &6{arena}&a 的出生点。");
+        yml.addDefault(Messages.SETUP_GREETING, "&a你好，{player}！");
+        yml.addDefault(Messages.SETUP_WAITING_SPAWN_PROMPT, "&f请设置等待出生点。");
+        yml.addDefault(Messages.SETUP_WAITING_SPAWN_EXPLANATION, "&f玩家将在此等待游戏开始。");
+        yml.addDefault(Messages.SETUP_WAITING_SPAWN_CLICK, "&9     ▪     &6点击此处设置等待大厅    &9 ▪");
+        yml.addDefault(Messages.SETUP_WAITING_SPAWN_HOVER, "&d点击设置等待出生点。");
+        yml.addDefault(Messages.SETUP_COMMAND_LIST_HINT, "&e或输入：&7/{command} 查看命令列表。");
+        yml.addDefault(Messages.SETUP_COMMAND_LIST_HOVER, "&f查看命令列表。");
+        yml.addDefault(Messages.SETUP_TEAM_GENERATOR_MARKER, "&6已为队伍 {teamColor}{team} 添加 {generator} 生成器。");
+        yml.addDefault(Messages.SETUP_TEAM_SPAWN_MARKER, "{teamColor}{team} &6出生点已设置");
+        yml.addDefault(Messages.SETUP_TEAM_BED_MARKER, "{teamColor}{team} &6床已设置");
+        yml.addDefault(Messages.SETUP_TEAM_SHOP_MARKER, "{teamColor}{team} &6商店已设置");
+        yml.addDefault(Messages.SETUP_TEAM_UPGRADE_MARKER, "{teamColor}{team} &6升级商店已设置");
+        yml.addDefault(Messages.SETUP_TEAM_KILL_DROPS_MARKER, "&6击杀掉落物 {team}");
+        yml.addDefault(Messages.SETUP_GENERATOR_MARKER, "&6{generator} 已设置");
+        yml.addDefault(Messages.SETUP_GENERATOR_IRON, "铁");
+        yml.addDefault(Messages.SETUP_GENERATOR_GOLD, "金");
+        yml.addDefault(Messages.SETUP_GENERATOR_EMERALD, "绿宝石");
+        yml.addDefault(Messages.SETUP_GENERATOR_DIAMOND, "钻石");
+        yml.addDefault(Messages.SETUP_AVAILABLE_TEAMS, "可用队伍：");
+        yml.addDefault(Messages.SETUP_START_FAILED, "&c无法启动设置流程。请检查控制台。");
+        yml.addDefault(Messages.VAULT_SUPPORT_MISSING, "&c缺少 Vault 支持！");
+        yml.addDefault(Messages.SHOP_VAULT_REQUIRED, "&4&l错误：此功能需要 Vault 支持！请安装 Vault 插件！");
+        yml.addDefault(Messages.SIGN_SAVED, "&a▪ &7已保存竞技场 {arena} 的告示牌。");
+        yml.addDefault(Messages.SIGN_NO_ARENAS, "&c▪ &7你还没有设置任何竞技场！");
+        yml.addDefault(Messages.PLUGIN_RELOAD_KICK, "BedWars1058 已重新加载！请勿重新加载插件。");
+        yml.addDefault(Messages.SHOP_HALLOWEEN_PUMPKIN_NAME, "&6&l万圣节快乐！");
+        yml.addDefault(Messages.HALLOWEEN_COBWEB_XP, "&6+{xp} 经验！");
         yml.addDefault(Messages.COMMAND_ECHO_USAGE, "{prefix}&c用法：/bw echo <消息>");
         yml.addDefault(Messages.COMMAND_ECHO_SENT, "{prefix}&a消息已发送至竞技场 {arena}");
         yml.addDefault(Messages.COMMAND_ECHO_NOT_IN_ARENA, "{prefix}&c你不在一个竞技场中。");
@@ -66,7 +421,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_NOT_PLAYER, "{prefix}&c该命令仅限玩家使用。");
         yml.addDefault(Messages.COMMAND_LANG_LIST_HEADER, "{prefix} &2可用的语言：");
         yml.addDefault(Messages.COMMAND_LANG_LIST_FORMAT, "&a▪  &7{iso} - &f{name}");
-        yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&用法：/lang &f&o<iso>");
+        yml.addDefault(Messages.COMMAND_LANG_USAGE, "{prefix}&7用法：/lang &f&o<iso>");
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_NOT_EXIST, "{prefix}&c该语言不存在！");
         yml.addDefault(Messages.COMMAND_LANG_SELECTED_SUCCESSFULLY, "{prefix}&a语言已设置！");
         yml.addDefault(Messages.COMMAND_LANG_USAGE_DENIED, "{prefix}&c你不能在游戏进行时修改语言。");
@@ -111,14 +466,13 @@ public class SimplifiedChinese extends Language {
                 "&e/party help &7- &b查看该提示",
                 "&e/party invite <玩家> &7- &b邀请一位玩家到你的队伍",
                 "&e/party leave &7- &b离开当前队伍",
-                "&e/party info &7- &bShow party members and owner",
-                "&e/party promote <player> &7- &bTransfer party ownership",
+                "&e/party info &7- &b查看队伍成员和队长",
+                "&e/party promote <player> &7- &b转让队长身份",
                 "&e/party remove <玩家> &7- &b将玩家移出队伍",
                 "&e/party accept <玩家> &7- &b接受队伍邀请",
-                "&e/party disband &7- &bD解散队伍")
+                "&e/party disband &7- &b解散队伍")
         );
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "{prefix}&e用法：&7/party invite <玩家>");
-        yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "{prefix}&7{player}&e不在线！");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "{prefix}&e已向&7{player}&e发送邀请&6。");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG, "{prefix}&b{player}&e邀请你加入队伍！ &o&7(点击接受)");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_CANNOT_INVITE_YOURSELF, "{prefix}&c你不可以邀请你自己！");
@@ -175,8 +529,9 @@ public class SimplifiedChinese extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                 "&f                                  &l起床战争", "",
                 "&e&l                            保护你的床并破坏敌人的床，",
-                "&e&l                        从资源点收集铁锭、金锭、绿宝石和钻石，",
-                "&e&l                        来购买强力装备和进行升级来使自己变强！",
+                "&e&l                        从资源点收集铁锭、金锭、",
+                "&e&l                        绿宝石和钻石，",
+                "&e&l                        来购买强力装备和进行升级来使自己变强！", "",
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.ARENA_JOIN_DENIED_SELECTOR, "{prefix}&c抱歉，你现在不能加入该游戏。右键来观赛！");
         yml.addDefault(Messages.ARENA_SPECTATE_DENIED_SELECTOR, "{prefix}&c抱歉，你现在不能观赛。左键来加入游戏！");
@@ -279,7 +634,8 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&l游戏结束！");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&l胜利！");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "{prefix}{TeamColor}{TeamName}&a赢得了这场游戏！");
-        yml.addDefault(Messages.GAME_END_TOP_PLAYER_CHAT, Arrays.asList("&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+        yml.addDefault(Messages.GAME_END_TOP_PLAYER_CHAT, Arrays.asList("",
+                "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                 "&f                                   &l起床战争", "", "{winnerFormat}", "", "",
                 "&6                      &6⭐ &l击杀第一名 &7- {topTeamColor}{topPlayerDisplayName} &7- &l{topValue}",
                 "&e                        &l击杀第二名 &7- {topTeamColor}{topPlayerDisplayName} &7- &l{topValue}",
@@ -351,7 +707,7 @@ public class SimplifiedChinese extends Language {
 
         // Start of Sidebar
         yml.addDefault(Messages.SCOREBOARD_LOBBY, Arrays.asList(
-                "&6&l起床战争,&4&l起&6&l床战争,&6&l起&4&l床&6&l战争,&6&l起床&4&l战&6&l争,&6&l起床战&4&l争,&6&l起床战争",
+                "&6&l起床战争,&4&l起&6&l床战争,&6&l起&4&l床&6&l战争,&6&l起床&4&l战&6&l争,&6&l起床战&4&l争,&6&l起床战争,&6&l起床战争,&6&l{poweredBy},&6&l{poweredBy},&6&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&f等级：{level}",
                 "",
                 "&f进度：&a{currentXp}&7/&b{requiredXp}",
@@ -366,7 +722,7 @@ public class SimplifiedChinese extends Language {
                 "", "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_WAITING, Arrays.asList(
-                "&f&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date} &8{server}",
                 "",
                 "&f地图：&a{map}",
@@ -381,9 +737,9 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_WAITING_SPEC, Arrays.asList(
-                "&f&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date} &8{server}",
-                "&o&7Spectating",
+                "&o&7正在观战",
                 "&f地图：&a{map}",
                 "",
                 "&f玩家数：&a{on}/{max}",
@@ -396,7 +752,7 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_STARTING, Arrays.asList(
-                "&f&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date} &8{server}",
                 "",
                 "&f地图：&a{map}",
@@ -411,9 +767,9 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_STARTING_SPEC, Arrays.asList(
-                "&f&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date} &8{server}",
-                "&o&7Spectating",
+                "&o&7正在观战",
                 "&f地图：&a{map}",
                 "",
                 "&f玩家数：&a{on}/{max}",
@@ -426,10 +782,10 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING, Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&f{nextEvent} - &a{time}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -446,10 +802,11 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC_ELIMINATED, Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -465,10 +822,11 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC, Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -487,9 +845,9 @@ public class SimplifiedChinese extends Language {
                 "&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&6Winner: {winnerTeamColor}{winnerTeamName} &6⭐",
+                "&6获胜者：{winnerTeamColor}{winnerTeamName} &6⭐",
                 "",
-                "&7&lTop Kills:",
+                "&7&l击杀榜：",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
@@ -506,9 +864,9 @@ public class SimplifiedChinese extends Language {
                 "&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&6Winner: {winnerTeamColor}{winnerTeamName} &6⭐",
+                "&6获胜者：{winnerTeamColor}{winnerTeamName} &6⭐",
                 "",
-                "&7&lTop Kills:",
+                "&7&l击杀榜：",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
@@ -525,9 +883,9 @@ public class SimplifiedChinese extends Language {
                 "&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&6Winner: {winnerTeamColor}{winnerTeamName} &6⭐",
+                "&6获胜者：{winnerTeamColor}{winnerTeamName} &6⭐",
                 "",
-                "&7&lTop Kills:",
+                "&7&l击杀榜：",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
@@ -544,9 +902,9 @@ public class SimplifiedChinese extends Language {
                 "&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&lBED WARS,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&lBED WARS,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&6Winner: {winnerTeamColor}{winnerTeamName} &6⭐",
+                "&6获胜者：{winnerTeamColor}{winnerTeamName} &6⭐",
                 "",
-                "&7&lTop Kills:",
+                "&7&l击杀榜：",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
                 "&f{topTeamColor}{topPlayerDisplayName}&7 - &l{topValue}",
@@ -560,10 +918,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING.replaceFirst("Default", "Doubles"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&f{nextEvent} - &a{time}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -578,10 +936,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC.replaceFirst("Default", "Doubles"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -595,10 +953,10 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC_ELIMINATED.replaceFirst("Default", "Doubles"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -613,10 +971,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING.replaceFirst("Default", "3v3v3v3"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&f{nextEvent} - &a{time}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -635,10 +993,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC.replaceFirst("Default", "3v3v3v3"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -653,10 +1011,10 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC_ELIMINATED.replaceFirst("Default", "3v3v3v3"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -675,10 +1033,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING.replaceFirst("Default", "4v4v4v4"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
                 "",
-                "&f{nextEvent} - &a{time}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -693,10 +1051,10 @@ public class SimplifiedChinese extends Language {
         );
 
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC.replaceFirst("Default", "4v4v4v4"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -707,10 +1065,10 @@ public class SimplifiedChinese extends Language {
                 "&e{serverIp}")
         );
         yml.addDefault(Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC_ELIMINATED.replaceFirst("Default", "4v4v4v4"), Arrays.asList(
-                "&e&l起床战争",
+                "&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l起床战争,&f&l{poweredBy},&f&l{poweredBy},&f&l{poweredBy},&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l起床战争,&e&l{poweredBy},&e&l{poweredBy},&e&l{poweredBy}",
                 "&7{date}",
-                "&o&7Spectating {spectatorTarget}",
-                "&f{nextEvent} - &a{time}",
+                "&o&7正在观战 {spectatorTarget}",
+                "&f{nextEvent}：&a{time}",
                 "",
                 "{team}",
                 "{team}",
@@ -736,8 +1094,8 @@ public class SimplifiedChinese extends Language {
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_LOBBY_FOOTER, List.of(
                 "",
-                "&fThere are {on} players on this lobby",
-                "Powered by {poweredBy},&a{serverIp}",
+                "&f大厅玩家数：{on}",
+                "由 {poweredBy} 提供支持,&a{serverIp}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_LOBBY_PREFIX, List.of("{vPrefix}"));
@@ -750,11 +1108,11 @@ public class SimplifiedChinese extends Language {
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_WAITING_FOOTER, List.of(
                 "",
-                "Waiting for more players,Waiting for more players.,Waiting for more players.., Waiting for more players...",
+                "等待更多玩家,等待更多玩家.,等待更多玩家.., 等待更多玩家...",
                 "&f{on}&a/&f{max}",
                 "",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_WAITING_PREFIX, List.of("{vPrefix}"));
@@ -767,12 +1125,12 @@ public class SimplifiedChinese extends Language {
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_WAITING_FOOTER_SPEC, List.of(
                 "",
-                "&7&oYou are spectating",
-                "Waiting for more players,Waiting for more players.,Waiting for more players.., Waiting for more players...",
+                "&7&o你正在观战",
+                "等待更多玩家,等待更多玩家.,等待更多玩家.., 等待更多玩家...",
                 "&f{on}&a/&f{max}",
                 "",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_WAITING_PREFIX_SPEC, List.of("{vPrefix}"));
@@ -782,16 +1140,16 @@ public class SimplifiedChinese extends Language {
                 "                                                                                                        ",
                 "&a{serverIp}",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_STARTING_FOOTER, List.of(
                 "",
-                "&fStarting in &a{time} &fseconds,&fStarting in &a{time} &fseconds.,&fStarting in &a{time} &fseconds..,&fStarting in &a{time} &fseconds..",
+                "&f&a{time}&f 秒后开始,&f&a{time}&f 秒后开始.,&f&a{time}&f 秒后开始..,&f&a{time}&f 秒后开始..",
                 "&f{on}&a/&f{max}",
                 "",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_STARTING_PREFIX, List.of("{vPrefix} "));
@@ -801,16 +1159,17 @@ public class SimplifiedChinese extends Language {
                 "                                                                                                        ",
                 "&a{serverIp}",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
-                ""
+                "&7地图：&f{map} &7模式：&f{group}",
+                "",
+                "&7&o你正在观战"
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_STARTING_FOOTER_SPEC, List.of(
                 "",
-                "&fStarting in &a{time} &fseconds,&fStarting in &a{time} &fseconds.,&fStarting in &a{time} &fseconds..,&fStarting in &a{time} &fseconds..",
+                "&f&a{time}&f 秒后开始,&f&a{time}&f 秒后开始.,&f&a{time}&f 秒后开始..,&f&a{time}&f 秒后开始..",
                 "&f{on}&a/&f{max}",
                 "",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_STARTING_PREFIX_SPEC, List.of("{vPrefix} "));
@@ -820,16 +1179,16 @@ public class SimplifiedChinese extends Language {
                 "                                                                                                        ",
                 "&a{serverIp}",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 "",
-                "{nextEvent} in {time}",
+                "{nextEvent}：{time}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_FOOTER, List.of(
                 "",
-                "&fYou are playing on the {teamColor}{teamName} Team",
+                "&f你正在{teamColor}{teamName}队伍中",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_PREFIX, List.of("{teamColor}{teamName} "));
@@ -839,54 +1198,55 @@ public class SimplifiedChinese extends Language {
                 "                                                                                                        ",
                 "&a{serverIp}",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 "",
-                "{nextEvent} in {time}",
+                "{nextEvent}：{time}",
                 "",
-                "&7&oAYou've been eliminated,&f&oAYou've been eliminated"
+                "&7&o你已被淘汰,&f&o你已被淘汰"
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_ELM_FOOTER, List.of(
                 "",
-                "&fYou have played in the {teamColor}{teamName} Team",
+                "&f你曾在{teamColor}{teamName}队伍中游戏",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_ELM_PREFIX, List.of("&f&oSpectator "));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_ELM_SUFFIX, List.of(" &c&oEliminated {teamColor}&o{teamName}", " {teamColor}&oEliminated {vPrefix}", "{teamColor}&oEliminated {level}"));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_ELM_PREFIX, List.of("&f&o观战者 "));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_ELM_SUFFIX, List.of(" &c&o已淘汰 {teamColor}&o{teamName}", " {teamColor}&o已淘汰 {vPrefix}", "{teamColor}&o已淘汰 {level}"));
         // spectator - playing state
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_SPEC_HEADER, List.of(
                 "                                                                                                        ",
                 "&a{serverIp}",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 "",
-                "{nextEvent} in {time}",
-                ""
+                "{nextEvent}：{time}",
+                "",
+                "&7&o你正在观战"
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_SPEC_FOOTER, List.of(
                 "",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_SPEC_PREFIX, List.of("&f&oSpectator "));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_SPEC_PREFIX, List.of("&f&o观战者 "));
         yml.addDefault(Messages.FORMATTING_SB_TAB_PLAYING_SPEC_SUFFIX, List.of(" {vPrefix}", " {level}"));
         // winner alive - restarting state
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN1_HEADER, List.of(
                 "                                                                                                        ",
-                "&6⭐ {winnerTeamColor}&lYour team won the game! &6⭐",
-                "&7{date}", "&7Map: &f{map} &7Mode: &f{group}",
+                "&6⭐ {winnerTeamColor}&l你的队伍赢得了游戏！ &6⭐",
+                "&7{date}", "&7地图：&f{map} &7模式：&f{group}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN1_FOOTER, List.of(
                 "",
-                "&6&lYou won in the {teamColor}&l{teamName} Team&6&l!,&6&lYou won in the {teamColor}&l{teamName} Team&6&l!,&f&lYou won in the {teamColor}&l{teamName} Team&f&l!",
-                "&7Statistics from this match",
-                "&eKills: &f{kills} &8| &eFinal Kills: &f{finalKills} &8| &eBeds Destroyed: &f{beds} &8| &eDeaths: &f{deaths},&eKills: &7{kills} &8| &eFinal Kills: &7{finalKills} &8| &eBeds Destroyed: &7{beds} &8| &eDeaths: &7{deaths}",
+                "&6&l你所在的{teamColor}&l{teamName}队伍获胜&6&l!,&6&l你所在的{teamColor}&l{teamName}队伍获胜&6&l!,&f&l你所在的{teamColor}&l{teamName}队伍获胜&f&l!",
+                "&7本场比赛统计",
+                "&e击杀： &f{kills} &8| &e最终击杀： &f{finalKills} &8| &e破坏床： &f{beds} &8| &e死亡： &f{deaths},&e击杀： &7{kills} &8| &e最终击杀： &7{finalKills} &8| &e破坏床： &7{beds} &8| &e死亡： &7{deaths}",
                 "",
-                "&fThanks for playing {player}!",
+                "&f感谢你的游玩 {player}!",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN1_PREFIX, List.of("&6&l⭐ {teamColor}{teamName} "));
@@ -894,67 +1254,67 @@ public class SimplifiedChinese extends Language {
         // winner dead - restarting state
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN2_HEADER, List.of(
                 "                                                                                                        ",
-                "&6⭐ {winnerTeamColor}&l{winnerTeamName} Team won the game! &6⭐",
+                "&6⭐ {winnerTeamColor}&l{winnerTeamName}队伍赢得了游戏！ &6⭐",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN2_FOOTER, List.of(
                 "",
-                "&6&lYou won in the {teamColor}&l{teamName} Team&6&l!,&6&lYou won in the {teamColor}&l{teamName} Team&6&l!,&f&lYou won in the {teamColor}&l{teamName} Team&f&l!",
-                "&7Statistics from this match",
-                "&eKills: &f{kills} &8| &eFinal Kills: &f{finalKills} &8| &eBeds Destroyed: &f{beds} &8| &eDeaths: &f{deaths},&eKills: &7{kills} &8| &eFinal Kills: &7{finalKills} &8| &eBeds Destroyed: &7{beds} &8| &eDeaths: &7{deaths}",
+                "&6&l你所在的{teamColor}&l{teamName}队伍获胜&6&l!,&6&l你所在的{teamColor}&l{teamName}队伍获胜&6&l!,&f&l你所在的{teamColor}&l{teamName}队伍获胜&f&l!",
+                "&7本场比赛统计",
+                "&e击杀： &f{kills} &8| &e最终击杀： &f{finalKills} &8| &e破坏床： &f{beds} &8| &e死亡： &f{deaths},&e击杀： &7{kills} &8| &e最终击杀： &7{finalKills} &8| &e破坏床： &7{beds} &8| &e死亡： &7{deaths}",
 
-                "&fThanks for playing {player}!",
+                "&f感谢你的游玩 {player}!",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN2_PREFIX, List.of("&6&l⭐ {teamColor}{teamName} "));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN2_SUFFIX, List.of(" {vPrefix}", " &c&oEliminated", " {level}", " &c&oEliminated"));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_WIN2_SUFFIX, List.of(" {vPrefix}", " &c&o已淘汰", " {level}", " &c&o已淘汰"));
         // loser - restarting state
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_ELM_HEADER, List.of(
                 "                                                                                                        ",
-                "&6⭐ {winnerTeamColor}&l{winnerTeamName} Team won the game! &6⭐",
+                "&6⭐ {winnerTeamColor}&l{winnerTeamName}队伍赢得了游戏！ &6⭐",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_ELM_FOOTER, List.of(
                 "",
-                "&fYou have lost in the {teamColor}{teamName} Team",
-                "&7Statistics from this match",
-                "&eKills: &f{kills} &8| &eFinal Kills: &f{finalKills} &8| &eBeds Destroyed: &f{beds} &8| &eDeaths: &f{deaths},&eKills: &7{kills} &8| &eFinal Kills: &7{finalKills} &8| &eBeds Destroyed: &7{beds} &8| &eDeaths: &7{deaths}",
-                "&fThanks for playing {player}!",
+                "&f你所在的{teamColor}{teamName}队伍已失败",
+                "&7本场比赛统计",
+                "&e击杀： &f{kills} &8| &e最终击杀： &f{finalKills} &8| &e破坏床： &f{beds} &8| &e死亡： &f{deaths},&e击杀： &7{kills} &8| &e最终击杀： &7{finalKills} &8| &e破坏床： &7{beds} &8| &e死亡： &7{deaths}",
+                "&f感谢你的游玩 {player}!",
                 "&a{serverIp}",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_ELM_PREFIX, List.of("{teamColor}{teamName} "));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_ELM_SUFFIX, List.of(" {vPrefix}", " &c&oEliminated", " {level}", " &c&oEliminated"));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_ELM_SUFFIX, List.of(" {vPrefix}", " &c&o已淘汰", " {level}", " &c&o已淘汰"));
         // spectator - restarting state
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_SPEC_HEADER, List.of(
                 "                                                                                                        ",
                 "&a{serverIp}",
-                "&6⭐ {winnerTeamColor}&l{winnerTeamName} Team won the game! &6⭐",
+                "&6⭐ {winnerTeamColor}&l{winnerTeamName}队伍赢得了游戏！ &6⭐",
                 "&7{date}",
-                "&7Map: &f{map} &7Mode: &f{group}",
+                "&7地图：&f{map} &7模式：&f{group}",
                 "",
-                "&fThanks for playing {player}!",
+                "&f感谢你的游玩 {player}!",
                 ""
         ));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_SPEC_FOOTER, List.of(
                 "",
-                "&fPowered by {poweredBy}",
+                "&f由 {poweredBy} 提供支持",
                 ""
         ));
-        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_SPEC_PREFIX, List.of("&f&oSpectator "));
+        yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_SPEC_PREFIX, List.of("&f&o观战者 "));
         yml.addDefault(Messages.FORMATTING_SB_TAB_RESTARTING_SPEC_SUFFIX, List.of(" {vPrefix}", " {level}"));
         // end of tab
 
         yml.addDefault(Messages.SHOP_INDEX_NAME, "&8快速购买");
         yml.addDefault(Messages.SHOP_QUICK_ADD_NAME, "&8添加到快速购买...");
-        yml.addDefault(Messages.SHOP_INSUFFICIENT_MONEY, "{prefix}&c你没有足够的{currency}！ 还需要 {amount} 个{currency}！");
+        yml.addDefault(Messages.SHOP_INSUFFICIENT_MONEY, "{prefix}&c你没有足够的{currency}！ 还需要 {amount} 个！");
         yml.addDefault(Messages.SHOP_INSUFFICIENT_INVENTORY_SPACE, "{prefix}&c背包已满！");
         yml.addDefault(Messages.SHOP_NEW_PURCHASE, "{prefix}&a购买&6{item}");
         yml.addDefault(Messages.SHOP_ALREADY_BOUGHT, "{prefix}&c你已经购买过了！");
@@ -1046,8 +1406,7 @@ public class SimplifiedChinese extends Language {
                 "&7喝下后 60 秒内不会触发陷阱", "", "{quick_buy}", "{buy_status}"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}海绵", Arrays.asList("&7花费：{cost} {currency}", "",
                 "&7用来吸水不错", "", "{quick_buy}", "{buy_status}"));
-        addContentMessages(yml, "Compact Pop-up Tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}袖珍弹出塔", Arrays.asList("&花费: {cost} {currency}", "",
-                "&7放置一个袖珍弹出塔", "&7塔防！", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "Compact Pop-up Tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}袖珍弹出塔", Arrays.asList("&7花费: {cost} {currency}", "", "&7放置一个袖珍弹出塔", "&7塔防！", "", "{quick_buy}", "{buy_status}"));
 
         yml.addDefault(Messages.MEANING_NO_TRAP, "无陷阱！");
         yml.addDefault(Messages.FORMAT_SPECTATOR_TARGET, "{targetTeamColor}{targetDisplayName}");
@@ -1064,7 +1423,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_UPGRADE_BOUGHT_CHAT, "&a{player}购买了&6{upgradeName}");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "forge").replace("{tier}", "tier-1"), "{color}铁锭熔炉");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "forge"),
-                Arrays.asList("&7增加岛上资源的生成速度", "", "{tier_1_color}等级 1：+50% 生成速率, &b{tier_1_cost} {tier_1_currency}",
+                Arrays.asList("&7增加岛上资源的生成速度", "&7在你的岛屿上。", "", "{tier_1_color}等级 1：+50% 生成速率, &b{tier_1_cost} {tier_1_currency}",
                         "{tier_2_color}等级 2：+100% 生成速率，&b{tier_2_cost} {tier_2_currency}",
                         "{tier_3_color}等级 3：生成绿宝石，&b{tier_3_cost} {tier_3_currency}",
                         "{tier_4_color}等级 4：+200% 生成速率，&b{tier_4_cost} {tier_4_currency}", ""));
@@ -1072,54 +1431,53 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "forge").replace("{tier}", "tier-3"), "{color}绿宝石熔炉");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "forge").replace("{tier}", "tier-4"), "{color}无尽熔炉");
         yml.addDefault(Messages.UPGRADES_CATEGORY_ITEM_NAME_PATH + "traps", "&e购买陷阱");
-        yml.addDefault(Messages.UPGRADES_CATEGORY_ITEM_LORE_PATH + "traps", Arrays.asList("&7已购买的陷阱将从右边进入队列", "", "&e点击查看！"));
+        yml.addDefault(Messages.UPGRADES_CATEGORY_ITEM_LORE_PATH + "traps", Arrays.asList("&7已购买的陷阱将会", "&7在右侧排队。", "", "&e点击查看！"));
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "swords").replace("{tier}", "tier-1"), "{color}锋利附魔");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "swords"),
-                Arrays.asList("&7队伍的所有剑和斧获得锋利 I！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
+                Arrays.asList("&7你的队伍将永久获得", "&7所有剑的锋利附魔 I，以及", "&7斧的锋利附魔 I！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "armor").replace("{tier}", "tier-1"), "{color}护甲强化 I");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "armor"),
-                Arrays.asList("&7队伍的所有护甲获得保护附魔！", "", "{tier_1_color}等级 1：保护 I， &b{tier_1_cost} {tier_1_currency}",
-                        "{tier_2_color}等级 2：保护 II，&b{tier_2_cost} {tier_2_currency}",
-                        "{tier_3_color}等级 3：保护 III，&b{tier_3_cost} {tier_3_currency}",
+                Arrays.asList("&7你的队伍将永久获得", "&7所有护甲的保护附魔！", "", "{tier_1_color}等级 1：保护 I， &b{tier_1_cost} {tier_1_currency}",
+                        "{tier_2_color}等级 2：保护 II，&b{tier_2_cost} {tier_2_currency}", "{tier_3_color}等级 3：保护 III，&b{tier_3_cost} {tier_3_currency}",
                         "{tier_4_color}等级 4：保护 IV，&b{tier_4_cost} {tier_4_currency}", ""));
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "armor").replace("{tier}", "tier-2"), "{color}护甲强化 II");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "armor").replace("{tier}", "tier-3"), "{color}护甲强化 III");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "armor").replace("{tier}", "tier-4"), "{color}护甲强化 IV");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "miner").replace("{tier}", "tier-1"), "{color}疯狂矿工 I");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "miner"),
-                Arrays.asList("&7队伍获得急迫效果。", "", "{tier_1_color}等级 1：急迫 I, &b{tier_1_cost} {tier_1_currency}",
+                Arrays.asList("&7你队伍中的所有玩家", "&7将永久获得急迫效果。", "", "{tier_1_color}等级 1：急迫 I, &b{tier_1_cost} {tier_1_currency}",
                         "{tier_2_color}等级 2：急迫 II, &b{tier_2_cost} {tier_2_currency}", ""));
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "miner").replace("{tier}", "tier-2"), "{color}疯狂矿工 II");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "heal-pool").replace("{tier}", "tier-1"), "{color}治愈池");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "heal-pool"),
-                Arrays.asList("&7在基地附近生成治愈池！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
+                Arrays.asList("&7在你的基地周围", "&7生成治愈池！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "dragon").replace("{tier}", "tier-1"), "{color}末影龙升级");
-        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "dragon").replace("{tier}", "tier-1"),
-                Arrays.asList("&7在死斗时你的队伍会有 2 条而不是 1 条龙！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "dragon"),
+                Arrays.asList("&7你的队伍将拥有 2 条龙", "&7而不是 1 条龙，在死斗期间！", "", "{tier_1_color}花费：&b{tier_1_cost} {tier_1_currency}", ""));
         yml.addDefault(Messages.UPGRADES_SEPARATOR_ITEM_NAME_PATH + "glass", "&8⬆&7可购买");
         yml.addDefault(Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + "glass", Collections.singletonList("&8⬇&7陷阱队列"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_NAME_PATH + "first", "{color}陷阱 #1：{name}");
-        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "first", Collections.singletonList("&7第一个进入你基地的敌人将触发该陷阱！"));
+        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "first", Arrays.asList("&7第一个进入你基地的敌人", "&7将触发这个", "&7陷阱！"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE2_PATH + "first",
-                Arrays.asList("", "&7下个购买的陷阱将在此进入队列", "&7陷阱的花费将会随着队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
+                Arrays.asList("", "&7下个购买的陷阱将在此", "&7进入队列。", "&7陷阱的花费将会随着", "&7队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_NAME_PATH + "second", "{color}陷阱 #2：{name}");
-        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "second", Collections.singletonList("&7第二个进入你基地的敌人将触发该陷阱！"));
+        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "second", Arrays.asList("&7第二个进入你基地的敌人", "&7将触发这个", "&7陷阱！"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE2_PATH + "second",
-                Arrays.asList("", "&7下个购买的陷阱将在此进入队列", "&7陷阱的花费将会随着队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
+                Arrays.asList("", "&7下个购买的陷阱将在此", "&7进入队列。", "&7陷阱的花费将会随着", "&7队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_NAME_PATH + "third", "{color}陷阱 #3：{name}");
-        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "third", Collections.singletonList("&7第三个进入你基地的敌人将触发该陷阱！"));
+        yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + "third", Arrays.asList("&7第三个进入你基地的敌人", "&7将触发这个", "&7陷阱！"));
         yml.addDefault(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE2_PATH + "third",
-                Arrays.asList("", "&7下个购买的陷阱将在此进入队列", "&7陷阱的花费将会随着队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
+                Arrays.asList("", "&7下个购买的陷阱将在此", "&7进入队列。", "&7陷阱的花费将会随着", "&7队列长度增加", "", "&7下个陷阱花费：&b{cost} {currency}"));
         yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + "1", "{color}这是个陷阱！");
-        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "1", Arrays.asList("&7造成5秒失明和缓慢", ""));
+        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "1", Arrays.asList("&7造成5秒失明和缓慢", "&7持续 5 秒。", ""));
         yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + "2", "{color}反击陷阱");
-        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "2", Arrays.asList("&7给予基地附近的队友 15 秒速度 I。", ""));
+        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "2", Arrays.asList("&7给予基地附近的队友", "&7持续 15 秒速度 I。", ""));
         yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + "3", "{color}报警陷阱");
-        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "3", Arrays.asList("&7显示隐身的敌人及其名字和队伍。", ""));
+        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "3", Arrays.asList("&7显示隐身的敌人，", "&7以及他们的名字和队伍。", ""));
         yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + "4", "{color}挖掘疲劳陷阱");
-        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "4", Arrays.asList("&7造成 10 秒挖掘疲劳。", ""));
+        yml.addDefault(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + "4", Arrays.asList("&7造成 10 秒", "&7挖掘疲劳。", ""));
         yml.addDefault(Messages.UPGRADES_SEPARATOR_ITEM_NAME_PATH + "back", "&a返回");
-        yml.addDefault(Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + "back", Collections.singletonList("&7回到升级和陷阱菜单"));
+        yml.addDefault(Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + "back", Collections.singletonList("&7回到队伍升级菜单"));
         yml.addDefault(Messages.UPGRADES_CATEGORY_GUI_NAME_PATH + "traps", "&8将陷阱加入队列");
         yml.addDefault(Messages.UPGRADES_TRAP_QUEUE_LIMIT, "&c陷阱队列已满！");
         yml.addDefault(Messages.UPGRADES_TRAP_DEFAULT_MSG, "&c&l{trap}被触发了！");
@@ -1128,6 +1486,9 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_MSG + "3", "&c&l报警陷阱被{color}&l{team}的&7&l{player}&c&l触发了！");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&l警报！！！");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "{color}{team}&f触发了陷阱！");
+        yml.addDefault(Messages.CONFIG_ITEM_NAME_NOT_SET, "&c名称未设置");
+        yml.addDefault(Messages.CONFIG_ITEM_LORE_NOT_SET, Collections.singletonList("&c说明未设置"));
+        yml.addDefault(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT, "&8队伍升级");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));

@@ -200,14 +200,14 @@ public class Arena implements IArena {
                 if (mm.getArenaName().equalsIgnoreCase(name)) {
                     plugin.getLogger().severe("Tried to load arena " + name + " but it is already in the enable queue.");
                     if (p != null)
-                        p.sendMessage(ChatColor.RED + "Tried to load arena " + name + " but it is already in the enable queue.");
+                        p.sendMessage(getMsg(p, Messages.ARENA_LOAD_ALREADY_QUEUED).replace("{arena}", name));
                     return;
                 }
             }
             if (getArenaByName(name) != null) {
                 plugin.getLogger().severe("Tried to load arena " + name + " but it is already enabled.");
                 if (p != null)
-                    p.sendMessage(ChatColor.RED + "Tried to load arena " + name + " but it is already enabled.");
+                    p.sendMessage(getMsg(p, Messages.ARENA_LOAD_ALREADY_ENABLED).replace("{arena}", name));
                 return;
             }
         }
@@ -222,12 +222,12 @@ public class Arena implements IArena {
 
         yml = cm.getYml();
         if (yml.get("Team") == null) {
-            if (p != null) p.sendMessage("You didn't set any team for arena: " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_NO_TEAMS).replace("{arena}", name));
             plugin.getLogger().severe("You didn't set any team for arena: " + name);
             return;
         }
         if (yml.getConfigurationSection("Team").getKeys(false).size() < 2) {
-            if (p != null) p.sendMessage("§cYou must set at least 2 teams on: " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_NOT_ENOUGH_TEAMS).replace("{arena}", name));
             plugin.getLogger().severe("You must set at least 2 teams on: " + name);
             return;
         }
@@ -246,7 +246,7 @@ public class Arena implements IArena {
 
 
         if (!BedWars.getAPI().getRestoreAdapter().isWorld(name)) {
-            if (p != null) p.sendMessage(ChatColor.RED + "There isn't any map called " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_WORLD_MISSING).replace("{arena}", name));
             plugin.getLogger().log(Level.WARNING, "There isn't any map called " + name);
             return;
         }
@@ -259,28 +259,28 @@ public class Arena implements IArena {
             try {
                 TeamColor.valueOf(colorS);
             } catch (Exception e) {
-                if (p != null) p.sendMessage("§cInvalid color at team: " + team + " in arena: " + name);
+                if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_INVALID_TEAM_COLOR).replace("{team}", team).replace("{arena}", name));
                 plugin.getLogger().severe("Invalid color at team: " + team + " in arena: " + name);
                 error = true;
             }
             for (String stuff : Arrays.asList("Color", "Spawn", "Bed", "Shop", "Upgrade", "Iron", "Gold")) {
                 if (yml.get("Team." + team + "." + stuff) == null) {
-                    if (p != null) p.sendMessage("§c" + stuff + " not set for " + team + " team on: " + name);
+                    if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_TEAM_SETTING_MISSING).replace("{setting}", stuff).replace("{team}", team).replace("{arena}", name));
                     plugin.getLogger().severe(stuff + " not set for " + team + " team on: " + name);
                     error = true;
                 }
             }
         }
         if (yml.get("generator.Diamond") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Diamond generator on: " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_DIAMOND_GENERATOR_MISSING).replace("{arena}", name));
             plugin.getLogger().severe("There isn't set any Diamond generator on: " + name);
         }
         if (yml.get("generator.Emerald") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Emerald generator on: " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_EMERALD_GENERATOR_MISSING).replace("{arena}", name));
             plugin.getLogger().severe("There isn't set any Emerald generator on: " + name);
         }
         if (yml.get("waiting.Loc") == null) {
-            if (p != null) p.sendMessage("§cWaiting spawn not set on: " + name);
+            if (p != null) p.sendMessage(getMsg(p, Messages.ARENA_LOAD_WAITING_SPAWN_MISSING).replace("{arena}", name));
             plugin.getLogger().severe("Waiting spawn not set on: " + name);
             return;
         }
@@ -1209,7 +1209,7 @@ public class Arena implements IArena {
         if (getPlayingTask() != null) getPlayingTask().cancel();
         plugin.getLogger().log(Level.WARNING, "Disabling arena: " + getArenaName());
         for (Player inWorld : getWorld().getPlayers()) {
-            inWorld.kickPlayer("You're not supposed to be here.");
+            inWorld.kickPlayer(getMsg(inWorld, Messages.ARENA_UNEXPECTED_PLAYER_KICK));
         }
         BedWars.getAPI().getRestoreAdapter().onDisable(this);
         Bukkit.getPluginManager().callEvent(new ArenaDisableEvent(getArenaName(), getWorldName()));
@@ -1232,7 +1232,7 @@ public class Arena implements IArena {
         plugin.getLogger().log(Level.FINE, "Restarting arena: " + getArenaName());
         Bukkit.getPluginManager().callEvent(new ArenaRestartEvent(getArenaName(), getWorldName()));
         for (Player inWorld : getWorld().getPlayers()) {
-            inWorld.kickPlayer("You're not supposed to be here.");
+            inWorld.kickPlayer(getMsg(inWorld, Messages.ARENA_UNEXPECTED_PLAYER_KICK));
         }
         BedWars.getAPI().getRestoreAdapter().onRestart(this);
         destroyData();

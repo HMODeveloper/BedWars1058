@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
 import org.bukkit.command.CommandSender;
@@ -48,20 +50,20 @@ public class SetMaxInTeam extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null){
-            s.sendMessage("§c ▪ §7You're not in a setup session!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_NOT_IN_SESSION));
             return true;
         }
         if (args.length == 0) {
-            p.sendMessage("§c▪ §7Usage: /" + mainCmd + " setMaxInTeam <int>");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_MAX_IN_TEAM_USAGE).replace("{command}", mainCmd));
         } else {
             try {
                 Integer.parseInt(args[0]);
             } catch (Exception ex) {
-                p.sendMessage("§c▪ §7Usage: /" + mainCmd + " setMaxInTeam <int>");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_MAX_IN_TEAM_USAGE).replace("{command}", mainCmd));
                 return true;
             }
             ss.getConfig().set("maxInTeam", Integer.valueOf(args[0]));
-            p.sendMessage("§6 ▪ §7Max in team set!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_MAX_IN_TEAM_SET));
         }
         return true;
     }

@@ -21,8 +21,8 @@ public class CmdEchoAll extends SubCommand {
         super(parent, name);
         setPriority(23);
         showInList(true);
-        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName() + " §8- §eSend message to all arenas",
-                "/" + getParent().getName() + " " + getSubCommandName(), "§fSend a message to all players in all arenas.\n§fUsage: /bw echoall <message>"));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_ECHOALL_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_ECHOALL_HOVER).replace("{command}", getParent().getName())));
     }
 
     @Override
@@ -42,22 +42,20 @@ public class CmdEchoAll extends SubCommand {
             messageBuilder.append(arg).append(" ");
         }
         String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString().trim());
-        String prefix = "§8[§cOperator§8] §f";
-
         for (IArena arena : Arena.getArenas()) {
-            sendMessageToArena(arena, prefix, message);
+            sendMessageToArena(arena, message);
         }
         s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_ECHOALL_SENT));
 
         return true;
     }
 
-    private void sendMessageToArena(IArena arena, String prefix, String message) {
+    private void sendMessageToArena(IArena arena, String message) {
         for (Player player : arena.getPlayers()) {
-            player.sendMessage(prefix + message);
+            player.sendMessage(Language.getMsg(player, Messages.COMMAND_ECHO_PREFIX) + message);
         }
         for (Player spectator : arena.getSpectators()) {
-            spectator.sendMessage(prefix + message);
+            spectator.sendMessage(Language.getMsg(spectator, Messages.COMMAND_ECHO_PREFIX) + message);
         }
     }
 

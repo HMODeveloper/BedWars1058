@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
@@ -51,30 +53,30 @@ public class WaitingPos extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null){
-            s.sendMessage("§c ▪ §7You're not in a setup session!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_NOT_IN_SESSION));
             return true;
         }
         if (args.length == 0) {
-            p.sendMessage("§c▪ §7Usage: /" + mainCmd + " "+getSubCommandName()+" 1 or 2");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_USAGE).replace("{command}", mainCmd).replace("{subcommand}", getSubCommandName()));
         } else {
             if (args[0].equalsIgnoreCase("1") || args[0].equalsIgnoreCase("2")) {
-                p.sendMessage("§6 ▪ §7Pos " + args[0] + " set!");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_SET).replace("{position}", args[0]));
                 ss.getConfig().saveArenaLoc("waiting.Pos" + args[0], p.getLocation());
                 ss.getConfig().reload();
                 if (ss.getConfig().getYml().get("waiting.Pos1") == null){
-                    p.sendMessage("§c ▪ §7Set the remaining position:");
-                    p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/"+ BedWars.mainCmd+" waitingPos 1", "§dSet pos 1", "/"+getParent().getName()+" waitingPos 1", ClickEvent.Action.RUN_COMMAND));
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_REMAINING));
+                    p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "1"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "1"), "/"+getParent().getName()+" waitingPos 1", ClickEvent.Action.RUN_COMMAND));
                 } else if (ss.getConfig().getYml().get("waiting.Pos2") == null){
-                    p.sendMessage("§c ▪ §7Set the remaining position:");
-                    p.spigot().sendMessage(Misc.msgHoverClick("§c ▪ §7/"+ BedWars.mainCmd+" waitingPos 2", "§dSet pos 2", "/"+getParent().getName()+" waitingPos 2", ClickEvent.Action.RUN_COMMAND));
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_REMAINING));
+                    p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION).replace("{command}", BedWars.mainCmd).replace("{position}", "2"), Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_OPTION_HOVER).replace("{position}", "2"), "/"+getParent().getName()+" waitingPos 2", ClickEvent.Action.RUN_COMMAND));
                 }
             } else {
-                p.sendMessage("§c▪ §7Usage: /" + mainCmd + " "+getSubCommandName()+" 1 or 2");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_USAGE).replace("{command}", mainCmd).replace("{subcommand}", getSubCommandName()));
             }
         }
         if (!((ss.getConfig().getYml().get("waiting.Pos1") == null || ss.getConfig().getYml().get("waiting.Pos2") == null))){
             Bukkit.dispatchCommand(p, BedWars.mainCmd+" cmds");
-            s.sendMessage("§6 ▪ §7Set teams spawn if you didn't!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_WAITING_POS_TEAMS_REMINDER));
         }
         return true;
     }

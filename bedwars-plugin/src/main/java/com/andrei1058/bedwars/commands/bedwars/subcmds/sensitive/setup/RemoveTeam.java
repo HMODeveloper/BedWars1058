@@ -25,6 +25,8 @@ import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
@@ -56,49 +58,51 @@ public class RemoveTeam extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage("§c ▪ §7You're not in a setup session!");
             return false;
         }
         if (args.length < 1) {
-            p.sendMessage(ss.getPrefix() + ChatColor.RED + "Usage: /" + mainCmd + " removeTeam <teamName>");
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_USAGE).replace("{command}", mainCmd));
             if (ss.getConfig().getYml().get("Team") != null) {
-                p.sendMessage(ss.getPrefix() + "Available teams: ");
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_AVAILABLE_TEAMS));
                 for (String team : Objects.requireNonNull(ss.getConfig().getYml().getConfigurationSection("Team")).getKeys(false)) {
-                    p.spigot().sendMessage(Misc.msgHoverClick(ChatColor.GOLD + " " + '▪' + " " + TeamColor.getChatColor(team) + team, ChatColor.GRAY + "Remove " + TeamColor.getChatColor(team) + team + " " + ChatColor.GRAY + "(click to remove)", "/" + mainCmd + " removeTeam " + team, ClickEvent.Action.RUN_COMMAND));
+                    p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_ENTRY).replace("{team}", TeamColor.getChatColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_HOVER).replace("{team}", TeamColor.getChatColor(team) + team), "/" + mainCmd + " removeTeam " + team, ClickEvent.Action.RUN_COMMAND));
                 }
             }
         } else {
             if (ss.getConfig().getYml().get("Team." + args[0] + ".Color") == null) {
-                p.sendMessage(ss.getPrefix() + "This team doesn't exist: " + args[0]);
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Team not found: " + args[0], 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_NOT_FOUND).replace("{team}", args[0]));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_NOT_FOUND_TITLE).replace("{team}", args[0]), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
             } else {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Iron") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Iron")) {
-                        removeArmorStand(null, loc, null);
+                        removeArmorStand("iron", loc, null);
+                        removeArmorStand("team-generator", loc, null);
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Gold") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Gold")) {
-                        removeArmorStand(null, loc, null);
+                        removeArmorStand("gold", loc, null);
+                        removeArmorStand("team-generator", loc, null);
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Emerald") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Emerald")) {
-                        removeArmorStand(null, loc, null);
+                        removeArmorStand("emerald", loc, null);
+                        removeArmorStand("team-generator", loc, null);
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Shop") != null) {
-                    removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), null);
+                    removeArmorStand("shop", ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), null);
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Upgrade") != null) {
-                    removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + ".Upgrade"), null);
+                    removeArmorStand("upgrade", ss.getConfig().getArenaLoc("Team." + args[0] + ".Upgrade"), null);
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    removeArmorStand("kill-drops", ss.getConfig().getArenaLoc("Team." + args[0] + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
                 }
-                p.sendMessage(ss.getPrefix() + "Team removed: " + ss.getTeamColor(args[0]) + args[0]);
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + "Team removed: " + ss.getTeamColor(args[0]) + args[0], 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_SUCCESS).replace("{team}", ss.getTeamColor(args[0]) + args[0]));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_TEAM_SUCCESS_TITLE).replace("{team}", ss.getTeamColor(args[0]) + args[0]), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
                 ss.getConfig().set("Team." + args[0], null);
             }

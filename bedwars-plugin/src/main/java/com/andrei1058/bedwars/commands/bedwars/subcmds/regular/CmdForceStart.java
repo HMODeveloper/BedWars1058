@@ -4,6 +4,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
 import org.bukkit.command.CommandSender;
@@ -14,8 +16,8 @@ public class CmdForceStart extends AbstractCmdStart {
         super(parent, name);
         setPriority(15);
         showInList(true);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName()+" §8 - §eForce start an arena",
-                "/"+getParent().getName()+" "+getSubCommandName(), "§fForce start an arena.\n§fPermission: §c"+ Permissions.PERMISSION_FORCESTART));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_FORCE_START_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_FORCE_START_DISPLAY_HOVER).replace("{permission}", Permissions.PERMISSION_FORCESTART)));
     }
 
     @Override

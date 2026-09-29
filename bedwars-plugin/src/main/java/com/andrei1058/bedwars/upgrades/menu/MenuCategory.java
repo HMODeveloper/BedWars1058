@@ -48,9 +48,15 @@ public class MenuCategory implements MenuContent {
     public MenuCategory(String name, ItemStack displayItem) {
         this.name = name;
         this.displayItem = BedWars.nms.addCustomData(displayItem, "MCONT_" + name);
-        Language.saveIfNotExists(Messages.UPGRADES_CATEGORY_GUI_NAME_PATH + name.replace("category-", ""), "&8" + name);
-        Language.saveIfNotExists(Messages.UPGRADES_CATEGORY_ITEM_NAME_PATH + name.replace("category-", ""), "&cName not set");
-        Language.saveIfNotExists(Messages.UPGRADES_CATEGORY_ITEM_LORE_PATH + name.replace("category-", ""), Collections.singletonList("&cLore not set"));
+        String category = name.replace("category-", "");
+        String guiNamePath = Messages.UPGRADES_CATEGORY_GUI_NAME_PATH + category;
+        String itemNamePath = Messages.UPGRADES_CATEGORY_ITEM_NAME_PATH + category;
+        String itemLorePath = Messages.UPGRADES_CATEGORY_ITEM_LORE_PATH + category;
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedName(guiNamePath);
+            language.ensureLocalizedName(itemNamePath);
+            language.ensureLocalizedLore(itemLorePath);
+        }
     }
 
     /**

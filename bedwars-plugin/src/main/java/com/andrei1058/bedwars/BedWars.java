@@ -24,6 +24,7 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.configuration.ConfigManager;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.levels.Level;
 import com.andrei1058.bedwars.api.party.Party;
 import com.andrei1058.bedwars.api.server.RestoreAdapter;
@@ -202,6 +203,7 @@ public class BedWars extends JavaPlugin {
         new Portuguese();
         new SimplifiedChinese();
         new Turkish();
+        Language.migrateEnglishDefaults();
 
         config = new MainConfig(this, "config");
 
@@ -461,7 +463,7 @@ public class BedWars extends JavaPlugin {
 
         /* Prevent issues on reload */
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.kickPlayer("BedWars1058 was RELOADED! (do not reload plugins)");
+            p.kickPlayer(Language.getMsg(p, Messages.PLUGIN_RELOAD_KICK));
         }
 
         /* Load sounds configuration */

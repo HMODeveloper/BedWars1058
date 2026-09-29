@@ -131,16 +131,16 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
                         Bukkit.dispatchCommand(s, getName() + " cmds");
                     } else {
                         s.sendMessage("");
-                        s.sendMessage("ยง8ยงl" + dot + " ยง6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " ยง7- ยงc Admin Commands");
+                        s.sendMessage(getMsg((Player) s, Messages.COMMAND_ADMIN_HEADER).replace("{dot}", String.valueOf(dot)).replace("{plugin}", plugin.getDescription().getName()).replace("{version}", plugin.getDescription().getVersion()));
                         s.sendMessage("");
                         sendSubCommands((Player) s);
                     }
                 } else {
-                    s.sendMessage("ยงf   bw safemode ยงeenable/ disable");
+                    s.sendMessage(getMsg(null, Messages.COMMAND_CONSOLE_SAFEMODE));
                 }
             } else {
                 if (s instanceof ConsoleCommandSender) {
-                    s.sendMessage("ยงfNo console commands available atm.");
+                    s.sendMessage(getMsg(null, Messages.COMMAND_CONSOLE_NO_COMMANDS));
                     return true;
                 }
                 /* Send player commands */
@@ -189,13 +189,73 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
 
     @Override
     public void sendSubCommands(Player p) {
-        for (int i = 0; i <= 20; i++) {
-            for (SubCommand sb : getSubCommands()) {
-                if (sb.getPriority() == i && sb.isShow() && sb.canSee(p, BedWars.getAPI())) {
-                    p.spigot().sendMessage(sb.getDisplayInfo());
+        List<SubCommand> commands = new ArrayList<>(getSubCommands());
+        for (int priority = 0; priority <= 20; priority++) {
+            for (SubCommand sb : commands) {
+                if (sb.getPriority() != priority || !sb.isShow() || !sb.canSee(p, BedWars.getAPI())) continue;
+                String displayKey = displayKey(sb.getSubCommandName(), false);
+                if (displayKey == null) {
+                    if (sb.getDisplayInfo() != null) p.spigot().sendMessage(sb.getDisplayInfo());
+                    continue;
                 }
+                String hoverKey = displayKey(sb.getSubCommandName(), true);
+                String text = getMsg(p, displayKey).replace("{command}", getName()).replace("{subcommand}", sb.getSubCommandName());
+                String hover = hoverKey == null ? null : getMsg(p, hoverKey);
+                if ("setLobby".equalsIgnoreCase(sb.getSubCommandName())) {
+                    text = text.replace("{status}", getMsg(p, config.getLobbyWorldName().isEmpty() ? Messages.COMMAND_SET_LOBBY_NOT_SET : Messages.COMMAND_SET_LOBBY_SET));
+                } else if ("arenaList".equalsIgnoreCase(sb.getSubCommandName())) {
+                    int count = com.andrei1058.bedwars.arena.Arena.getArenas().size();
+                    text = text.replace("{countColor}", count == 0 ? "§c" : "§a").replace("{count}", String.valueOf(count));
+                }
+                if (hover != null) {
+                    if (sb instanceof CmdForceEndGame) {
+                        hover = hover.replace("{permission}", com.andrei1058.bedwars.configuration.Permissions.PERMISSION_FORCE_END_GAME);
+                    } else if (sb instanceof CmdForceStart) {
+                        hover = hover.replace("{permission}", com.andrei1058.bedwars.configuration.Permissions.PERMISSION_FORCESTART);
+                    } else if (sb instanceof CmdStart) {
+                        hover = hover.replace("{permission}", com.andrei1058.bedwars.configuration.Permissions.PERMISSION_START);
+                    }
+                    hover = hover.replace("{command}", getName());
+                }
+                TextComponent display = hover == null ? new TextComponent(text) : createTC(text, "/" + getName() + " " + sb.getSubCommandName(), hover);
+                if (sb.getDisplayInfo() != null && sb.getDisplayInfo().getClickEvent() != null) {
+                    display.setClickEvent(sb.getDisplayInfo().getClickEvent());
+                }
+                p.spigot().sendMessage(display);
             }
         }
+    }
+
+    private static String displayKey(String command, boolean hover) {
+        switch (command) {
+            case "setLobby": return hover ? Messages.COMMAND_SET_LOBBY_DISPLAY_HOVER : Messages.COMMAND_SET_LOBBY_DISPLAY;
+            case "setupArena": return hover ? Messages.COMMAND_SETUP_ARENA_DISPLAY_HOVER : Messages.COMMAND_SETUP_ARENA_DISPLAY;
+            case "arenaList": return hover ? Messages.COMMAND_ARENA_LIST_DISPLAY_HOVER : Messages.COMMAND_ARENA_LIST_DISPLAY;
+            case "delArena": return hover ? Messages.COMMAND_DEL_ARENA_DISPLAY_HOVER : Messages.COMMAND_DEL_ARENA_DISPLAY;
+            case "enableArena": return hover ? Messages.COMMAND_ENABLE_ARENA_DISPLAY_HOVER : Messages.COMMAND_ENABLE_ARENA_DISPLAY;
+            case "disableArena": return hover ? Messages.COMMAND_DISABLE_ARENA_DISPLAY_HOVER : Messages.COMMAND_DISABLE_ARENA_DISPLAY;
+            case "cloneArena": return hover ? Messages.COMMAND_CLONE_ARENA_DISPLAY_HOVER : Messages.COMMAND_CLONE_ARENA_DISPLAY;
+            case "arenaGroup": return hover ? Messages.COMMAND_ARENA_GROUP_DISPLAY_HOVER : Messages.COMMAND_ARENA_GROUP_DISPLAY;
+            case "build": return hover ? Messages.COMMAND_BUILD_DISPLAY_HOVER : Messages.COMMAND_BUILD_DISPLAY;
+            case "level": return hover ? Messages.COMMAND_LEVEL_DISPLAY_HOVER : Messages.COMMAND_LEVEL_DISPLAY;
+            case "npc": return hover ? Messages.COMMAND_NPC_DISPLAY_HOVER : Messages.COMMAND_NPC_DISPLAY;
+            case "reload": return hover ? Messages.COMMAND_RELOAD_DISPLAY_HOVER : Messages.COMMAND_RELOAD_DISPLAY;
+            case "cmds": return hover ? Messages.COMMAND_LIST_DISPLAY_HOVER : Messages.COMMAND_LIST_DISPLAY;
+            case "forceStart": return hover ? Messages.COMMAND_FORCE_START_DISPLAY_HOVER : Messages.COMMAND_FORCE_START_DISPLAY;
+            case "start": return hover ? Messages.COMMAND_START_DISPLAY_HOVER : Messages.COMMAND_START_DISPLAY;
+            case "forceEndGame": return hover ? Messages.COMMAND_FORCE_END_GAME_DISPLAY_HOVER : Messages.COMMAND_FORCE_END_GAME_DISPLAY;
+            case "ready": return hover ? null : Messages.COMMAND_READY_DISPLAY;
+            case "echo": return hover ? Messages.COMMAND_ECHO_HOVER : Messages.COMMAND_ECHO_DISPLAY;
+            case "echoto": return hover ? Messages.COMMAND_ECHOTO_HOVER : Messages.COMMAND_ECHOTO_DISPLAY;
+            case "echoall": return hover ? Messages.COMMAND_ECHOALL_HOVER : Messages.COMMAND_ECHOALL_DISPLAY;
+            case "gui": return hover ? Messages.COMMAND_GUI_DISPLAY_HOVER : Messages.COMMAND_GUI_DISPLAY;
+            case "join": return hover ? Messages.COMMAND_JOIN_DISPLAY_HOVER : Messages.COMMAND_JOIN_DISPLAY;
+            case "lang": return hover ? Messages.COMMAND_LANG_DISPLAY_HOVER : Messages.COMMAND_LANG_DISPLAY;
+            case "leave": return hover ? Messages.COMMAND_LEAVE_DISPLAY_HOVER : Messages.COMMAND_LEAVE_DISPLAY;
+            case "stats": return hover ? Messages.COMMAND_STATS_DISPLAY_HOVER : Messages.COMMAND_STATS_DISPLAY;
+            case "spec": return hover ? Messages.COMMAND_SPEC_MODE_DISPLAY_HOVER : Messages.COMMAND_SPEC_MODE_DISPLAY;
+        }
+        return null;
     }
 
     public List<String> tabComplete(CommandSender s, String alias, String[] args, Location location) throws IllegalArgumentException {
@@ -235,7 +295,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         if (BedWars.getServerType() == ServerType.BUNGEE) return true;
         if (config.getLobbyWorldName().isEmpty()) {
             if (p != null) {
-                p.sendMessage("ยงcโ�ช ยง7You have to set the lobby location first!");
+                p.sendMessage(getMsg(p, Messages.COMMAND_LOBBY_NOT_SET));
             }
             return false;
         }

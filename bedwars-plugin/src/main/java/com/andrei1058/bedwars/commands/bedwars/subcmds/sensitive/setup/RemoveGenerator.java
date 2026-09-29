@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.commands.Misc;
@@ -116,9 +118,9 @@ public class RemoveGenerator extends SubCommand {
             }
 
             if (nearest == null) {
-                p.sendMessage(ss.getPrefix() + "Could not find any nearby generator (Range 2x2).");
-                p.sendMessage(ss.getPrefix() + "You mast stand close to the generator hologram's you want to remove.");
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Could not find any nearby generator.", 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_NOT_FOUND));
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_STAND_CLOSE));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_NOT_FOUND_TITLE), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
                 return true;
             }
@@ -128,10 +130,10 @@ public class RemoveGenerator extends SubCommand {
                 list.remove(toRemove[1]);
 
                 ss.getConfig().set("generator." + toRemove[0], list);
-                p.sendMessage(ss.getPrefix() + "Removed " + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getZ());
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + toRemove[0] + " generator removed.", 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_REMOVED_AT).replace("{generator}", toRemove[0]).replace("{x}", String.valueOf(nearest.getBlockX())).replace("{y}", String.valueOf(nearest.getBlockY())).replace("{z}", String.valueOf(nearest.getZ())));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_REMOVED_TITLE).replace("{generator}", toRemove[0]), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-                Misc.removeArmorStand(toRemove[0], nearest, toRemove[1]);
+                Misc.removeArmorStand(toRemove[0].toLowerCase(), nearest, toRemove[1]);
                 return true;
             }
 
@@ -139,20 +141,23 @@ public class RemoveGenerator extends SubCommand {
                 ss.getConfig().set("Team." + toRemove[2] + ".Emerald", new ArrayList<>());
                 ss.getConfig().set("Team." + toRemove[2] + ".Iron", new ArrayList<>());
                 ss.getConfig().set("Team." + toRemove[2] + ".Gold", new ArrayList<>());
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ss.getTeamColor(toRemove[2]) + toRemove[2] + " generator was removed.", 5, 40, 5);
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED_TITLE).replace("{team}", ss.getTeamColor(toRemove[2]) + toRemove[2]), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-                Misc.removeArmorStand(null, nearest, toRemove[1]);
-                p.sendMessage(ss.getPrefix() + ss.getTeamColor(toRemove[2]) + toRemove[2] + ChatColor.getLastColors(ss.getPrefix()) + " generators were removed!");
+                Misc.removeArmorStand("team-generator", nearest, toRemove[1]);
+                Misc.removeArmorStand("iron", nearest, toRemove[1]);
+                Misc.removeArmorStand("gold", nearest, toRemove[1]);
+                Misc.removeArmorStand("emerald", nearest, toRemove[1]);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED).replace("{team}", ss.getTeamColor(toRemove[2]) + toRemove[2]));
                 return true;
             }
 
             List<String> list = ss.getConfig().getList("Team." + toRemove[2] + "." + toRemove[0]);
             list.remove(toRemove[1]);
             ss.getConfig().set("Team." + toRemove[2] + "." + toRemove[0], list);
-            p.sendMessage(ss.getPrefix() + "Removed " + ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.getLastColors(ss.getPrefix()) + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getZ());
-            com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.GREEN + toRemove[0] + " generator removed.", 5, 40, 5);
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_REMOVED_AT).replace("{team}", ss.getTeamColor(toRemove[2]) + toRemove[2]).replace("{generator}", toRemove[0]).replace("{x}", String.valueOf(nearest.getBlockX())).replace("{y}", String.valueOf(nearest.getBlockY())).replace("{z}", String.valueOf(nearest.getZ())));
+            com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_REMOVE_GENERATOR_TEAM_GENERATOR_REMOVED_TITLE).replace("{team}", ss.getTeamColor(toRemove[2]) + toRemove[2]).replace("{generator}", toRemove[0]), 5, 40, 5);
             Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-            Misc.removeArmorStand(toRemove[0], nearest, toRemove[1]);
+            Misc.removeArmorStand(toRemove[0].toLowerCase(), nearest, toRemove[1]);
             return true;
         }
         return true;

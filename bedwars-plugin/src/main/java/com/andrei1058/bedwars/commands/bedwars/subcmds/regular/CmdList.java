@@ -25,6 +25,7 @@ import com.andrei1058.bedwars.api.arena.team.TeamColor;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Arena;
@@ -51,7 +52,7 @@ public class CmdList extends SubCommand {
         super(parent, name);
         setPriority(11);
         showInList(true);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + com.andrei1058.bedwars.commands.bedwars.MainCommand.getInstance().getName() + " " + getSubCommandName() + "         §8 - §e view player cmds", "§fView player commands.", "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_LIST_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(null, Messages.COMMAND_LIST_DISPLAY_HOVER), "/" + getParent().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
     @Override
@@ -109,15 +110,18 @@ public class CmdList extends SubCommand {
                 dmGen = ss.getConfig().getYml().getStringList("generator.Diamond").size();
             }
 
-            String posMsg, group = ChatColor.RED + "(NOT SET)";
+            String notSet = Language.getMsg(p, Messages.COMMAND_LIST_NOT_SET);
+            String set = Language.getMsg(p, Messages.COMMAND_LIST_SET);
+            String allSet = Language.getMsg(p, Messages.COMMAND_LIST_ALL_SET);
+            String posMsg, group = notSet;
             if (pos1 && !pos2) {
-                posMsg = ChatColor.RED + "(POS 2 NOT SET)";
+                posMsg = Language.getMsg(p, Messages.COMMAND_LIST_POS2_NOT_SET);
             } else if (!pos1 && pos2) {
-                posMsg = ChatColor.RED + "(POS 1 NOT SET)";
+                posMsg = Language.getMsg(p, Messages.COMMAND_LIST_POS1_NOT_SET);
             } else if (pos1) {
-                posMsg = ChatColor.GREEN + "(SET)";
+                posMsg = set;
             } else {
-                posMsg = ChatColor.GRAY + "(NOT SET) " + ChatColor.ITALIC + "OPTIONAL";
+                posMsg = notSet + " " + Language.getMsg(p, Messages.COMMAND_LIST_OPTIONAL);
             }
 
             String g2 = ss.getConfig().getYml().getString("group");
@@ -129,53 +133,49 @@ public class CmdList extends SubCommand {
 
             int maxInTeam = ss.getConfig().getInt("maxInTeam");
 
-            String setWaitingSpawn = ss.dot() + (waitingSpawn ? ChatColor.STRIKETHROUGH : "") + "setWaitingSpawn" + ChatColor.RESET + " " + (waitingSpawn ? ChatColor.GREEN + "(SET)" : ChatColor.RED + "(NOT SET)");
-            String waitingPos = ss.dot() + (pos ? ChatColor.STRIKETHROUGH : "") + "waitingPos 1/2" + ChatColor.RESET + " " + posMsg;
-            String setSpawn = ss.dot() + ((spawnNotSet.length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setSpawn <teamName>" + ChatColor.RESET + " " + ((spawnNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + spawnNotSet + ChatColor.RED + ")");
-            String setBed = ss.dot() + ((bedNotSet.toString().length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setBed" + ChatColor.RESET + " " + ((bedNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + bedNotSet + ChatColor.RED + ")");
-            String setShop = ss.dot() + ((shopNotSet.toString().length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setShop" + ChatColor.RESET + " " + ((shopNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + shopNotSet + ChatColor.RED + ")");
-            String setKillDrops = ss.dot() + ((killDropsNotSet.toString().length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setKillDrops" + ChatColor.RESET + " " + ((shopNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + killDropsNotSet + ChatColor.RED + ")");
-            String setUpgrade = ss.dot() + ((upgradeNotSet.toString().length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setUpgrade" + ChatColor.RESET + " " + ((upgradeNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + upgradeNotSet + ChatColor.RED + ")");
-            String addGenerator = ss.dot() + "addGenerator " + ((generatorNotSet.toString().length() == 0) ? "" : ChatColor.RED + "(Remaining: " + generatorNotSet + ChatColor.RED + ") ") + ChatColor.YELLOW + "(" + ChatColor.DARK_GREEN + "E" + emGen + " " + ChatColor.AQUA + "D" + dmGen + ChatColor.YELLOW + ")";
-            String setSpectatorSpawn = ss.dot() + (ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? "" : ChatColor.STRIKETHROUGH) + "setSpectSpawn" + ChatColor.RESET + " " + (ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? ChatColor.RED + "(NOT SET)" : ChatColor.GRAY + "(SET)");
+            String remaining = Language.getMsg(p, Messages.COMMAND_LIST_REMAINING);
+            String setWaitingSpawn = Language.getMsg(p, Messages.COMMAND_LIST_WAITING_SPAWN).replace("{dot}", ss.dot()).replace("{strike}", waitingSpawn ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", waitingSpawn ? set : notSet);
+            String waitingPos = Language.getMsg(p, Messages.COMMAND_LIST_WAITING_POS).replace("{dot}", ss.dot()).replace("{strike}", pos ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", posMsg);
+            String setSpawn = Language.getMsg(p, Messages.COMMAND_LIST_SET_SPAWN).replace("{dot}", ss.dot()).replace("{strike}", spawnNotSet.length() == 0 ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", spawnNotSet.length() == 0 ? allSet : remaining.replace("{remaining}", spawnNotSet.toString()));
+            String setBed = Language.getMsg(p, Messages.COMMAND_LIST_SET_BED).replace("{dot}", ss.dot()).replace("{strike}", bedNotSet.length() == 0 ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", bedNotSet.length() == 0 ? allSet : remaining.replace("{remaining}", bedNotSet.toString()));
+            String setShop = Language.getMsg(p, Messages.COMMAND_LIST_SET_SHOP).replace("{dot}", ss.dot()).replace("{strike}", shopNotSet.length() == 0 ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", shopNotSet.length() == 0 ? allSet : remaining.replace("{remaining}", shopNotSet.toString()));
+            String setKillDrops = Language.getMsg(p, Messages.COMMAND_LIST_SET_KILL_DROPS).replace("{dot}", ss.dot()).replace("{strike}", killDropsNotSet.length() == 0 ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", killDropsNotSet.length() == 0 ? allSet : remaining.replace("{remaining}", killDropsNotSet.toString()));
+            String setUpgrade = Language.getMsg(p, Messages.COMMAND_LIST_SET_UPGRADE).replace("{dot}", ss.dot()).replace("{strike}", upgradeNotSet.length() == 0 ? ChatColor.STRIKETHROUGH.toString() : "").replace("{status}", upgradeNotSet.length() == 0 ? allSet : remaining.replace("{remaining}", upgradeNotSet.toString()));
+            String addGenerator = Language.getMsg(p, Messages.COMMAND_LIST_ADD_GENERATOR).replace("{dot}", ss.dot()).replace("{remaining}", generatorNotSet.length() == 0 ? "" : remaining.replace("{remaining}", generatorNotSet.toString()) + " ").replace("{iron}", String.valueOf(emGen)).replace("{gold}", String.valueOf(dmGen));
+            String setSpectatorSpawn = Language.getMsg(p, Messages.COMMAND_LIST_SET_SPECTATOR_SPAWN).replace("{dot}", ss.dot()).replace("{strike}", ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? "" : ChatColor.STRIKETHROUGH.toString()).replace("{status}", ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? notSet : set);
 
             s.sendMessage("");
-            s.sendMessage(ChatColor.GRAY + "" + ChatColor.BOLD + com.andrei1058.bedwars.commands.bedwars.MainCommand.getDot() + ChatColor.GOLD + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + ChatColor.GRAY + '-' + " " + ChatColor.GREEN + ss.getWorldName() + " commands");
-            p.spigot().sendMessage(Misc.msgHoverClick(setWaitingSpawn, ChatColor.WHITE + "Set the place where players have\n" + ChatColor.WHITE + "to wait before the game starts.", "/" + getParent().getName() + " setWaitingSpawn", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(waitingPos, ChatColor.WHITE + "Make it so the waiting lobby will disappear at start.\n" + ChatColor.WHITE + "Select it as a world edit region.", "/" + getParent().getName() + " waitingPos ", ClickEvent.Action.SUGGEST_COMMAND));
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_LIST_SETUP_HEADER).replace("{dot}", String.valueOf(com.andrei1058.bedwars.commands.bedwars.MainCommand.getDot())).replace("{plugin}", plugin.getDescription().getName()).replace("{version}", plugin.getDescription().getVersion()).replace("{world}", ss.getWorldName()));
+            p.spigot().sendMessage(Misc.msgHoverClick(setWaitingSpawn, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_WAITING_SPAWN), "/" + getParent().getName() + " setWaitingSpawn", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(waitingPos, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_WAITING_POS), "/" + getParent().getName() + " waitingPos ", ClickEvent.Action.SUGGEST_COMMAND));
             if (ss.getSetupType() == SetupType.ADVANCED) {
-                p.spigot().sendMessage(Misc.msgHoverClick(setSpectatorSpawn, ChatColor.WHITE + "Set where to spawn spectators.", "/" + getParent().getName() + " setSpectSpawn", ClickEvent.Action.RUN_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(setSpectatorSpawn, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SPECTATOR_SPAWN), "/" + getParent().getName() + " setSpectSpawn", ClickEvent.Action.RUN_COMMAND));
             }
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "autoCreateTeams " + ChatColor.YELLOW + "(auto detect)", ChatColor.WHITE + "Create teams based on islands colors.", "/" + getParent().getName() + " autoCreateTeams", ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "createTeam <name> <color> " + ChatColor.YELLOW + "(" + teams + " CREATED)", ChatColor.WHITE + "Create a team.", "/" + getParent().getName() + " createTeam ", ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "removeTeam <name>", ChatColor.WHITE + "Remove a team by name.", "/" + mainCmd + " removeTeam ", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_AUTO_CREATE_TEAMS).replace("{dot}", ss.dot()), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_AUTO_CREATE_TEAMS), "/" + getParent().getName() + " autoCreateTeams", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_CREATE_TEAM).replace("{dot}", ss.dot()).replace("{teams}", String.valueOf(teams)), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_CREATE_TEAM), "/" + getParent().getName() + " createTeam ", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_REMOVE_TEAM).replace("{dot}", ss.dot()), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_REMOVE_TEAM), "/" + mainCmd + " removeTeam ", ClickEvent.Action.SUGGEST_COMMAND));
 
-
-            p.spigot().sendMessage(Misc.msgHoverClick(setSpawn, ChatColor.WHITE + "Set a team spawn.\n" + ChatColor.WHITE + "Teams without a spawn set:\n" + spawnNotSetNames.toString(), "/" + getParent().getName() + " setSpawn ", ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(setBed, ChatColor.WHITE + "Set a team's bed location.\n" + ChatColor.WHITE + "You don't have to specify the team name.", "/" + getParent().getName() + " setBed", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(setShop, ChatColor.WHITE + "Set a team's NPC.\n" + ChatColor.WHITE + "You don't have to specify the team name.\n" + ChatColor.WHITE + "It will be spawned only when the game starts.", "/" + getParent().getName() + " setShop", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(setUpgrade, ChatColor.WHITE + "Set a team's upgrade NPC.\n" + ChatColor.WHITE + "You don't have to specify the team name.\n" + ChatColor.WHITE + "It will be spawned only when the game starts.", "/" + getParent().getName() + " setUpgrade", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(setSpawn, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_SPAWN).replace("{spawnNames}", spawnNotSetNames.toString()), "/" + getParent().getName() + " setSpawn ", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(setBed, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_BED), "/" + getParent().getName() + " setBed", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(setShop, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_SHOP), "/" + getParent().getName() + " setShop", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(setUpgrade, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_UPGRADE), "/" + getParent().getName() + " setUpgrade", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
             if (ss.getSetupType() == SetupType.ADVANCED) {
-                p.spigot().sendMessage(Misc.msgHoverClick(setKillDrops, ChatColor.WHITE + "Set a the location where to drop\n" + ChatColor.WHITE + "enemy items after you kill them.", "/" + getParent().getName() + " setKillDrops ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(setKillDrops, Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_KILL_DROPS), "/" + getParent().getName() + " setKillDrops ", ClickEvent.Action.SUGGEST_COMMAND));
             }
-            String genHover = (ss.getSetupType() == SetupType.ADVANCED ? ChatColor.WHITE + "Add a generator spawn point.\n" + ChatColor.YELLOW + "/" + getParent().getName() + " addGenerator <Iron/ Gold/ Emerald, Diamond>" :
-                    ChatColor.WHITE + "Add a generator spawn point.\n" + ChatColor.YELLOW + "Stay in on a team island to set a team generator") + "\n" + ChatColor.WHITE + "Stay on a diamond block to set the diamond generator.\n" + ChatColor.WHITE + "Stay on a emerald block to set an emerald generator.";
-
+            String genHover = Language.getMsg(p, ss.getSetupType() == SetupType.ADVANCED ? Messages.COMMAND_LIST_HOVER_ADD_GENERATOR_ADVANCED : Messages.COMMAND_LIST_HOVER_ADD_GENERATOR_ASSISTED).replace("{command}", getParent().getName());
             p.spigot().sendMessage(Misc.msgHoverClick(addGenerator, genHover, "/" + getParent().getName() + " addGenerator ", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "removeGenerator", genHover, "/" + getParent().getName() + " removeGenerator", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
-
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_REMOVE_GENERATOR).replace("{dot}", ss.dot()), genHover, "/" + getParent().getName() + " removeGenerator", ss.getSetupType() == SetupType.ASSISTED ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND));
             if (ss.getSetupType() == SetupType.ADVANCED) {
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "setMaxInTeam <int> (IS SET TO " + maxInTeam + ")", ChatColor.WHITE + "Set the max team size.", "/" + mainCmd + " setMaxInTeam ", ClickEvent.Action.SUGGEST_COMMAND));
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "arenaGroup " + group, ChatColor.WHITE + "Set the arena group.", "/" + mainCmd + " arenaGroup ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_SET_MAX_IN_TEAM).replace("{dot}", ss.dot()).replace("{size}", String.valueOf(maxInTeam)), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_MAX_IN_TEAM), "/" + mainCmd + " setMaxInTeam ", ClickEvent.Action.SUGGEST_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_ARENA_GROUP).replace("{dot}", ss.dot()).replace("{group}", group), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_ARENA_GROUP), "/" + mainCmd + " arenaGroup ", ClickEvent.Action.SUGGEST_COMMAND));
             } else {
-                p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "setType <type> " + group, ChatColor.WHITE + "Add the arena to a group.", "/" + getParent().getName() + " setType", ClickEvent.Action.RUN_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_SET_TYPE).replace("{dot}", ss.dot()).replace("{group}", group), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SET_TYPE), "/" + getParent().getName() + " setType", ClickEvent.Action.RUN_COMMAND));
             }
-
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "save", ChatColor.WHITE + "Save arena and go back to lobby", "/" + getParent().getName() + " save", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_LIST_SAVE).replace("{dot}", ss.dot()), Language.getMsg(p, Messages.COMMAND_LIST_HOVER_SAVE), "/" + getParent().getName() + " save", ClickEvent.Action.SUGGEST_COMMAND));
         } else {
-            TextComponent credits = new TextComponent(ChatColor.BLUE + "" + ChatColor.BOLD + com.andrei1058.bedwars.commands.bedwars.MainCommand.getDot() + " " + ChatColor.GOLD + plugin.getName() + " " + ChatColor.GRAY + "v" + plugin.getDescription().getVersion() + " by andrei1058");
+            TextComponent credits = new TextComponent(Language.getMsg(p, Messages.COMMAND_LIST_CREDITS).replace("{dot}", String.valueOf(com.andrei1058.bedwars.commands.bedwars.MainCommand.getDot())).replace("{plugin}", plugin.getName()).replace("{version}", plugin.getDescription().getVersion()));
             credits.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
-            credits.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Arenas: " + (Arena.getArenas().size() == 0 ? ChatColor.RED + "0" : ChatColor.GREEN + "" + Arena.getArenas().size())).create()));
+            credits.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Language.getMsg(p, Messages.COMMAND_LIST_CREDITS_HOVER).replace("{arenaColor}", Arena.getArenas().isEmpty() ? ChatColor.RED.toString() : ChatColor.GREEN.toString()).replace("{arenas}", String.valueOf(Arena.getArenas().size()))).create()));
             ((Player) s).spigot().sendMessage(credits);
             for (String string : getList((Player) s, Messages.COMMAND_MAIN)) {
                 s.sendMessage(string);

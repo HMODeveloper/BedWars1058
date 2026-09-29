@@ -52,9 +52,13 @@ public class MenuSeparator implements MenuContent {
         if (name == null) return;
         this.displayItem = BedWars.nms.addCustomData(displayItem, "MCONT_" + name);
         this.name = name;
-        Language.saveIfNotExists(Messages.UPGRADES_SEPARATOR_ITEM_NAME_PATH + name.replace("separator-", ""), "&cName not set");
-        Language.saveIfNotExists(Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + name.replace("separator-", ""), Collections.singletonList("&cLore not set"));
-
+        String separator = name.replace("separator-", "");
+        String itemNamePath = Messages.UPGRADES_SEPARATOR_ITEM_NAME_PATH + separator;
+        String itemLorePath = Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + separator;
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedName(itemNamePath);
+            language.ensureLocalizedLore(itemLorePath);
+        }
         if (UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.player") != null) {
             playerCommands.addAll(UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.player"));
         }

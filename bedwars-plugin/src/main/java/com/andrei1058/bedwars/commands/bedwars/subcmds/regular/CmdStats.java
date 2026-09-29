@@ -26,6 +26,8 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -45,7 +47,7 @@ public class CmdStats extends SubCommand {
         super(parent, name);
         setPriority(16);
         showInList(false);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName(), "/"+getParent().getName()+" "+getSubCommandName(), "§fOpens the stats GUI."));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_STATS_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_STATS_DISPLAY_HOVER)));
     }
 
     private static ConcurrentHashMap<UUID, Long> statsCoolDown = new ConcurrentHashMap<>();

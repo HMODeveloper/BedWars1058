@@ -27,6 +27,8 @@ import com.andrei1058.bedwars.api.events.player.PlayerJoinArenaEvent;
 import com.andrei1058.bedwars.api.events.player.PlayerKillEvent;
 import com.andrei1058.bedwars.api.events.player.PlayerXpGainEvent;
 import com.andrei1058.bedwars.api.events.server.ArenaDisableEvent;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.events.server.ArenaEnableEvent;
 import com.andrei1058.bedwars.api.events.server.ArenaRestartEvent;
 import com.andrei1058.bedwars.arena.Misc;
@@ -97,8 +99,9 @@ public class HalloweenListener implements Listener {
             PlayerLevel level = PlayerLevel.getLevelByPlayer(e.getPlayer().getUniqueId());
             if (level != null) {
                 e.getBlock().getDrops().clear();
-                level.addXp(5, PlayerXpGainEvent.XpSource.OTHER);
-                e.getPlayer().sendMessage(ChatColor.GOLD + "+5 xp!");
+                int xp = 5;
+                level.addXp(xp, PlayerXpGainEvent.XpSource.OTHER);
+                e.getPlayer().sendMessage(Language.getMsg(e.getPlayer(), Messages.HALLOWEEN_COBWEB_XP).replace("{xp}", String.valueOf(xp)));
             }
         }
     }

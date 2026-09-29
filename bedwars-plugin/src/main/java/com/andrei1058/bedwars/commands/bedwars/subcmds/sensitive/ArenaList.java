@@ -24,6 +24,7 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -51,8 +52,8 @@ public class ArenaList extends SubCommand {
         super(parent, name);
         setPriority(3);
         showInList(true);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + com.andrei1058.bedwars.commands.bedwars.MainCommand.getInstance().getName() + " " + getSubCommandName() + ((getArenas().size() == 0) ? " §c(0 set)" : " §a(" + getArenas().size() + " set)"),
-                "§fShow available arenas", "/" + MainCommand.getInstance().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_ARENA_LIST_DISPLAY).replace("{command}", MainCommand.getInstance().getName()).replace("{subcommand}", getSubCommandName()).replace("{countColor}", getArenas().isEmpty() ? "§c" : "§a").replace("{count}", String.valueOf(getArenas().size())),
+                Language.getMsg(null, Messages.COMMAND_ARENA_LIST_DISPLAY_HOVER), "/" + MainCommand.getInstance().getName() + " " + getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
     }
 
     @Override
@@ -78,10 +79,10 @@ public class ArenaList extends SubCommand {
             start = 0;
         }
 
-        p.sendMessage(color(" \n&1|| &3" + plugin.getName() + "&7 Instantiated games: \n "));
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_ARENA_LIST_HEADER).replace("{plugin}", plugin.getName()));
 
         if (arenas.isEmpty()) {
-            p.sendMessage(ChatColor.RED + "No arenas to display.");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_ARENA_LIST_EMPTY));
             return true;
         }
 
@@ -89,22 +90,21 @@ public class ArenaList extends SubCommand {
 
         arenas.subList(start, limit).forEach(arena -> {
             String gameState = arena.getDisplayStatus(Language.getPlayerLanguage(p));
-            String msg = color(
-                    "ID: &e" + arena.getWorldName() +
-                            " &fG: &e" + arena.getDisplayGroup(p) +
-                            " &fP: &e" + (arena.getPlayers().size() + arena.getSpectators().size()) +
-                            " &fS: " + gameState +
-                            " &fWl: &e" + (Bukkit.getWorld(arena.getWorldName()) != null)
-            );
+            String msg = Language.getMsg(p, Messages.COMMAND_ARENA_LIST_ENTRY)
+                    .replace("{arena}", arena.getWorldName())
+                    .replace("{group}", arena.getDisplayGroup(p))
+                    .replace("{players}", String.valueOf(arena.getPlayers().size() + arena.getSpectators().size()))
+                    .replace("{status}", gameState)
+                    .replace("{worldLoaded}", String.valueOf(Bukkit.getWorld(arena.getWorldName()) != null));
 
 
             p.sendMessage(msg);
         });
 
-        p.sendMessage(" ");
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_ARENA_LIST_SPACER));
 
         if (arenas.size() > ARENAS_PER_PAGE * page) {
-            p.sendMessage(ChatColor.GRAY + "Type /" + ChatColor.GREEN + MainCommand.getInstance().getName() + " arenaList " + ++page + ChatColor.GRAY + " for next page.");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_ARENA_LIST_NEXT_PAGE).replace("{command}", MainCommand.getInstance().getName()).replace("{page}", String.valueOf(++page)));
         }
         return true;
     }
@@ -143,7 +143,4 @@ public class ArenaList extends SubCommand {
         return hasPermission(s);
     }
 
-    private static String color(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
-    }
 }

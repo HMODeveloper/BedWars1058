@@ -69,12 +69,17 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         this.displayItem = BedWars.nms.addCustomData(displayItem, "MCONT_" + name);
         this.name = name;
         String nPath = name.replace("base-trap-", "");
-        Language.saveIfNotExists(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + nPath, "&cName not set");
-        Language.saveIfNotExists(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + nPath, Collections.singletonList("&cLore not set"));
-        if (UpgradesManager.getConfiguration().getBoolean(name + ".custom-announce")) {
-            Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_MSG + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_MSG + nPath);
-            Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_TITLE + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_TITLE + nPath);
-            Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + nPath);
+        String itemNamePath = Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + nPath;
+        String itemLorePath = Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + nPath;
+        boolean customAnnounce = UpgradesManager.getConfiguration().getBoolean(name + ".custom-announce");
+        for (Language language : Language.getLanguages()) {
+            language.ensureLocalizedName(itemNamePath);
+            language.ensureLocalizedLore(itemLorePath);
+            if (customAnnounce) {
+                language.ensureLocalizedName(Messages.UPGRADES_TRAP_CUSTOM_MSG + nPath);
+                language.ensureLocalizedName(Messages.UPGRADES_TRAP_CUSTOM_TITLE + nPath);
+                language.ensureLocalizedName(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + nPath);
+            }
         }
 
         this.cost = cost;

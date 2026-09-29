@@ -10,7 +10,6 @@ import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,7 +22,7 @@ public class CmdReady extends SubCommand {
         super(parent, name);
         showInList(true);
         setPriority(20);
-        setDisplayInfo(new TextComponent(ChatColor.YELLOW + "/bw ready " + ChatColor.GRAY + "- Toggle ready status."));
+        setDisplayInfo(new TextComponent(Language.getMsg(null, Messages.COMMAND_READY_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName())));
     }
 
     @Override
@@ -32,7 +31,7 @@ public class CmdReady extends SubCommand {
             if (s instanceof Player) {
                 s.sendMessage(Language.getMsg((Player) s, Messages.COMMAND_READY_DISABLED));
             } else {
-                s.sendMessage(ChatColor.RED + "This command is disabled.");
+                s.sendMessage(Language.getMsg(null, Messages.COMMAND_READY_DISABLED));
             }
             return true;
         }

@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -45,7 +47,7 @@ public class EnableArena extends SubCommand {
 
     public EnableArena(ParentCommand parent, String name) {
         super(parent, name);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + getParent().getName() + " "+getSubCommandName()+" §6<worldName>","§fEnable an arena.",
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_ENABLE_ARENA_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(null, Messages.COMMAND_ENABLE_ARENA_DISPLAY_HOVER),
                 "/" + getParent().getName() + " "+getSubCommandName()+ " ", ClickEvent.Action.SUGGEST_COMMAND));
         showInList(true);
         setPriority(5);
@@ -58,27 +60,27 @@ public class EnableArena extends SubCommand {
         Player p = (Player) s;
         if (!MainCommand.isLobbySet(p)) return true;
         if (args.length != 1) {
-            p.sendMessage("§c▪ §7Usage: §o/" + getParent().getName() + " enableRotation <mapName>");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_ENABLE_ARENA_USAGE).replace("{command}", getParent().getName()));
             return true;
         }
         if (!BedWars.getAPI().getRestoreAdapter().isWorld(args[0])) {
-            p.sendMessage("§c▪ §7" + args[0] + " doesn't exist!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_ARENA_NOT_FOUND).replace("{arena}", args[0]));
             return true;
         }
 
         for (IArena mm : Arena.getEnableQueue()){
             if (mm.getArenaName().equalsIgnoreCase(args[0])){
-                p.sendMessage("§c▪ §7This arena is already in the enable queue!");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_ENABLE_ARENA_QUEUED));
                 return true;
             }
         }
 
         IArena aa = Arena.getArenaByName(args[0]);
         if (aa != null) {
-            p.sendMessage("§c▪ §7This arena is already enabled!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_ENABLE_ARENA_ALREADY_ENABLED));
             return true;
         }
-        p.sendMessage("§6 ▪ §7Enabling arena...");
+        p.sendMessage(Language.getMsg(p, Messages.COMMAND_ENABLE_ARENA_START));
         new Arena(args[0], p);
         return true;
     }

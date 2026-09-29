@@ -76,7 +76,7 @@ public class PAPISupport extends PlaceholderExpansion {
                 return player == null ? Language.getDefaultLanguage().m(Messages.ARENA_STATUS_RESTARTING_NAME) :
                         Language.getMsg(player, Messages.ARENA_STATUS_RESTARTING_NAME);
             }
-            return a.getDisplayStatus(Language.getDefaultLanguage());
+            return a.getDisplayStatus(player == null ? Language.getDefaultLanguage() : Language.getPlayerLanguage(player));
         }
 
         if (s.startsWith("arena_count_")) {

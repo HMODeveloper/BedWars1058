@@ -24,6 +24,8 @@ import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -60,7 +62,6 @@ public class SetKillDropsLoc extends SubCommand {
         Player p = (Player) s;
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) {
-            //s.sendMessage(ss.getPrefix()"§c ▪ §7You're not in a setup session!");
             return false;
         }
         ArenaConfig arena = ss.getConfig();
@@ -68,8 +69,8 @@ public class SetKillDropsLoc extends SubCommand {
             String foundTeam = "";
             double distance = 100;
             if (ss.getConfig().getYml().getConfigurationSection("Team") == null) {
-                p.sendMessage(ss.getPrefix() + "Please create teams first!");
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Please create teams first!", 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_CREATE_TEAMS));
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_CREATE_TEAMS_TITLE), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
                 return true;
             }
@@ -85,13 +86,13 @@ public class SetKillDropsLoc extends SubCommand {
             }
             if (!foundTeam.isEmpty()) {
                 if (ss.getConfig().getYml().get("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    removeArmorStand("Kill drops", ss.getConfig().getArenaLoc("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    removeArmorStand("kill-drops", ss.getConfig().getArenaLoc("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
                 }
                 arena.set("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC, arena.stringLocationArenaFormat(p.getLocation()));
                 String team = ss.getTeamColor(foundTeam) + foundTeam;
-                p.sendMessage(ss.getPrefix() + "Kill drops set for team: " + team);
-                createArmorStand(ChatColor.GOLD + "Kill drops " + team, p.getLocation(), null);
-                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + "Kill drops set for team: " + team, 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_TEAM_SET).replace("{team}", team));
+                createArmorStand(Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_HOLOGRAM).replace("{team}", team), p.getLocation(), null, "kill-drops");
+                com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_TEAM_SET_TITLE).replace("{team}", team), 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
 
                 if (ss.getSetupType() == SetupType.ASSISTED) {
@@ -100,7 +101,7 @@ public class SetKillDropsLoc extends SubCommand {
                 return true;
             }
 
-            p.sendMessage(ss.getPrefix() + ChatColor.RED + "Usage: /" + mainCmd + " setKillDrops <teamName>");
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_USAGE).replace("{command}", mainCmd));
             return true;
         }
 
@@ -108,10 +109,10 @@ public class SetKillDropsLoc extends SubCommand {
 
         if (foundTeam.isEmpty()) {
             p.sendMessage("");
-            p.sendMessage(ss.getPrefix() + ChatColor.RED + "Could not find any nearby team.");
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Make sure you set the team's spawn first!", ChatColor.WHITE + "Set a team spawn.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-            p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + "Or if you set the spawn and it wasn't found automatically try using: /bw " + getSubCommandName() + " <team>", "Set kill drops location for a team.", "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
-            com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Could not find any nearby team.", 5, 60, 5);
+            p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND));
+            p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SET_SPAWN_FIRST), Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_SPAWN_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+            p.spigot().sendMessage(Misc.msgHoverClick(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_MANUAL_HINT).replace("{subcommand}", getSubCommandName()), Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_HOVER), "/" + getParent().getName() + " " + getSubCommandName() + " ", ClickEvent.Action.SUGGEST_COMMAND));
+            com.andrei1058.bedwars.BedWars.nms.sendTitle(p, " ", Language.getMsg(p, Messages.COMMAND_SETUP_NEARBY_TEAM_NOT_FOUND_TITLE), 5, 60, 5);
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
             return true;
         }
@@ -120,11 +121,11 @@ public class SetKillDropsLoc extends SubCommand {
             if (arena.getYml().get("Team." + args[0]) != null) {
                 foundTeam = args[0];
             } else {
-                p.sendMessage(ss.getPrefix() + ChatColor.RED + "This team doesn't exist!");
+                p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_TEAM_NOT_FOUND));
                 if (arena.getYml().get("Team") != null) {
-                    p.sendMessage(ss.getPrefix() + "Available teams: ");
+                    p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_AVAILABLE_TEAMS));
                     for (String team : Objects.requireNonNull(arena.getYml().getConfigurationSection("Team")).getKeys(false)) {
-                        p.spigot().sendMessage(Misc.msgHoverClick(ChatColor.GOLD + " " + '▪' + " " + "Kill drops " + ss.getTeamColor(team) + team + " " + ChatColor.getLastColors(ss.getPrefix()) + "(click to set)", ChatColor.WHITE + "Set Kill drops for " + ss.getTeamColor(team) + team, "/" + mainCmd + " setKillDrops " + team, ClickEvent.Action.RUN_COMMAND));
+                        p.spigot().sendMessage(Misc.msgHoverClick(Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_TEAM_ENTRY).replace("{team}", ss.getTeamColor(team) + team), Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_TEAM_HOVER).replace("{team}", ss.getTeamColor(team) + team), "/" + mainCmd + " setKillDrops " + team, ClickEvent.Action.RUN_COMMAND));
                     }
                 }
                 return true;
@@ -132,7 +133,7 @@ public class SetKillDropsLoc extends SubCommand {
         }
 
         arena.set("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC, arena.stringLocationArenaFormat(p.getLocation()));
-        p.sendMessage(ss.getPrefix() + "Kill drops set for: " + ss.getTeamColor(foundTeam) + foundTeam);
+        p.sendMessage(ss.getPrefix() + Language.getMsg(p, Messages.COMMAND_SETUP_KILL_DROPS_SET).replace("{team}", ss.getTeamColor(foundTeam) + foundTeam));
 
         if (ss.getSetupType() == SetupType.ASSISTED) {
             Bukkit.dispatchCommand(p, getParent().getName());

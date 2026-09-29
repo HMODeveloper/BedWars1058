@@ -3,6 +3,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Permissions;
 import org.bukkit.command.CommandSender;
@@ -43,21 +45,21 @@ public class SetBuildHeight extends SubCommand {
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
 
         if (ss == null){
-            s.sendMessage("§c ▪ §7You're not in a setup session!");
+            s.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_NOT_IN_SESSION));
             return true;
         }
 
         if (args.length == 0) {
-            p.sendMessage("§c▪ §7Usage: /" + mainCmd + " setMaxBuildHeight <int>");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_BUILD_HEIGHT_USAGE).replace("{command}", mainCmd));
         } else {
             try {
                 Integer.parseInt(args[0]);
             } catch (Exception ex) {
-                p.sendMessage("§c▪ §7Usage: /" + mainCmd + " setMaxBuildHeight <int>");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_BUILD_HEIGHT_USAGE).replace("{command}", mainCmd));
                 return true;
             }
             ss.getConfig().set("max-build-y", Integer.valueOf(args[0]));
-            p.sendMessage("§6 ▪ §7Max build height Y set to §e" + args[0] + "§7!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_BUILD_HEIGHT_SET).replace("{height}", args[0]));
         }
         return true;
     }

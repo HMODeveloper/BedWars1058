@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.regular;
 import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.ArenaGUI;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -39,7 +41,7 @@ public class CmdGUI extends SubCommand {
         super(parent, name);
         setPriority(17);
         showInList(false);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName(), "/"+getParent().getName()+" "+getSubCommandName(), "§fOpens the arena GUI."));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_GUI_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()), "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_GUI_DISPLAY_HOVER)));
     }
 
     @Override

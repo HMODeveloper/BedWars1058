@@ -23,6 +23,8 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
@@ -52,7 +54,7 @@ public class DelArena extends SubCommand {
         setPriority(4);
         showInList(true);
         setPermission(Permissions.PERMISSION_DEL_ARENA);
-        setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/" + MainCommand.getInstance().getName() + " "+getSubCommandName()+" §6<worldName>", "§fDelete a map and its configuration.",
+        setDisplayInfo(Misc.msgHoverClick(Language.getMsg(null, Messages.COMMAND_DEL_ARENA_DISPLAY).replace("{command}", MainCommand.getInstance().getName()).replace("{subcommand}", getSubCommandName()), Language.getMsg(null, Messages.COMMAND_DEL_ARENA_DISPLAY_HOVER),
                 "/" + MainCommand.getInstance().getName() + " "+getSubCommandName(), ClickEvent.Action.SUGGEST_COMMAND));
     }
 
@@ -62,33 +64,33 @@ public class DelArena extends SubCommand {
         Player p = (Player) s;
         if (!MainCommand.isLobbySet(p)) return true;
         if (args.length != 1) {
-            p.sendMessage("§c▪ §7Usage: §o/" + MainCommand.getInstance().getName() + " delArena <mapName>");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_USAGE).replace("{command}", MainCommand.getInstance().getName()));
             return true;
         }
         if (!BedWars.getAPI().getRestoreAdapter().isWorld(args[0])) {
-            p.sendMessage("§c▪ §7" + args[0] + " doesn't exist as a world folder!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_WORLD_NOT_FOUND).replace("{arena}", args[0]));
             return true;
         }
         if (getArenaByName(args[0]) != null) {
-            p.sendMessage("§c▪ §7Please disable it first!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_SETUP_ARENA_DISABLE_FIRST));
             return true;
         }
         File ac = new File(plugin.getDataFolder(), "/Arenas/" + args[0]+ ".yml");
         if (!ac.exists()) {
-            p.sendMessage("§c▪ §7This arena doesn't exist!");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_NOT_FOUND));
             return true;
         }
         if (delArenaConfirm.containsKey(p)) {
             if (System.currentTimeMillis() - 2000 <= delArenaConfirm.get(p)) {
                 BedWars.getAPI().getRestoreAdapter().deleteWorld(args[0]);
                 FileUtils.deleteQuietly(ac);
-                p.sendMessage("§c▪ §7" + args[0] + " was deleted!");
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_SUCCESS).replace("{arena}", args[0]));
                 return true;
             }
-            p.sendMessage("§6 ▪ §7Type again to confirm.");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_CONFIRM));
             delArenaConfirm.replace(p, System.currentTimeMillis());
         } else {
-            p.sendMessage("§6 ▪ §7Type again to confirm.");
+            p.sendMessage(Language.getMsg(p, Messages.COMMAND_DEL_ARENA_CONFIRM));
             delArenaConfirm.put(p, System.currentTimeMillis());
         }
         return true;

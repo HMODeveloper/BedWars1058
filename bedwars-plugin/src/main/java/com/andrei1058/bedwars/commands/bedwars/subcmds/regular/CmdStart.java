@@ -22,6 +22,7 @@ package com.andrei1058.bedwars.commands.bedwars.subcmds.regular;
 
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
+import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
@@ -36,8 +37,8 @@ public class CmdStart extends AbstractCmdStart {
         super(parent, name);
         setPriority(15);
         showInList(true);
-        setDisplayInfo(com.andrei1058.bedwars.commands.bedwars.MainCommand.createTC("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName()+" §8 - §eShorten the start countdown to 5s",
-                "/"+getParent().getName()+" "+getSubCommandName(), "§fShorten the start countdown to 5s in an arena.\n§fPermission: §c"+Permissions.PERMISSION_START));
+        setDisplayInfo(MainCommand.createTC(Language.getMsg(null, Messages.COMMAND_START_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                "/" + getParent().getName() + " " + getSubCommandName(), Language.getMsg(null, Messages.COMMAND_START_DISPLAY_HOVER).replace("{permission}", Permissions.PERMISSION_START)));
     }
 
     @Override

@@ -24,7 +24,7 @@ public class CmdToggleReady extends SubCommand {
         showInList(true);
         setPriority(25);
         setPermission(Permissions.PERMISSION_TOGGLE_READY);
-        setDisplayInfo(new TextComponent(ChatColor.YELLOW + "/bw toggleReady " + ChatColor.GRAY + "- Toggle ready check feature."));
+        setDisplayInfo(new TextComponent(Language.getMsg(null, Messages.COMMAND_TOGGLE_READY_DISPLAY)));
     }
 
     @Override

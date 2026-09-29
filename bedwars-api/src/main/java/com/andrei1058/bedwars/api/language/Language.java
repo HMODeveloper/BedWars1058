@@ -26,6 +26,7 @@ import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.events.player.PlayerLangChangeEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -41,12 +42,74 @@ public class Language extends ConfigManager {
     private static final HashMap<UUID, Language> langByPlayer = new HashMap<>();
     private static final List<Language> languages = new ArrayList<>();
     private static Language defaultLanguage;
+    private static Language englishLanguage;
+    private static final String MISSING_LANGUAGE_MESSAGE = "MISSING_LANG";
+    private static final Set<String> LEGACY_UPGRADE_MENU_TITLES = new HashSet<>(Arrays.asList(
+            "&8Upgrades & Traps", "&8দলের উন্নতি ও ফাঁদ", "&8दल के सुधार और जाल",
+            "&8Peningkatan & Perangkap", "&8Potenziamenti e Trappole", "&8ارتقاهای گروه و تله‌ها",
+            "&8Ulepszenia drużyny i pułapki", "&8Melhorias e Armadilhas", "&8Îmbunătățiri și capcane",
+            "&8Улучшения команды и ловушки", "&8团队升级与陷阱", "&8队伍升级与陷阱",
+            "&8Mejoras de equipo y trampas", "&8Takım Yükseltme ve Tuzaklar", "&8Takım Yükseltmeleri ve Tuzaklar"));
+    private static final Set<String> LEGACY_UPGRADE_BACK_LORE = new HashSet<>(Arrays.asList(
+            "&7To Upgrades & Traps", "&7Unnoti o fand-e", "&7Unnayans aur Fands par",
+            "&7Ke Peningkatan & Perangkap", "&7A Potenziamenti e Trappole", "&7Be Unnayan-ha va Fand-ha",
+            "&7Do ulepszeń i pułapek", "&7To Upgrades & Traps", "&7La îmbunătățiri și capcane",
+            "&7К Улучшениям и Ловушкам", "&7回到升级和陷阱菜单", "&7A actualizaciones y trampas",
+            "&7Yükseltmeler & Tuzaklar"));
+
+    private static Language fallbackLanguage() {
+        if (defaultLanguage != null) return defaultLanguage;
+        if (englishLanguage != null) return englishLanguage;
+        return languages.isEmpty() ? null : languages.get(0);
+    }
+
+    private static Language languageFor(UUID uuid) {
+        Language language = uuid == null ? null : langByPlayer.get(uuid);
+        if (language != null && languages.contains(language)) return language;
+        return fallbackLanguage();
+    }
+
+    private static Object rawValue(Language language, String path) {
+        if (path == null) return null;
+        Language[] candidates = new Language[]{language, defaultLanguage, englishLanguage};
+        for (Language candidate : candidates) {
+            if (candidate != null && candidate.getYml() != null && candidate.getYml().get(path) != null) {
+                return candidate.getYml().get(path);
+            }
+        }
+        return null;
+    }
+
+    private static String rawMessage(Language language, String path) {
+        if (path == null) return null;
+        Language[] candidates = new Language[]{language, defaultLanguage, englishLanguage};
+        for (Language candidate : candidates) {
+            if (candidate != null && candidate.getYml() != null) {
+                String message = candidate.getYml().getString(path);
+                if (message != null) return message;
+            }
+        }
+        return null;
+    }
+
+    private static List<String> rawList(Language language, String path) {
+        if (path == null) return null;
+        Language[] candidates = new Language[]{language, defaultLanguage, englishLanguage};
+        for (Language candidate : candidates) {
+            if (candidate != null && candidate.getYml() != null && candidate.getYml().get(path) != null) {
+                return candidate.getYml().getStringList(path);
+            }
+        }
+        return null;
+    }
     private String serverIp;
 
     public Language(Plugin plugin, String iso) {
         super(plugin, "messages_" + iso, plugin.getDataFolder().getPath() + "/Languages");
         this.iso = iso;
-
+        if ("en".equalsIgnoreCase(iso)) {
+            englishLanguage = this;
+        }
         // replace old placeholders
         List<String> oldMsg = getYml().getStringList(Messages.GAME_END_TOP_PLAYER_CHAT);
         if (!oldMsg.isEmpty()) {
@@ -88,7 +151,7 @@ public class Language extends ConfigManager {
                     }
                     if (exists("scoreboard." + group + ".playing.alive")) {
                         relocate("scoreboard." + group + ".playing.alive", Messages.SCOREBOARD_DEFAULT_PLAYING.replace("Default", group));
-                        relocate("scoreboard." + group + ".playing.spectator", Messages.SCOREBOARD_DEFAULT_PLAYING.replace("Default", group));
+                        relocate("scoreboard." + group + ".playing.spectator", Messages.SCOREBOARD_DEFAULT_PLAYING_SPEC.replace("Default", group));
                     } else {
                         relocate("scoreboard." + group + ".playing", Messages.SCOREBOARD_DEFAULT_PLAYING.replace("Default", group));
                     }
@@ -116,19 +179,18 @@ public class Language extends ConfigManager {
      */
     public static List<String> getScoreboard(Player player, String path, String alternative) {
         Language language = getPlayerLanguage(player);
-        if (language.exists(path)) {
+        if (language == null) return Collections.emptyList();
+        if (rawValue(language, path) != null) {
             return language.l(path);
-        } else {
-            if (path.split("\\.").length == 3) {
-                String[] sp = path.split("\\.");
-                String path2 = sp[1];
-                path2 = String.valueOf(path2.charAt(0)).toUpperCase() + path2.substring(1).toLowerCase();
-                path2 = sp[0] + "." + path2 + "." + sp[2];
-                if (language.exists(path2)) {
-                    return language.l(path);
-                } else if (language.exists(sp[0] + "." + sp[1].toUpperCase() + "." + sp[2])) {
-                    return language.l(sp[0] + "." + sp[1].toUpperCase() + "." + sp[2]);
-                }
+        }
+        if (path != null) {
+            String[] sp = path.split("\\.", -1);
+            if (sp.length == 3 && !sp[1].isEmpty()) {
+                String path2 = sp[0] + "." + Character.toUpperCase(sp[1].charAt(0))
+                        + sp[1].substring(1).toLowerCase(Locale.ROOT) + "." + sp[2];
+                if (rawValue(language, path2) != null) return language.l(path2);
+                path2 = sp[0] + "." + sp[1].toUpperCase(Locale.ROOT) + "." + sp[2];
+                if (rawValue(language, path2) != null) return language.l(path2);
             }
         }
         return language.l(alternative);
@@ -138,44 +200,66 @@ public class Language extends ConfigManager {
      * Get language display name.
      */
     public String getLangName() {
-        return getYml().getString("name");
+        if (getYml() == null) return iso;
+        return getYml().getString("name", iso);
     }
 
     /**
      * Get message in player's language.
      */
     public static String getMsg(Player player, String path) {
-        if (player == null) {
-            return getDefaultLanguage().m(path);
-        }
-        return langByPlayer.getOrDefault(player.getUniqueId(), getDefaultLanguage())
-                .m(path).replace("{prefix}", (prefixStatic == null ? "" : prefixStatic));
+        Language language = getPlayerLanguage(player);
+        String message = language == null ? MISSING_LANGUAGE_MESSAGE : language.m(path);
+        return message.replace("{prefix}", prefixStatic == null ? "" : prefixStatic);
     }
 
     /**
      * Retrieve a player language.
      */
     public static Language getPlayerLanguage(@NotNull Player player) {
-        return langByPlayer.getOrDefault(player.getUniqueId(), getDefaultLanguage());
+        return languageFor(player == null ? null : player.getUniqueId());
     }
 
     public static Language getPlayerLanguage(UUID p) {
-        return langByPlayer.getOrDefault(p, getDefaultLanguage());
+        return languageFor(p);
     }
 
     /**
      * Check if a message was set.
      */
     public boolean exists(String path) {
-        return getYml().get(path) != null;
+        return path != null && getYml() != null && getYml().get(path) != null;
+    }
+    /**
+     * Ensure a dynamic item name exists and migrate old English placeholder text.
+     */
+    public void ensureLocalizedName(String path) {
+        Object current = getYml().get(path);
+        Object configuredDefault = getYml().getDefaults() == null ? null : getYml().getDefaults().get(path);
+        String replacement = configuredDefault instanceof String ? (String) configuredDefault : m(Messages.CONFIG_ITEM_NAME_NOT_SET);
+        if (current == null || isLegacyUnsetName(current)) set(path, replacement);
+    }
+
+    /**
+     * Ensure dynamic lore exists and migrate old English placeholder text.
+     */
+    @SuppressWarnings("unchecked")
+    public void ensureLocalizedLore(String path) {
+        Object current = getYml().get(path);
+        Object configuredDefault = getYml().getDefaults() == null ? null : getYml().getDefaults().get(path);
+        List<String> replacement = configuredDefault instanceof List ? new ArrayList<>((List<String>) configuredDefault)
+                : l(Messages.CONFIG_ITEM_LORE_NOT_SET);
+        if (current == null || isLegacyUnsetLore(current)) set(path, replacement);
     }
 
     /**
      * Get a string list in player's language.
      */
     public static List<String> getList(@NotNull Player player, String path) {
-        return langByPlayer.getOrDefault(player.getUniqueId(), getDefaultLanguage()).l(path);
+        Language language = getPlayerLanguage(player);
+        return language == null ? Collections.emptyList() : language.l(path);
     }
+
 
     @SuppressWarnings("unused")
     public void relocate(String from, String to) {
@@ -190,8 +274,9 @@ public class Language extends ConfigManager {
      * Save a value to file if not exists.
      */
     public static void saveIfNotExists(String path, Object data) {
+        if (path == null) return;
         for (Language l : languages) {
-            if (l.getYml().get(path) == null) {
+            if (l != null && l.getYml() != null && l.getYml().get(path) == null) {
                 l.set(path, data);
             }
         }
@@ -201,38 +286,29 @@ public class Language extends ConfigManager {
      * Get a color translated message.
      */
     public String m(String path) {
-        String message = getYml().getString(path);
-        if (message == null) {
-            // 总是报错，不知道为啥，先注释掉
-//            System.err.println("Missing message key " + path + " in language " + getIso());
-            message = "MISSING_LANG";
-        }
-        if (null == serverIp) {
+        String message = rawMessage(this, path);
+        if (message == null) message = MISSING_LANGUAGE_MESSAGE;
+        if (serverIp == null && Bukkit.getServicesManager().getRegistration(BedWars.class) != null) {
             BedWars api = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
-            if (null != api.getConfigs().getMainConfig()) {
-                serverIp = api.getConfigs().getMainConfig().
-                        getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP);
+            if (api != null && api.getConfigs() != null && api.getConfigs().getMainConfig() != null) {
+                serverIp = api.getConfigs().getMainConfig().getString(
+                        ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP);
             }
         }
-
         return ChatColor.translateAlternateColorCodes('&', message
-                .replace("{prefix}", (prefix == null ? "" : prefix))
-                .replace("{serverIp}", serverIp == null ? "" : serverIp)
-        );
+                .replace("{prefix}", prefix == null ? "" : prefix)
+                .replace("{serverIp}", serverIp == null ? "" : serverIp));
     }
 
     /**
      * Get a color translated list.
      */
     public List<String> l(String path) {
+        List<String> lines = rawList(this, path);
         List<String> result = new ArrayList<>();
-        List<String> lines = getYml().getStringList(path);
-        if (lines == null) {
-            System.err.println("Missing message list key " + path + " in language " + getIso());
-            lines = Collections.emptyList();
-        }
+        if (lines == null) lines = Collections.emptyList();
         for (String line : lines) {
-            result.add(ChatColor.translateAlternateColorCodes('&', line));
+            if (line != null) result.add(ChatColor.translateAlternateColorCodes('&', line));
         }
         return result;
     }
@@ -245,26 +321,28 @@ public class Language extends ConfigManager {
      * Check if a language exists.
      */
     public static boolean isLanguageExist(String iso) {
-        for (Language l : languages) {
-            if (l.iso.equalsIgnoreCase(iso)) {
-                return true;
-            }
-        }
-        return false;
+        return findLang(iso) != null;
     }
 
     /**
-     * Get language with given info.
+     * Find an explicitly loaded language.
      *
-     * @return null if you could not find.
+     * @return the matching language, or null when the ISO is unknown.
+     */
+    public static Language findLang(String iso) {
+        if (iso == null) return null;
+        for (Language language : languages) {
+            if (language != null && language.iso != null && language.iso.equalsIgnoreCase(iso)) return language;
+        }
+        return null;
+    }
+
+    /**
+     * Get a language by ISO, falling back to the server language for compatibility.
      */
     public static Language getLang(String iso) {
-        for (Language l : languages) {
-            if (l.iso.equalsIgnoreCase(iso)) {
-                return l;
-            }
-        }
-        return getDefaultLanguage();
+        Language language = findLang(iso);
+        return language == null ? fallbackLanguage() : language;
     }
 
     /**
@@ -281,23 +359,93 @@ public class Language extends ConfigManager {
         return languages;
     }
 
+    private static String getDefaultMessage(Language language, String path, String fallback) {
+        String message = rawMessage(language, path);
+        return message == null ? fallback : message;
+    }
+
+    private static List<String> getDefaultMessageList(Language language, String path, List<String> fallback) {
+        List<String> messages = rawList(language, path);
+        return messages == null ? fallback : messages;
+    }
+
+    private static String normalizeLegacyPlaceholder(String message) {
+        return message.replaceAll("(?i)[&§][0-9A-FK-OR]", "").trim().toLowerCase(Locale.ROOT);
+    }
+    private static String plainMessage(Object value) {
+        if (value instanceof List) {
+            StringBuilder message = new StringBuilder();
+            for (Object line : (List<?>) value) {
+                if (line != null) message.append(line).append(' ');
+            }
+            return normalizeLegacyPlaceholder(message.toString());
+        }
+        return value instanceof String ? normalizeLegacyPlaceholder((String) value) : null;
+    }
+
+    private static boolean sameMessage(Object first, Object second) {
+        String firstMessage = plainMessage(first);
+        return firstMessage != null && firstMessage.equals(plainMessage(second));
+    }
+
+    private static boolean isLegacyUnsetName(Object value) {
+        if (!(value instanceof String)) return false;
+        String message = normalizeLegacyPlaceholder((String) value);
+        return message.equals("name not set") || message.startsWith("name not set at:");
+    }
+
+    private static boolean isLegacyUnsetLore(Object value) {
+        if (value instanceof String) return isLegacyUnsetLoreText((String) value);
+        if (value instanceof List) {
+            StringBuilder message = new StringBuilder();
+            for (Object line : (List<?>) value) {
+                if (line != null) message.append(line).append(' ');
+            }
+            return isLegacyUnsetLoreText(message.toString());
+        }
+        return false;
+    }
+
+    private static boolean isLegacyUnsetLoreText(String value) {
+        String message = normalizeLegacyPlaceholder(value);
+        return message.equals("lore not set") || message.startsWith("lore not set at:");
+    }
+
+    private static void addLocalizedDefaultName(Language language, String path, String fallback) {
+        YamlConfiguration yml = language.getYml();
+        String message = getDefaultMessage(language, Messages.CONFIG_ITEM_NAME_NOT_SET, fallback);
+        Object current = yml.get(path);
+        if (isLegacyUnsetName(current) && !sameMessage(current, message)) yml.set(path, message);
+        if (yml.getDefaults() == null || !yml.getDefaults().contains(path)) yml.addDefault(path, message);
+    }
+
+    private static void addLocalizedDefaultLore(Language language, String path, List<String> fallback) {
+        YamlConfiguration yml = language.getYml();
+        List<String> messages = getDefaultMessageList(language, Messages.CONFIG_ITEM_LORE_NOT_SET, fallback);
+        Object current = yml.get(path);
+        if (isLegacyUnsetLore(current) && !sameMessage(current, messages)) yml.set(path, messages);
+        if (yml.getDefaults() == null || !yml.getDefaults().contains(path)) yml.addDefault(path, messages);
+    }
+
     /**
-     * Save messages for unset stats items.
+     * Save localized messages for unset stats items.
      */
     public static void setupCustomStatsMessages() {
+        if (Bukkit.getServer().getServicesManager().getRegistration(BedWars.class) == null) return;
         BedWars api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
+        if (api == null || api.getConfigs() == null || api.getConfigs().getMainConfig() == null) return;
+        YamlConfiguration main = api.getConfigs().getMainConfig().getYml();
+        if (main == null || main.get(ConfigPath.GENERAL_CONFIGURATION_STATS_PATH) == null) return;
+        ConfigurationSection stats = main.getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_STATS_PATH);
+        if (stats == null) return;
         for (Language l : getLanguages()) {
-            if (l == null) continue;
-            if (l.getYml() == null) continue;
-            /* save messages for stats gui items if custom items added */
-            if (api.getConfigs().getMainConfig().getYml().get(ConfigPath.GENERAL_CONFIGURATION_STATS_PATH) == null)
-                return;
-            for (String item : api.getConfigs().getMainConfig().getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_STATS_PATH).getKeys(false)) {
+            if (l == null || l.getYml() == null) continue;
+            for (String item : stats.getKeys(false)) {
                 if (ConfigPath.GENERAL_CONFIGURATION_STATS_GUI_SIZE.contains(item)) continue;
-                if (l.getYml().getDefaults() == null || !l.getYml().getDefaults().contains(Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-name"))
-                    l.getYml().addDefault(Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-name", "Name not set");
-                if (l.getYml().getDefaults() == null || !l.getYml().getDefaults().contains(Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-lore"))
-                    l.getYml().addDefault(Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-lore", Collections.singletonList("lore not set"));
+                String namePath = Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-name";
+                String lorePath = Messages.PLAYER_STATS_GUI_PATH + "-" + item + "-lore";
+                addLocalizedDefaultName(l, namePath, "&cName not set");
+                addLocalizedDefaultLore(l, lorePath, Collections.singletonList("&cLore not set"));
             }
             l.save();
         }
@@ -311,85 +459,84 @@ public class Language extends ConfigManager {
             yml.addDefault(Messages.PLAYER_STATS_GUI_PATH + "-" + path + "-lore", lore);
     }
 
+    private static void addLocalizedItemDefaults(Language language, ConfigurationSection section,
+                                                  String nameTemplate, String loreTemplate) {
+        if (section == null) return;
+        for (String item : section.getKeys(false)) {
+            if (item.isEmpty()) continue;
+            addLocalizedDefaultName(language, nameTemplate.replace("%path%", item), "&cName not set");
+            addLocalizedDefaultLore(language, loreTemplate.replace("%path%", item),
+                    Collections.singletonList("&cLore not set"));
+        }
+    }
+
     /**
      * Create missing name/ lore for items: multi arena lobby, waiting, spectating
      */
     public static void addDefaultMessagesCommandItems(Language language) {
-        if (language == null) return;
-        YamlConfiguration yml = language.getYml();
-        if (yml == null) return;
+        if (language == null || language.getYml() == null
+                || Bukkit.getServer().getServicesManager().getRegistration(BedWars.class) == null) return;
         BedWars api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
-        if (api.getConfigs().getMainConfig().getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) != null) {
-            for (String item : api.getConfigs().getMainConfig().getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
-                if (item.isEmpty()) continue;
-                String p1 = Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", item);
-                String p2 = Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", item);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p1, "&cName not set at: &f" + p1);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p2, Arrays.asList("&cLore not set at:", " &f" + p2));
-            }
-        }
-        if (api.getConfigs().getMainConfig().getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH) != null) {
-            for (String item : api.getConfigs().getMainConfig().getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH).getKeys(false)) {
-                if (item.isEmpty()) continue;
-                String p1 = Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", item);
-                String p2 = Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", item);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p1, "&cName not set at: &f" + p1);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p2, Arrays.asList("&cLore not set at:", " &f" + p2));
-            }
-        }
-        if (api.getConfigs().getMainConfig().getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) != null) {
-            for (String item : api.getConfigs().getMainConfig().getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH).getKeys(false)) {
-                if (item.isEmpty()) continue;
-                String p1 = Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", item);
-                String p2 = Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", item);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p1, "&cName not set at: &f" + p1);
-                if (yml.getDefaults() == null || !yml.getDefaults().contains(p1))
-                    yml.addDefault(p2, Arrays.asList("&cLore not set at:", " &f" + p2));
-            }
-        }
-        yml.options().copyDefaults(true);
+        if (api == null || api.getConfigs() == null || api.getConfigs().getMainConfig() == null) return;
+        YamlConfiguration main = api.getConfigs().getMainConfig().getYml();
+        if (main == null) return;
+        addLocalizedItemDefaults(language,
+                main.getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH),
+                Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME,
+                Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE);
+        addLocalizedItemDefaults(language,
+                main.getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH),
+                Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME,
+                Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE);
+        addLocalizedItemDefaults(language,
+                main.getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH),
+                Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME,
+                Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE);
+        language.getYml().options().copyDefaults(true);
         language.save();
     }
 
     /**
-     * Create messages paths for new shop categories
+     * Create messages paths for new shop categories.
      */
     @SuppressWarnings("DuplicateExpressions")
     public void setupUnSetCategories() {
+        if (getYml() == null || Bukkit.getServer().getServicesManager().getRegistration(BedWars.class) == null) return;
         BedWars api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
-        for (String s : api.getConfigs().getShopConfig().getYml().getConfigurationSection("").getKeys(false)) {
-            if (s.equalsIgnoreCase(ConfigPath.SHOP_SETTINGS_PATH)) continue;
-            if (s.equalsIgnoreCase(ConfigPath.SHOP_SPECIALS_PATH)) continue;
-            if (s.equals(ConfigPath.SHOP_QUICK_DEFAULTS_PATH)) continue;
-            if (!exists(Messages.SHOP_CATEGORY_INVENTORY_NAME.replace("%category%", s))) {
-                set(Messages.SHOP_CATEGORY_INVENTORY_NAME.replace("%category%", s), "&8Name not set");
-            }
-            if (!exists(Messages.SHOP_CATEGORY_ITEM_NAME.replace("%category%", s))) {
-                set(Messages.SHOP_CATEGORY_ITEM_NAME.replace("%category%", s), "&8Name not set");
-            }
-            if (!exists(Messages.SHOP_CATEGORY_ITEM_LORE.replace("%category%", s))) {
-                set(Messages.SHOP_CATEGORY_ITEM_LORE.replace("%category%", s), Collections.singletonList("&8Lore not set"));
-            }
-            if (api.getConfigs().getShopConfig().getYml().get(s + ConfigPath.SHOP_CATEGORY_CONTENT_PATH) == null)
-                continue;
-            for (String c : api.getConfigs().getShopConfig().getYml().getConfigurationSection(s + ConfigPath.SHOP_CATEGORY_CONTENT_PATH).getKeys(false)) {
-                if (!exists(Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", s).replace("%content%", c))) {
-                    set(Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", s).replace("%content%", c), "&8Name not set");
-                }
-                if (!exists(Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", s).replace("%content%", c))) {
-                    set(Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", s).replace("%content%", c), Collections.singletonList("&8Lore not set"));
-                }
+        if (api == null || api.getConfigs() == null || api.getConfigs().getShopConfig() == null
+                || api.getConfigs().getShopConfig().getYml() == null) return;
+        YamlConfiguration shop = api.getConfigs().getShopConfig().getYml();
+        for (String s : shop.getKeys(false)) {
+            if (s.equalsIgnoreCase(ConfigPath.SHOP_SETTINGS_PATH)
+                    || s.equalsIgnoreCase(ConfigPath.SHOP_SPECIALS_PATH)
+                    || s.equals(ConfigPath.SHOP_QUICK_DEFAULTS_PATH)) continue;
+            String nameFallback = getDefaultMessage(this, Messages.CONFIG_ITEM_NAME_NOT_SET, "&8Name not set");
+            List<String> loreFallback = getDefaultMessageList(this, Messages.CONFIG_ITEM_LORE_NOT_SET,
+                    Collections.singletonList("&8Lore not set"));
+            String inventoryNamePath = Messages.SHOP_CATEGORY_INVENTORY_NAME.replace("%category%", s);
+            String itemNamePath = Messages.SHOP_CATEGORY_ITEM_NAME.replace("%category%", s);
+            String itemLorePath = Messages.SHOP_CATEGORY_ITEM_LORE.replace("%category%", s);
+            Object inventoryName = getYml().get(inventoryNamePath);
+            Object itemName = getYml().get(itemNamePath);
+            Object itemLore = getYml().get(itemLorePath);
+            if (inventoryName == null || (isLegacyUnsetName(inventoryName) && !sameMessage(inventoryName, nameFallback))) set(inventoryNamePath, nameFallback);
+            if (itemName == null || (isLegacyUnsetName(itemName) && !sameMessage(itemName, nameFallback))) set(itemNamePath, nameFallback);
+            if (itemLore == null || (isLegacyUnsetLore(itemLore) && !sameMessage(itemLore, loreFallback))) set(itemLorePath, loreFallback);
+            ConfigurationSection content = shop.getConfigurationSection(s + ConfigPath.SHOP_CATEGORY_CONTENT_PATH);
+            if (content == null) continue;
+            for (String c : content.getKeys(false)) {
+                String contentNamePath = Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", s).replace("%content%", c);
+                String contentLorePath = Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", s).replace("%content%", c);
+                Object contentName = getYml().get(contentNamePath);
+                Object contentLore = getYml().get(contentLorePath);
+                if (contentName == null || (isLegacyUnsetName(contentName) && !sameMessage(contentName, nameFallback))) set(contentNamePath, nameFallback);
+                if (contentLore == null || (isLegacyUnsetLore(contentLore) && !sameMessage(contentLore, loreFallback))) set(contentLorePath, loreFallback);
             }
         }
     }
 
     /**
-     * Add required messages for a shop category to the given yml
+     * Add required messages for a shop category to the given yml.
      */
     public static void addCategoryMessages(@NotNull YamlConfiguration yml, String categoryName, String invName, String itemName, List<String> itemLore) {
         if (yml.getDefaults() == null || !yml.getDefaults().contains(Messages.SHOP_CATEGORY_INVENTORY_NAME.replace("%category%", categoryName)))
@@ -401,68 +548,140 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Add required messages for a shop category to the given yml
+     * Add required messages for a shop category content to the given yml.
      */
     public static void addContentMessages(@NotNull YamlConfiguration yml, String contentName, String categoryName, String itemName, List<String> itemLore) {
+        if (yml == null || contentName == null || categoryName == null) return;
         final String path1 = Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", categoryName).replace("%content%", contentName),
                 path2 = Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", categoryName).replace("%content%", contentName);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path1)) yml.addDefault(path1, itemName);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path2)) yml.addDefault(path2, itemLore);
     }
 
+    private static boolean migrateUpgradeMenuTerminology(Language language) {
+        ConfigurationSection defaults = language.getYml().getDefaults();
+        if (defaults == null) return false;
+        Object defaultTitle = defaults.get(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT);
+        boolean changed = false;
+        if (defaultTitle instanceof String) {
+            for (String path : language.getYml().getKeys(true)) {
+                if (!path.equals(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT)
+                        && !path.startsWith(Messages.UPGRADES_MENU_GUI_NAME_PATH)) continue;
+                Object current = language.getYml().get(path);
+                if (current instanceof String && LEGACY_UPGRADE_MENU_TITLES.contains(((String) current).replace('§', '&'))) {
+                    language.getYml().set(path, defaultTitle);
+                    changed = true;
+                }
+            }
+        }
+        String backPath = Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + "back";
+        Object defaultBackLore = defaults.get(backPath);
+        Object currentBackLore = language.getYml().get(backPath);
+        if (defaultBackLore instanceof List && currentBackLore instanceof List && ((List<?>) currentBackLore).size() == 1) {
+            Object currentLine = ((List<?>) currentBackLore).get(0);
+            if (currentLine instanceof String && LEGACY_UPGRADE_BACK_LORE.contains(((String) currentLine).replace('§', '&'))) {
+                language.getYml().set(backPath, defaultBackLore);
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
     /**
-     * Change a player language and refresh
-     * scoreboard and custom join items.
+     * Replace persisted stock-English values with the current built-in translation.
+     * Administrator-customized values are preserved because only exact English defaults migrate.
+     */
+    public static void migrateEnglishDefaults() {
+        if (englishLanguage == null || englishLanguage.getYml() == null || englishLanguage.getYml().getDefaults() == null) return;
+        ConfigurationSection englishDefaults = englishLanguage.getYml().getDefaults();
+        if (migrateUpgradeMenuTerminology(englishLanguage)) englishLanguage.save();
+        for (Language language : languages) {
+            if (language == null || language == englishLanguage || language.getYml() == null || language.getYml().getDefaults() == null) continue;
+            ConfigurationSection localizedDefaults = language.getYml().getDefaults();
+            boolean changed = false;
+            for (String path : localizedDefaults.getKeys(true)) {
+                Object current = language.getYml().get(path);
+                Object englishDefault = englishDefaults.get(path);
+                Object localizedDefault = localizedDefaults.get(path);
+                if (englishDefault instanceof ConfigurationSection || localizedDefault instanceof ConfigurationSection) continue;
+                if (current instanceof List && englishDefault instanceof List && localizedDefault instanceof List) {
+                    List<?> currentList = (List<?>) current;
+                    List<?> englishList = (List<?>) englishDefault;
+                    List<?> localizedList = (List<?>) localizedDefault;
+                    if (currentList.size() != englishList.size() || currentList.size() != localizedList.size()) continue;
+                    List<Object> migrated = new ArrayList<>(currentList);
+                    boolean listChanged = false;
+                    for (int index = 0; index < currentList.size(); index++) {
+                        if (Objects.equals(currentList.get(index), englishList.get(index))
+                                && !Objects.equals(localizedList.get(index), englishList.get(index))) {
+                            migrated.set(index, localizedList.get(index));
+                            listChanged = true;
+                        }
+                    }
+                    if (listChanged) {
+                        language.getYml().set(path, migrated);
+                        changed = true;
+                    }
+                } else if (englishDefault != null && localizedDefault != null && Objects.equals(current, englishDefault)
+                        && !Objects.equals(localizedDefault, englishDefault)) {
+                    language.getYml().set(path, localizedDefault);
+                    changed = true;
+                }
+            }
+            changed |= migrateUpgradeMenuTerminology(language);
+            if (changed) language.save();
+        }
+    }
+
+    /**
+     * Change a player language and refresh scoreboard and custom join items.
      */
     public static boolean setPlayerLanguage(UUID uuid, String iso) {
-
+        if (uuid == null) return false;
+        Language current = langByPlayer.get(uuid);
         if (iso == null) {
-            if (langByPlayer.containsKey(uuid)) {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player != null && player.isOnline()) {
-                    PlayerLangChangeEvent e = new PlayerLangChangeEvent(player, langByPlayer.get(uuid).iso, getDefaultLanguage().iso);
-                    Bukkit.getPluginManager().callEvent(e);
-                    if (e.isCancelled()) return false;
-                }
+            if (current == null) return true;
+            Language reset = fallbackLanguage();
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null && player.isOnline() && reset != null) {
+                PlayerLangChangeEvent event = new PlayerLangChangeEvent(player, current.getIso(), reset.getIso());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) return false;
             }
             langByPlayer.remove(uuid);
             return true;
         }
-
-        Language newLang = Language.getLang(iso);
+        Language newLang = Language.findLang(iso.trim());
         if (newLang == null) return false;
-        Language oldLang = Language.getPlayerLanguage(uuid);
-        if (oldLang.getIso().equals(newLang.getIso())) return false;
-
+        Language oldLang = current == null ? fallbackLanguage() : current;
+        if (oldLang != null && oldLang.getIso().equalsIgnoreCase(newLang.getIso())) return false;
         Player player = Bukkit.getPlayer(uuid);
-        if (player != null && player.isOnline()) {
-            PlayerLangChangeEvent e = new PlayerLangChangeEvent(player, oldLang.getIso(), newLang.getIso());
-            Bukkit.getPluginManager().callEvent(e);
-            if (e.isCancelled()) return false;
+        if (player != null && player.isOnline() && oldLang != null) {
+            PlayerLangChangeEvent event = new PlayerLangChangeEvent(player, oldLang.getIso(), newLang.getIso());
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
         }
-
-        if (Language.getDefaultLanguage().getIso().equals(newLang.getIso())) {
+        if (defaultLanguage != null && defaultLanguage.getIso().equalsIgnoreCase(newLang.getIso())) {
             langByPlayer.remove(uuid);
-            return true;
-        }
-
-        if (langByPlayer.containsKey(uuid)) {
-            langByPlayer.replace(uuid, newLang);
         } else {
             langByPlayer.put(uuid, newLang);
         }
         return true;
     }
-
     public static String @NotNull [] getCountDownTitle(@NotNull Language playerLang, int second) {
+        Language language = playerLang == null ? fallbackLanguage() : playerLang;
+        String[] paths = {
+                Messages.ARENA_STATUS_START_COUNTDOWN_TITLE,
+                Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE
+        };
         String[] result = new String[2];
-        result[0] = ChatColor.translateAlternateColorCodes('&', playerLang.getYml().get(Messages.ARENA_STATUS_START_COUNTDOWN_TITLE + "-" + second, playerLang.getString(Messages.ARENA_STATUS_START_COUNTDOWN_TITLE)).toString().replace("{second}", String.valueOf(second)));
-        if (result[0].isEmpty()) {
-            result[0] = " ";
-        }
-        result[1] = ChatColor.translateAlternateColorCodes('&', playerLang.getYml().get(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-" + second, playerLang.getString(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE)).toString().replace("{second}", String.valueOf(second)));
-        if (result[1].isEmpty()) {
-            result[1] = " ";
+        for (int i = 0; i < paths.length; i++) {
+            String specific = rawMessage(language, paths[i] + "-" + second);
+            String message = specific == null ? rawMessage(language, paths[i]) : specific;
+            if (message == null) message = MISSING_LANGUAGE_MESSAGE;
+            result[i] = ChatColor.translateAlternateColorCodes('&', message)
+                    .replace("{second}", String.valueOf(second));
+            if (result[i].isEmpty()) result[i] = " ";
         }
         return result;
     }
@@ -471,7 +690,7 @@ public class Language extends ConfigManager {
      * Change server default language.
      */
     public static void setDefaultLanguage(Language defaultLanguage) {
-        Language.defaultLanguage = defaultLanguage;
+        if (defaultLanguage != null) Language.defaultLanguage = defaultLanguage;
     }
 
     /**

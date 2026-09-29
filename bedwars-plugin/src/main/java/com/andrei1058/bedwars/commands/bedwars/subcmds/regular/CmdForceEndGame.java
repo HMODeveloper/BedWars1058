@@ -8,10 +8,8 @@ import com.andrei1058.bedwars.api.command.SubCommand;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.tasks.RestartingTask;
 import com.andrei1058.bedwars.arena.Arena;
-import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
-import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -27,8 +25,8 @@ public class CmdForceEndGame extends SubCommand {
         setPriority(16); // Just after forceStart
         showInList(true);
         setPermission(Permissions.PERMISSION_FORCE_END_GAME);
-        setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " " + getSubCommandName() + " §8 - §eForce end an arena",
-                "/" + getParent().getName() + " " + getSubCommandName(), "§fForce end an arena without winner.\n§fPermission: §c" + Permissions.PERMISSION_FORCE_END_GAME));
+        setDisplayInfo(MainCommand.createTC(getMsg(null, Messages.COMMAND_FORCE_END_GAME_DISPLAY).replace("{command}", getParent().getName()).replace("{subcommand}", getSubCommandName()),
+                "/" + getParent().getName() + " " + getSubCommandName(), getMsg(null, Messages.COMMAND_FORCE_END_GAME_DISPLAY_HOVER).replace("{permission}", Permissions.PERMISSION_FORCE_END_GAME)));
     }
 
     @Override
@@ -48,12 +46,12 @@ public class CmdForceEndGame extends SubCommand {
         }
 
         if (a.getStatus() == GameState.waiting || a.getStatus() == GameState.starting || a.getStatus() == GameState.restarting) {
-            p.sendMessage("§cThe game is not playing.");
+            p.sendMessage(getMsg(p, Messages.COMMAND_FORCE_END_GAME_NOT_PLAYING));
             return true;
         }
 
         // Force end the game
-        p.sendMessage("§aForce ending the game...");
+        p.sendMessage(getMsg(p, Messages.COMMAND_FORCE_END_GAME_SUCCESS));
         a.changeStatus(GameState.restarting);
         RestartingTask restartingTask = a.getRestartingTask();
         if (restartingTask != null) {

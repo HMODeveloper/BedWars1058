@@ -461,7 +461,7 @@ public interface BedWars {
     boolean isAutoScale();
 
     /**
-     * Get language by iso code.
+     * Get a language by ISO code, or the server language when the ISO is unknown.
      */
     @SuppressWarnings("unused")
     Language getLanguageByIso(String isoCode);
