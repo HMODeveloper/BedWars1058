@@ -33,7 +33,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class PlayerDropPick_1_11Minus implements Listener {
 
@@ -83,28 +82,20 @@ public class PlayerDropPick_1_11Minus implements Listener {
         if (VersionCommon.api.getVersionSupport().isBed(e.getItem().getItemStack().getType())) {
             e.setCancelled(true);
             e.getItem().remove();
-        } else if (e.getItem().getItemStack().hasItemMeta()) {
-            //noinspection ConstantConditions
-            if (e.getItem().getItemStack().getItemMeta().hasDisplayName()) {
-                if (e.getItem().getItemStack().getItemMeta().getDisplayName().contains("custom")) {
-                    Material material = e.getItem().getItemStack().getType();
-                    ItemMeta itemMeta = new ItemStack(material).getItemMeta();
+        } else if (api.getVersionSupport().getTag(e.getItem().getItemStack(), "bw1058-generator-drop") != null) {
+            if (api.getAFKUtil().isPlayerAFK(e.getPlayer())) {
+                e.setCancelled(true);
+                return;
+            }
 
-                    //Call ore pick up event
-
-                    if (!api.getAFKUtil().isPlayerAFK(e.getPlayer())){
-                        PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent(e.getPlayer(), e.getItem(), a);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (event.isCancelled()){
-                            e.setCancelled(true);
-                        } else {
-                            e.getItem().getItemStack().setItemMeta(itemMeta);
-                        }
-                    }
-                    else {  //Cancel Event if play is afk
-                        e.setCancelled(true);
-                    }
-                }
+            PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent(e.getPlayer(), e.getItem(), a);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                e.setCancelled(true);
+            } else {
+                ItemStack resource = e.getItem().getItemStack();
+                // Remove the unique ground-drop marker before the resource enters the inventory.
+                e.getItem().setItemStack(new ItemStack(resource.getType(), resource.getAmount(), resource.getDurability()));
             }
         }
     }
