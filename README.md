@@ -11,6 +11,11 @@ As from November 1st 2021 BedWars1058 by Andrei Dascălu becomes open source und
 BedWars is a mini-game where you have to defend your bed and destroy the others.  
 Once your bed is destroyed, you cannot respawn.
 
+Players can send arena-wide messages during a game with `/shout <message>` or `!<message>`.
+The `bw.shout` permission is granted by default; explicitly denying it blocks shout messages
+even when the player has `bw.*`. The existing shout cooldown still applies; `bw.shout.bypass`
+only bypasses that cooldown and does not override a denied `bw.shout` permission.
+
 # System requirements
 This software runs on [Spigot](https://www.spigotmc.org/) and NMS.
 Spigot forks without compiled NMS code are not supported.

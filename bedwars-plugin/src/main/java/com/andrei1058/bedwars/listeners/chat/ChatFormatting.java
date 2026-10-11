@@ -93,7 +93,10 @@ public class ChatFormatting implements Listener {
 
             // shout format
             if (isShouting(msg, language)) {
-                if (!(p.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND) || p.hasPermission(Permissions.PERMISSION_ALL))) {
+                // Explicit shout denial takes precedence over wildcard permission.
+                if ((p.isPermissionSet(Permissions.PERMISSION_SHOUT_COMMAND)
+                        && !p.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND))
+                        || !Permissions.hasPermission(p, Permissions.PERMISSION_SHOUT_COMMAND, Permissions.PERMISSION_ALL)) {
                     e.setCancelled(true);
                     p.sendMessage(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
                     return;

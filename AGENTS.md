@@ -75,6 +75,7 @@ The workflows mutate versions before deployment with `mvn versions:set` and `mvn
 
 - Use Maven, not Gradle; no wrapper or Node/Bun runtime is configured.
 - Prefer offline builds: `mvn -o clean install -DskipTests`; use online mode only when required dependencies are unavailable locally.
+- Preserve `BED_WARS_SERVER_DIR` during builds so the existing antrun hook can copy the plugin JAR to the configured server's `plugins` directory. Do not unset, override, or suppress it (including with `env -u BED_WARS_SERVER_DIR`) unless the user explicitly requests a build without deployment.
 - Java 11 is the documented minimum and the Maven source/target. CI uses Temurin JDK 21; compile with Java 11+ and do not lower the target without an explicit compatibility requirement.
 - Run against Spigot or Paper with compiled NMS. The 1.8 dependency graph uses Spigot `1.8.8-R0.1-SNAPSHOT`; server/plugin APIs and optional integrations are generally `provided`, not bundled.
 - `plugin.yml` is resource-filtered during Maven build. Commands are registered programmatically from `BedWars`, not declared as command entries there.
