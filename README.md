@@ -16,6 +16,28 @@ The `bw.shout` permission is granted by default; explicitly denying it blocks sh
 even when the player has `bw.*`. The existing shout cooldown still applies; `bw.shout.bypass`
 only bypasses that cooldown and does not override a denied `bw.shout` permission.
 
+Start a chat message with `@` to send it to every online player on the current server,
+including lobby players, other arenas and spectators. This does not broadcast across
+Bungee servers. Spectators can also send these messages to active contestants.
+Only a leading ASCII `@` is recognized; an empty message shows usage without consuming cooldown.
+The format uses the sender's language and the existing chat color permissions.
+
+```yaml
+global-chat:
+  require-permission: false
+  cooldown: 30
+```
+
+By default everyone can send server-wide messages. Set `require-permission: true` to
+require `bw.global` or `bw.*`; `bw.global` is not granted by default.
+An explicitly denied `bw.global` blocks sending in either mode, even with `bw.*`.
+`bw.global.bypass` bypasses only the independent global cooldown; neither global permission
+is granted by default. A cooldown of zero or less disables the cooldown.
+Reconnects do not reset an active cooldown. The `@` route also works with
+`chat-settings.format: false`; ordinary chat keeps its existing behavior.
+Messages remain Bukkit chat events so cancellation by moderation plugins is respected.
+Restart after installing the plugin so the new permission declarations are loaded.
+
 # System requirements
 This software runs on [Spigot](https://www.spigotmc.org/) and NMS.
 Spigot forks without compiled NMS code are not supported.

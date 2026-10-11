@@ -199,6 +199,8 @@ public class ConfigPath {
     private static final String GENERAL_CHAT = "chat-settings.";
     public static final String GENERAL_CHAT_FORMATTING = GENERAL_CHAT+"format";
     public static final String GENERAL_CHAT_GLOBAL = GENERAL_CHAT+"global";
+    public static final String GLOBAL_CHAT_REQUIRE_PERMISSION = "global-chat.require-permission";
+    public static final String GLOBAL_CHAT_COOLDOWN = "global-chat.cooldown";
 
     public static final String ARENA_DISPLAY_NAME = "display-name";
     public static final String ARENA_CONFIGURATION_MAX_BUILD_Y = "max-build-y";

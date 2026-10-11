@@ -30,6 +30,8 @@ public class Permissions {
     public static final String PERMISSION_ALL = BedWars.mainCmd+".*";
     public static final String PERMISSION_COMMAND_BYPASS = BedWars.mainCmd+".cmd.bypass";
     public static final String PERMISSION_SHOUT_COMMAND = BedWars.mainCmd+".shout";
+    public static final String PERMISSION_GLOBAL_CHAT = BedWars.mainCmd+".global";
+    public static final String PERMISSION_GLOBAL_CHAT_BYPASS = BedWars.mainCmd+".global.bypass";
 
     public static final String PERMISSION_SETUP_ARENA = BedWars.mainCmd+".setup";
     public static final String PERMISSION_ARENA_GROUP = BedWars.mainCmd+".groups";

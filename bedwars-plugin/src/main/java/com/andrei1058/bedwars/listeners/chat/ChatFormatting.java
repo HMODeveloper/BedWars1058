@@ -32,6 +32,7 @@ import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.commands.shout.ShoutCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
 import com.andrei1058.bedwars.support.papi.SupportPAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,17 +41,29 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.andrei1058.bedwars.BedWars.*;
 import static com.andrei1058.bedwars.api.language.Language.getMsg;
 import static com.andrei1058.bedwars.api.language.Language.getPlayerLanguage;
 
 public class ChatFormatting implements Listener {
+    private final Map<UUID, Long> globalCooldowns = new HashMap<>();
+    private long nextCooldownCleanup;
 
     @EventHandler(ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
         if (e == null) return;
         Player p = e.getPlayer();
+
+        // Global chat must be routed before shared-world, spectator and arena isolation.
+        if (e.getMessage().startsWith("@")) {
+            handleGlobalChat(e, p);
+            return;
+        }
+        if (!config.getBoolean(ConfigPath.GENERAL_CHAT_FORMATTING)) return;
 
         // in shared mode we don't want messages from outside the arena to be seen in game
         if (getServerType() == ServerType.SHARED && Arena.getArenaByPlayer(p) == null) {
@@ -132,6 +145,54 @@ public class ChatFormatting implements Listener {
 
         // multi arena lobby chat
         e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_LOBBY), p, null));
+    }
+
+    private void handleGlobalChat(AsyncPlayerChatEvent event, Player player) {
+        String message = event.getMessage().substring(1).trim();
+        if (message.isEmpty()) {
+            event.setCancelled(true);
+            player.sendMessage(getMsg(player, Messages.CHAT_GLOBAL_USAGE));
+            return;
+        }
+        boolean canSend = player.hasPermission(Permissions.PERMISSION_GLOBAL_CHAT);
+        if (!canSend && (player.isPermissionSet(Permissions.PERMISSION_GLOBAL_CHAT)
+                || (config.getBoolean(ConfigPath.GLOBAL_CHAT_REQUIRE_PERMISSION)
+                && !player.hasPermission(Permissions.PERMISSION_ALL)))) {
+            event.setCancelled(true);
+            player.sendMessage(getMsg(player, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
+            return;
+        }
+        long remaining = claimGlobalCooldown(player);
+        if (remaining > 0) {
+            event.setCancelled(true);
+            player.sendMessage(getMsg(player, Messages.COMMAND_COOLDOWN)
+                    .replace("{seconds}", String.valueOf((remaining + 999) / 1000)));
+            return;
+        }
+        if (Permissions.hasPermission(player, Permissions.PERMISSION_CHAT_COLOR, Permissions.PERMISSION_VIP, Permissions.PERMISSION_ALL)) {
+            message = ChatColor.translateAlternateColorCodes('&', message);
+        }
+        event.setMessage(message);
+        event.setFormat(parsePHolders(getMsg(player, Messages.FORMATTING_CHAT_SERVER), player, null));
+        // Keep the event uncancelled so downstream moderation can still block delivery.
+        event.getRecipients().clear();
+        event.getRecipients().addAll(Bukkit.getOnlinePlayers());
+    }
+
+    private synchronized long claimGlobalCooldown(Player player) {
+        long now = System.currentTimeMillis();
+        if (now >= nextCooldownCleanup) {
+            globalCooldowns.values().removeIf(deadline -> deadline <= now);
+            nextCooldownCleanup = now + 60_000;
+        }
+        if (player.hasPermission(Permissions.PERMISSION_GLOBAL_CHAT_BYPASS)) return 0;
+        int seconds = config.getInt(ConfigPath.GLOBAL_CHAT_COOLDOWN);
+        if (seconds <= 0) return 0;
+        UUID playerId = player.getUniqueId();
+        Long deadline = globalCooldowns.get(playerId);
+        if (deadline != null && deadline > now) return deadline - now;
+        globalCooldowns.put(playerId, now + seconds * 1000L);
+        return 0;
     }
 
     private static String parsePHolders(String content, Player player, @Nullable ITeam team) {

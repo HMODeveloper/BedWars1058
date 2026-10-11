@@ -10,3 +10,9 @@ permissions:
   bw.shout:
     description: Allows sending arena-wide shout messages
     default: true
+  bw.global:
+    description: Allows sending server-wide chat when permission is required
+    default: false
+  bw.global.bypass:
+    description: Bypasses the server-wide chat cooldown
+    default: false

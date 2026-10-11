@@ -451,9 +451,7 @@ public class BedWars extends JavaPlugin {
         });
 
         /* Chat support */
-        if (config.getBoolean(ConfigPath.GENERAL_CHAT_FORMATTING)) {
-            registerEvents(new ChatFormatting());
-        }
+        registerEvents(new ChatFormatting());
 
         /* Protect glass walls from tnt explosion */
         nms.registerTntWhitelist(
