@@ -681,6 +681,10 @@ public class Arena implements IArena {
                 if (isPlayer(on)) {
                     BedWars.nms.spigotShowPlayer(p, on);
                     BedWars.nms.spigotShowPlayer(on, p);
+                } else if (isSpectator(on)) {
+                    // 赛前观众单向可见：观众能看到新玩家，新玩家看不到观众
+                    BedWars.nms.spigotShowPlayer(p, on);
+                    BedWars.nms.spigotHidePlayer(on, p);
                 } else {
                     BedWars.nms.spigotHidePlayer(p, on);
                     BedWars.nms.spigotHidePlayer(on, p);

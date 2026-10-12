@@ -1503,23 +1503,6 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.CONFIG_ITEM_NAME_NOT_SET, "&c名称未设置");
         yml.addDefault(Messages.CONFIG_ITEM_LORE_NOT_SET, Collections.singletonList("&c说明未设置"));
         yml.addDefault(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT, "&8队伍升级");
-
-        List<String> selectorLore = yml.getStringList(Messages.ARENA_GUI_ARENA_CONTENT_LORE);
-        if (!selectorLore.isEmpty() && selectorLore.stream().noneMatch(s -> s.contains("{spectators}"))) {
-            List<String> newSelectorLore = new ArrayList<>();
-            boolean added = false;
-            for (String line : selectorLore) {
-                newSelectorLore.add(line);
-                if (line.contains("{on}") && !added) {
-                    newSelectorLore.add("&7观赛中：&f{spectators}");
-                    added = true;
-                }
-            }
-            if (!added) {
-                newSelectorLore.add("&7观赛中：&f{spectators}");
-            }
-            yml.set(Messages.ARENA_GUI_ARENA_CONTENT_LORE, newSelectorLore);
-        }
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));

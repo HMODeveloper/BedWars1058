@@ -193,6 +193,7 @@ public class ConfigPath {
 
     public static final String GENERAL_CONFIGURATION_ENABLE_READY_CHECK = "enable-ready-check";
     public static final String GENERAL_CONFIGURATION_MARK_LEAVE_AS_ABANDON = "mark-leave-as-abandon";
+    public static final String GENERAL_CONFIGURATION_ALLOW_PRE_GAME_SPECTATE = "allow-pre-game-spectate";
 
     public static final String GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP = "server-ip";
     public static final String GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_POWERED_BY = "powered-by";

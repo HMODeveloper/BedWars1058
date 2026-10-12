@@ -20,6 +20,8 @@
 
 package com.andrei1058.bedwars.commands.bedwars.subcmds.regular;
 
+import com.andrei1058.bedwars.BedWars;
+import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
@@ -71,7 +73,9 @@ public class CmdTpStaff extends SubCommand {
             return true;
         }
 
-        if (a.getStatus() == GameState.playing) {
+        GameState status = a.getStatus();
+        // 允许在 playing 状态传送并观战；赛前 waiting/starting 状态则由配置项控制
+        if (status == GameState.playing || ((status == GameState.waiting || status == GameState.starting) && BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PRE_GAME_SPECTATE))) {
             if (a2 != null) {
                 if (a2.isPlayer(p2)) a2.removePlayer(p2, false);
                 if (a2.isSpectator(p2)) {

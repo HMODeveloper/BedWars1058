@@ -24,6 +24,7 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.ArenaGUI;
@@ -73,7 +74,8 @@ public class ArenaSelectorListener implements Listener {
                 player.sendMessage(Language.getMsg(player, Messages.ARENA_JOIN_DENIED_SELECTOR));
             }
         } else if (event.getClick() == ClickType.RIGHT) {
-            if (status == GameState.playing && arena.addSpectator(player, false, null)) {
+            // 允许在 playing 状态观战；赛前 waiting/starting 状态则由配置项控制
+            if ((status == GameState.playing || ((status == GameState.waiting || status == GameState.starting) && BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PRE_GAME_SPECTATE))) && arena.addSpectator(player, false, null)) {
                 Sounds.playSound("spectate-allowed", player);
             } else {
                 player.sendMessage(Language.getMsg(player, Messages.ARENA_SPECTATE_DENIED_SELECTOR));

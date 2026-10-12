@@ -71,6 +71,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault("debug", false);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_READY_CHECK, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_MARK_LEAVE_AS_ABANDON, false);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PRE_GAME_SPECTATE, true);
         // parties category
         yml.addDefault(ConfigPath.GENERAL_ENABLE_PARTY_CMD, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PARTIES, true);
