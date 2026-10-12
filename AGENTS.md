@@ -71,6 +71,10 @@ The workflows mutate versions before deployment with `mvn versions:set` and `mvn
 - `bedwars-plugin/src/main/java/com/andrei1058/bedwars/commands/bedwars/MainCommand.java` — `/bw`/`/bedwars` command and arena setup operations.
 - `bedwars-plugin/src/main/resources/plugin.yml` — packaged plugin entry point and soft dependencies.
 
+## Commit Conventions
+
+- Commit messages MUST be written in English and follow Conventional Commits: `type(scope): description` (scope is optional), for example `fix(arena): prevent duplicate player registration`.
+
 ## Runtime/Tooling Preferences
 
 - Use Maven, not Gradle; no wrapper or Node/Bun runtime is configured.
