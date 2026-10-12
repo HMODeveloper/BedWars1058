@@ -28,10 +28,14 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -84,15 +88,43 @@ public class ConfigManager {
      * Old Bukkit versions read with the system default charset (GBK on Windows), which corrupts non-ASCII values.
      */
     private void loadYml() {
-        YamlConfiguration loaded = new YamlConfiguration();
-        if (config.exists()) {
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(config), StandardCharsets.UTF_8)) {
-                loaded.load(reader);
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
+        try {
+            replaceConfiguration(readConfiguration());
+        } catch (IOException | InvalidConfigurationException e) {
+            if (yml == null) yml = new YamlConfiguration();
+            Bukkit.getLogger().log(Level.SEVERE, "Could not load configuration " + config.getName()
+                    + " (" + e.getClass().getSimpleName() + "); keeping previous values.");
         }
-        yml = loaded;
+    }
+
+    /** Read a candidate without changing the running configuration. */
+    public YamlConfiguration readConfiguration() throws IOException, InvalidConfigurationException {
+        YamlConfiguration loaded = new YamlConfiguration();
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(config), StandardCharsets.UTF_8)) {
+            loaded.load(reader);
+        }
+        return loaded;
+    }
+
+    /** Install a candidate only after the caller has validated it. */
+    public void replaceConfiguration(YamlConfiguration configuration) {
+        yml = Objects.requireNonNull(configuration, "configuration");
+    }
+
+    /** Persist first; a failed write must not change the live configuration. */
+    public void saveConfiguration(YamlConfiguration configuration) throws IOException {
+        Path target = config.toPath().toAbsolutePath();
+        Path temporary = Files.createTempFile(target.getParent(), config.getName(), ".tmp");
+        try {
+            Files.write(temporary, configuration.saveToString().getBytes(StandardCharsets.UTF_8));
+            try {
+                Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 
     /**
@@ -201,10 +233,11 @@ public class ConfigManager {
      * Old Bukkit versions write with the system default charset (GBK on Windows), which corrupts non-ASCII values.
      */
     public void save() {
-        try (FileOutputStream out = new FileOutputStream(config)) {
-            out.write(yml.saveToString().getBytes(StandardCharsets.UTF_8));
+        try {
+            saveConfiguration(yml);
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Could not save configuration " + config.getName()
+                    + " (" + e.getClass().getSimpleName() + ").");
         }
     }
 

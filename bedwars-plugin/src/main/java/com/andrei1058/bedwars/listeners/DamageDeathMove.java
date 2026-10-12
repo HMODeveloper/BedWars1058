@@ -66,17 +66,22 @@ import static com.andrei1058.bedwars.BedWars.*;
 import static com.andrei1058.bedwars.api.language.Language.getMsg;
 import static com.andrei1058.bedwars.arena.LastHit.getLastHit;
 
-public class DamageDeathMove implements Listener {
+public class DamageDeathMove implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
-    private final double tntJumpBarycenterAlterationInY;
-    private final double tntJumpStrengthReductionConstant;
-    private final double tntJumpYAxisReductionConstant;
-    private final double tntDamageSelf;
-    private final double tntDamageTeammates;
-    private final double tntDamageOthers;
-    private final double ironGolemDamage;
+    private double tntJumpBarycenterAlterationInY;
+    private double tntJumpStrengthReductionConstant;
+    private double tntJumpYAxisReductionConstant;
+    private double tntDamageSelf;
+    private double tntDamageTeammates;
+    private double tntDamageOthers;
+    private double ironGolemDamage;
 
     public DamageDeathMove() {
+        refreshConfiguration();
+    }
+
+    @Override
+    public void refreshConfiguration() {
         this.tntJumpBarycenterAlterationInY = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y);
         this.tntJumpStrengthReductionConstant = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION);
         this.tntJumpYAxisReductionConstant = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION);

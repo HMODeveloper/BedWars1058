@@ -71,15 +71,20 @@ import java.util.*;
 import static com.andrei1058.bedwars.BedWars.*;
 import static com.andrei1058.bedwars.api.language.Language.getMsg;
 
-public class BreakPlace implements Listener {
+public class BreakPlace implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
     private static final List<Player> buildSession = new ArrayList<>();
-    private final boolean allowFireBreak;
+    private boolean allowFireBreak;
     private final BlastProtectionUtil blastProtection;
 
     public BreakPlace() {
-        allowFireBreak = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH);
+        refreshConfiguration();
         blastProtection = new BlastProtectionUtil(nms, BedWars.getAPI());
+    }
+
+    @Override
+    public void refreshConfiguration() {
+        allowFireBreak = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH);
     }
 
     @EventHandler

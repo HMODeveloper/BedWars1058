@@ -53,7 +53,7 @@ public class GameStartingTask implements Runnable, StartingTask {
 
     public GameStartingTask(Arena arena) {
         this.arena = arena;
-        countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR);
+        countdown = arena.getGameConfiguration().getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR);
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
     }
 

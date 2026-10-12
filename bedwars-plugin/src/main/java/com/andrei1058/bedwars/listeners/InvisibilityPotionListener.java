@@ -49,13 +49,13 @@ public class InvisibilityPotionListener implements Listener {
 
     public InvisibilityPotionListener() {
         // Task 1: Teammates (Redstone) - Old behavior
-        int intervalTeammates = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL);
+        int intervalTeammates = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_INTERVAL);
         if (intervalTeammates < 1) intervalTeammates = 1;
         
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT);
+            int amount = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_PARTICLES_AMOUNT);
             if (amount < 1) amount = 1;
-            boolean enabled = BedWars.plugin.getConfig().getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES);
+            boolean enabled = BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_TEAMMATES);
 
             for (IArena arena : Arena.getArenas()) {
                 if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
@@ -97,15 +97,15 @@ public class InvisibilityPotionListener implements Listener {
         }, intervalTeammates, intervalTeammates);
 
         // Task 2: Footsteps (Everyone) - New behavior
-        int intervalFootsteps = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL);
+        int intervalFootsteps = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_INTERVAL);
         if (intervalFootsteps < 1) intervalFootsteps = 1;
 
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            int amount = BedWars.plugin.getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT);
+            int amount = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS_AMOUNT);
             if (amount < 1) amount = 1;
 
             // New feature: Footstep particles for everyone (if enabled)
-            if (BedWars.plugin.getConfig().getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS)) {
+            if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_INVISIBILITY_FOOTSTEPS)) {
                 for (IArena arena : Arena.getArenas()) {
                     if (arena.getStatus() != com.andrei1058.bedwars.api.arena.GameState.playing) continue;
 

@@ -59,12 +59,12 @@ public class BwSidebar implements ISidebar {
         this.tabList = new BwTabList(this);
 
         // Persistent placeholders
-        String poweredBy = BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_POWERED_BY);
-        this.registerPersistentPlaceholder(new PlaceholderProvider("{poweredBy}", () -> poweredBy));
-        String serverId = config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID);
-        this.registerPersistentPlaceholder(new PlaceholderProvider("{server}", () -> serverId));
-        String serverIp = BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP);
-        this.registerPersistentPlaceholder(new PlaceholderProvider("{serverIp}", () -> serverIp));
+        this.registerPersistentPlaceholder(new PlaceholderProvider("{poweredBy}",
+                () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_POWERED_BY)));
+        this.registerPersistentPlaceholder(new PlaceholderProvider("{server}",
+                () -> config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID)));
+        this.registerPersistentPlaceholder(new PlaceholderProvider("{serverIp}",
+                () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP)));
     }
 
     public void remove() {

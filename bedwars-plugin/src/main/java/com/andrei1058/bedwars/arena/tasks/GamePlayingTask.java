@@ -53,9 +53,9 @@ public class GamePlayingTask implements Runnable, PlayingTask {
 
     public GamePlayingTask(Arena arena) {
         this.arena = arena;
-        this.beds_destroy_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_BEDS_DESTROY_COUNTDOWN);
-        this.dragon_spawn_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_DRAGON_SPAWN_COUNTDOWN);
-        this.game_end_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_GAME_END_COUNTDOWN);
+        this.beds_destroy_countdown = arena.getGameConfiguration().getInt(ConfigPath.GENERAL_CONFIGURATION_BEDS_DESTROY_COUNTDOWN);
+        this.dragon_spawn_countdown = arena.getGameConfiguration().getInt(ConfigPath.GENERAL_CONFIGURATION_DRAGON_SPAWN_COUNTDOWN);
+        this.game_end_countdown = arena.getGameConfiguration().getInt(ConfigPath.GENERAL_CONFIGURATION_GAME_END_COUNTDOWN);
         this.task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
     }
 

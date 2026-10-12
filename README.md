@@ -38,6 +38,46 @@ Reconnects do not reset an active cooldown. The `@` route also works with
 Messages remain Bukkit chat events so cancellation by moderation plugins is respected.
 Restart after installing the plugin so the new permission declarations are loaded.
 
+## 配置热更新（Minecraft 1.8.8）
+
+编辑配置文件后执行 `/bw reload`，沿用原有 reload 权限，不要求先设置大厅。
+命令只向执行者列出变化的文件、完整键、增改删类型及旧值 → 新值，并按实际应用时机分类：
+
+- **立即生效（后续操作）**：动态读取的设置及可安全刷新的普通缓存，例如聊天冷却、
+  火球/TNT 参数、饥饿开关、消息前缀和商店特殊物品参数。不会重建已经打开的界面或已生成的实体。
+- **下一局生效（竞技场重建后）**：竞技场配置、生成器配置及对局倒计时。
+  当前竞技场保留自己的配置快照；不踢玩家，也不提前重启对局。
+- **需重启生效**：数据库、服务器类型、语言启用集合、启动注册的功能、
+  固定调度周期、商店菜单/升级定义缓存及无法确认安全热更新的扩展键。
+  新值保留在磁盘，当前运行值不切换。
+- **加载失败**：缺失、损坏或类型/取值不合法的文件保留原运行配置，
+  不影响其他有效文件加载。修复后可再次 reload。
+
+重复 reload 不会重复列出已经加载但尚待下一局或重启的变化；无新变化时显示“配置无变化”。
+密码、令牌等敏感键隐藏旧值和新值。文件范围沿用原 reload 集合：
+主配置、告示牌、生成器、商店、升级、已加载语言及当前已加载竞技场；不会自动发现新竞技场或语言。
+
+### 仅 OP 可用的主配置修改命令
+
+```text
+/bw config set <已有键> <YAML值>
+/bw config set global-chat.cooldown 15
+/bw config set team-selector.enabled true
+/bw config set storeLink 'https://example.org/store'
+/bw config set allowed-commands [shout, bw, leave]
+/bw config set allowed-commands []
+```
+
+`/bedwars` 等现有别名同样可用。检查 `isOp()`，授予 `bw.*` 不会让非 OP 获得修改权限。
+仅修改主配置已有叶子键，支持与原类型匹配的布尔、有限数字、字符串和标量列表；
+数字字符串使用 YAML 单引号（例如 `'123'`）。不允许未知键、删除值、
+整个配置节、嵌套列表或映射，也不修改其他文件。
+
+命令先验证和保存，再使用与 reload 相同的生效分类；无变化不写文件。
+若主配置在磁盘上已有尚未 reload 的修改，命令会拒绝覆盖并提示先 reload。
+该功能不使用 Bukkit 全服 `/reload`。首次安装新版 JAR 仍需正常重启服务器。
+
+
 # System requirements
 This software runs on [Spigot](https://www.spigotmc.org/) and NMS.
 Spigot forks without compiled NMS code are not supported.
@@ -144,10 +184,11 @@ team-selector:
   start. They are preserved rather than moved for balance, so fixed choices can
   make the final teams uneven. Cancelling restores automatic assignment; leaving,
   spectating or starting the game clears the waiting preview.
-- Restart the plugin/server after changing these settings. Existing explicit
-  settings are preserved when missing defaults are added. The obsolete
-  `use-experimental-team-assigner` setting is removed on load; its old value is
-  not converted into either new setting.
+- Use `/bw reload` after changing these settings; subsequent team-selection and
+  allocation actions use the new values without moving existing selections.
+  Existing explicit settings are preserved when missing defaults are added. The
+  obsolete `use-experimental-team-assigner` setting is removed on load; its old
+  value is not converted into either new setting.
 - The existing team-assigner API and assignment-event overrides remain available.
   Third-party assigners receive already committed manual selections and must
   respect existing members; their own assignments or event overrides can change

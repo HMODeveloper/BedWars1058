@@ -55,13 +55,18 @@ import org.bukkit.util.Vector;
 import static com.andrei1058.bedwars.BedWars.*;
 import static com.andrei1058.bedwars.api.language.Language.getMsg;
 
-public class Interact implements Listener {
+public class Interact implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
-    private final double fireballSpeedMultiplier;
-    private final double fireballCooldown;
-    private final float fireballExplosionSize;
+    private double fireballSpeedMultiplier;
+    private double fireballCooldown;
+    private float fireballExplosionSize;
 
     public Interact() {
+        refreshConfiguration();
+    }
+
+    @Override
+    public void refreshConfiguration() {
         this.fireballSpeedMultiplier = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_SPEED_MULTIPLIER);
         this.fireballCooldown = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_COOLDOWN);
         this.fireballExplosionSize = (float) config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);

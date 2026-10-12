@@ -21,16 +21,13 @@
 package com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive;
 
 import com.andrei1058.bedwars.BedWars;
-import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
-import com.andrei1058.bedwars.api.configuration.ConfigManager;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
-import com.andrei1058.bedwars.commands.bedwars.MainCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
 import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.command.CommandSender;
@@ -51,25 +48,8 @@ public class Reload extends SubCommand {
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (s instanceof Player) {
-            if (!MainCommand.isLobbySet((Player) s)) return true;
-        } else {
-            if (!MainCommand.isLobbySet(null)) return true;
-        }
-        com.andrei1058.bedwars.api.BedWars api = BedWars.getAPI();
-        for (IArena arena : api.getArenaUtil().getArenas()) {
-            ConfigManager config = arena.getConfig();
-            config.reload();
-            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_ARENA).replace("{config}", config.getName()));
-        }
-        for (ConfigManager configManager : api.getConfigs().allConfigs()) {
-            configManager.reload();
-            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_CONFIG).replace("{config}", configManager.getName()));
-        }
-        for (Language l : Language.getLanguages()){
-            l.reload();
-            s.sendMessage(Language.getMsg(s instanceof Player ? (Player) s : null, Messages.COMMAND_RELOAD_LANGUAGE).replace("{language}", l.getLangName()));
-        }
+        if (!hasPermission(s)) return true;
+        BedWars.configurationReloadService.reload(s);
         return true;
     }
 

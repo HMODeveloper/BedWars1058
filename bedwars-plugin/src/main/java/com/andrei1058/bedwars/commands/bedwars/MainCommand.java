@@ -90,6 +90,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.Build(this, "build"); //priority 9
         new Level(this, "level");
         new Reload(this, "reload"); //priority 11
+        new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.Config(this, "config");
         new CmdList(this, "cmds"); //priority 20
         new CmdEcho(this, "echo"); //priority 21
         new CmdEchoTo(this, "echoto"); //priority 22
@@ -240,6 +241,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
             case "level": return hover ? Messages.COMMAND_LEVEL_DISPLAY_HOVER : Messages.COMMAND_LEVEL_DISPLAY;
             case "npc": return hover ? Messages.COMMAND_NPC_DISPLAY_HOVER : Messages.COMMAND_NPC_DISPLAY;
             case "reload": return hover ? Messages.COMMAND_RELOAD_DISPLAY_HOVER : Messages.COMMAND_RELOAD_DISPLAY;
+            case "config": return hover ? null : Messages.CONFIG_SET_DISPLAY;
             case "cmds": return hover ? Messages.COMMAND_LIST_DISPLAY_HOVER : Messages.COMMAND_LIST_DISPLAY;
             case "forceStart": return hover ? Messages.COMMAND_FORCE_START_DISPLAY_HOVER : Messages.COMMAND_FORCE_START_DISPLAY;
             case "start": return hover ? Messages.COMMAND_START_DISPLAY_HOVER : Messages.COMMAND_START_DISPLAY;

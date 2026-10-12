@@ -30,7 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LoadedUser {
 
-    private static final long waitSeconds = BedWars.config.getYml().getLong(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT);
+    private static volatile long waitSeconds = BedWars.config.getYml().getLong(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT);
+
+    public static void refreshConfiguration() {
+        waitSeconds = BedWars.config.getYml().getLong(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT);
+    }
 
     private UUID uuid;
     private String partyOwnerOrSpectateTarget = null;

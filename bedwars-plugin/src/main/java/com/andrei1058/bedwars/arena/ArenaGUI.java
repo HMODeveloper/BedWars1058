@@ -52,6 +52,10 @@ public class ArenaGUI {
     private static YamlConfiguration yml = BedWars.config.getYml();
     private static HashMap<UUID, Long> antiCalledTwice = new HashMap<>();
 
+    public static void refreshConfiguration() {
+        yml = BedWars.config.getYml();
+    }
+
     //Object[0] = inventory, Object[1] = group
     public static void refreshInv(Player p, IArena arena, int players) {
         if (p == null) return;

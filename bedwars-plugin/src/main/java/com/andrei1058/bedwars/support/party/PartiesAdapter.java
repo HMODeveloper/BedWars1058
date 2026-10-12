@@ -37,7 +37,6 @@ public class PartiesAdapter implements Party {
 
     //Support for Parties by AlessioDP
     private final PartiesAPI api = com.alessiodp.parties.api.Parties.getApi();
-    private static final int requiredRankToSelect = BedWars.config.getInt(ConfigPath.GENERAL_ALESSIODP_PARTIES_RANK);
 
     @Override
     public boolean hasParty(Player p) {
@@ -67,7 +66,7 @@ public class PartiesAdapter implements Party {
         if (pp == null || pp.getPartyId() == null) {
             return false;
         }
-        return pp.getRank() >= requiredRankToSelect;
+        return pp.getRank() >= BedWars.config.getInt(ConfigPath.GENERAL_ALESSIODP_PARTIES_RANK);
     }
 
     @Override

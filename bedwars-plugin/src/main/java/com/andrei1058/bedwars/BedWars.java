@@ -115,6 +115,7 @@ public class BedWars extends JavaPlugin {
     public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
     public static ConfigManager signs, generators;
     public static MainConfig config;
+    public static com.andrei1058.bedwars.configuration.ConfigurationReloadService configurationReloadService;
     public static ShopManager shop;
     public static StatsManager statsManager;
     public static BedWars plugin;
@@ -519,6 +520,8 @@ public class BedWars extends JavaPlugin {
 
         // TNT Spoil Feature
         SpoilPlayerTNTFeature.init();
+
+        configurationReloadService = new com.andrei1058.bedwars.configuration.ConfigurationReloadService();
 
         // Warn user if current server version support is deprecated
         this.performDeprecationCheck();

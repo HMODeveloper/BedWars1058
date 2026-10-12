@@ -174,6 +174,14 @@ public class Language extends ConfigManager {
         prefixStatic = prefix;
     }
 
+    /** Invalidate ordinary message caches after a successful configuration reload. */
+    public void refreshConfiguration() {
+        serverIp = null;
+        String message = rawMessage(this, Messages.PREFIX);
+        prefix = ChatColor.translateAlternateColorCodes('&', message == null ? "" : message);
+        if (this == defaultLanguage) prefixStatic = prefix;
+    }
+
     /**
      * Get scoreboard strings.
      */

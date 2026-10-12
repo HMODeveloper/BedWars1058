@@ -25,9 +25,14 @@ public class HealPoolTask extends BukkitRunnable {
     private Location l;
     
     // Particle density setting
-    private int particleDensity;
+    private volatile int particleDensity;
 
     private static List<HealPoolTask> healPoolTasks = new ArrayList<>();
+
+    public static void refreshConfiguration() {
+        int density = config.getInt("heal-pool-particle-density");
+        for (HealPoolTask task : new ArrayList<>(healPoolTasks)) task.particleDensity = density;
+    }
 
     public HealPoolTask(ITeam bwt){
         this.bwt = bwt;

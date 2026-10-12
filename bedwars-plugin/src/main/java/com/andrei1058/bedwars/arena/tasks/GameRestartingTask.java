@@ -51,11 +51,12 @@ public class GameRestartingTask implements Runnable, RestartingTask {
     private Arena arena;
     @Setter
     @Getter
-    private int restarting = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RESTART) + 5;
+    private int restarting;
     private final BukkitTask task;
 
     public GameRestartingTask(@NotNull Arena arena) {
         this.arena = arena;
+        restarting = arena.getGameConfiguration().getInt(ConfigPath.GENERAL_CONFIGURATION_RESTART) + 5;
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
         Sounds.playSound("game-end", arena.getPlayers());
         Sounds.playSound("game-end", arena.getSpectators());

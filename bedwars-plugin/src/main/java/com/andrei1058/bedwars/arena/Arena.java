@@ -63,6 +63,8 @@ import com.andrei1058.bedwars.arena.team.TeamAssigner;
 import com.andrei1058.bedwars.arena.team.TeamSelector;
 import com.andrei1058.bedwars.configuration.ArenaConfig;
 import com.andrei1058.bedwars.configuration.Sounds;
+import com.andrei1058.bedwars.configuration.ConfigurationValues;
+import com.andrei1058.bedwars.configuration.ConfigurationReloadService;
 import com.andrei1058.bedwars.levels.internal.InternalLevel;
 import com.andrei1058.bedwars.levels.internal.PerMinuteTask;
 import com.andrei1058.bedwars.listeners.blockstatus.BlockStatusListener;
@@ -117,6 +119,10 @@ public class Arena implements IArena {
     public static HashMap<UUID, Integer> afkCheck = new HashMap<>();
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
     private final Set<UUID> readyPlayers = new HashSet<>();
+    @Getter
+    private final YamlConfiguration gameConfiguration = ConfigurationReloadService.snapshotArenaConfiguration(config.getYml());
+    @Getter
+    private final YamlConfiguration generatorConfiguration = ConfigurationValues.copy(generators.getYml());
     private final Map<UUID, ITeam> selectedTeams = new HashMap<>();
     private boolean teamSelectionLocked;
 
@@ -324,8 +330,8 @@ public class Arena implements IArena {
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
         allowMapBreak = yml.getBoolean(ConfigPath.ARENA_ALLOW_MAP_BREAK);
         suddenDeathRemoveResourceGenerator = yml.getBoolean(ConfigPath.ARENA_SUDDEN_DEATH_REMOVE_RESOURCE_GENERATOR);
-        if (config.getYml().get("arenaGroups") != null) {
-            if (config.getYml().getStringList("arenaGroups").contains(yml.getString("group"))) {
+        if (gameConfiguration.get("arenaGroups") != null) {
+            if (gameConfiguration.getStringList("arenaGroups").contains(yml.getString("group"))) {
                 group = yml.getString("group");
             }
         }
@@ -372,6 +378,7 @@ public class Arena implements IArena {
         }
         if (error) return;
         yKillHeight = yml.getInt(ConfigPath.ARENA_Y_LEVEL_KILL);
+        if (BedWars.configurationReloadService != null) BedWars.configurationReloadService.registerArena(cm);
         addToEnableQueue(this);
         Language.saveIfNotExists(Messages.ARENA_DISPLAY_GROUP_PATH + getGroup().toLowerCase(), String.valueOf(getGroup().charAt(0)).toUpperCase() + group.substring(1).toLowerCase());
     }
@@ -485,9 +492,9 @@ public class Arena implements IArena {
             nextEvents.add(ne.toString());
         }
 
-        upgradeDiamondsCount = getGeneratorsCfg().getInt(getGeneratorsCfg().getYml().get(getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START) == null ?
+        upgradeDiamondsCount = generatorConfiguration.getInt(generatorConfiguration.get(getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START) == null ?
                 "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START : getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_II_START);
-        upgradeEmeraldsCount = getGeneratorsCfg().getInt(getGeneratorsCfg().getYml().get(getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_START) == null ?
+        upgradeEmeraldsCount = generatorConfiguration.getInt(generatorConfiguration.get(getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_START) == null ?
                 "Default." + ConfigPath.GENERATOR_EMERALD_TIER_II_START : getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_II_START);
         plugin.getLogger().info("Load done: " + getArenaName());
 
@@ -630,8 +637,8 @@ public class Arena implements IArena {
             if (players.size() >= getMaxPlayers() / 2 && players.size() > minPlayers) {
                 if (startingTask != null) {
                     if (Bukkit.getScheduler().isCurrentlyRunning(startingTask.getTask())) {
-                        if (startingTask.getCountdown() > getConfig().getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_HALF)) {
-                            startingTask.setCountdown(BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_HALF));
+                        if (startingTask.getCountdown() > gameConfiguration.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_HALF)) {
+                            startingTask.setCountdown(gameConfiguration.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_HALF));
                         }
                     }
                 }
@@ -695,8 +702,8 @@ public class Arena implements IArena {
         if (getPlayers().size() >= getMaxPlayers()) {
             if (startingTask != null) {
                 if (Bukkit.getScheduler().isCurrentlyRunning(startingTask.getTask())) {
-                    if (startingTask.getCountdown() > BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED)) {
-                        startingTask.setCountdown(BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED));
+                    if (startingTask.getCountdown() > gameConfiguration.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED)) {
+                        startingTask.setCountdown(gameConfiguration.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED));
                     }
                 }
             }
@@ -2282,7 +2289,7 @@ public class Arena implements IArena {
         debug("updateNextEvent called");
         if (nextEvent == NextEvent.EMERALD_GENERATOR_TIER_II && upgradeEmeraldsCount == 0) {
             // next diamond time < next emerald time
-            int next = getGeneratorsCfg().getInt(getGeneratorsCfg().getYml().get(getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_START) == null ?
+            int next = generatorConfiguration.getInt(generatorConfiguration.get(getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_START) == null ?
                     "Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_START : getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_START);
             if (upgradeDiamondsCount < next && diamondTier == 1) {
                 setNextEvent(NextEvent.DIAMOND_GENERATOR_TIER_II);
@@ -2300,7 +2307,7 @@ public class Arena implements IArena {
                 }
             }
         } else if (nextEvent == NextEvent.DIAMOND_GENERATOR_TIER_II && upgradeDiamondsCount == 0) {
-            int next = getGeneratorsCfg().getInt(getGeneratorsCfg().getYml().get(getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START) == null ?
+            int next = generatorConfiguration.getInt(generatorConfiguration.get(getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START) == null ?
                     "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START : getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_START);
             if (upgradeEmeraldsCount < next && emeraldTier == 1) {
                 setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_II);

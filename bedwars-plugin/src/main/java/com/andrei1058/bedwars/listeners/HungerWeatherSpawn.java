@@ -38,12 +38,17 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import static com.andrei1058.bedwars.BedWars.*;
 
-public class HungerWeatherSpawn implements Listener {
+public class HungerWeatherSpawn implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
-    private final boolean hungerWaiting;
-    private final boolean hungerIngame;
+    private boolean hungerWaiting;
+    private boolean hungerIngame;
 
     public HungerWeatherSpawn() {
+        refreshConfiguration();
+    }
+
+    @Override
+    public void refreshConfiguration() {
         hungerWaiting = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_HUNGER_WAITING);
         hungerIngame = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_HUNGER_INGAME);
     }

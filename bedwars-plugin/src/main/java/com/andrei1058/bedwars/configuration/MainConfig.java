@@ -425,6 +425,26 @@ public class MainConfig extends ConfigManager {
         BedWars.setLobbyWorld(getLobbyWorldName());
     }
 
+    @Override
+    public void save() {
+        if (BedWars.configurationReloadService == null) {
+            super.save();
+            return;
+        }
+        try {
+            BedWars.configurationReloadService.saveMainConfiguration(this);
+        } catch (IOException | org.bukkit.configuration.InvalidConfigurationException e) {
+            BedWars.plugin.getLogger().warning("Could not save config.yml (" + e.getClass().getSimpleName()
+                    + "); keeping the existing file.");
+        }
+    }
+
+    @Override
+    public void reload() {
+        if (BedWars.configurationReloadService == null) super.reload();
+        else BedWars.configurationReloadService.reloadMainConfiguration();
+    }
+
     public String getLobbyWorldName() {
         if (getYml().get("lobbyLoc") == null) return "";
         String d = getYml().getString("lobbyLoc");

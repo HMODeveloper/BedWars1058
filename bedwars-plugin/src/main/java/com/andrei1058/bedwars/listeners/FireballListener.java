@@ -22,20 +22,25 @@ import java.util.*;
 import static com.andrei1058.bedwars.BedWars.config;
 import static com.andrei1058.bedwars.BedWars.getAPI;
 
-public class FireballListener implements Listener {
+public class FireballListener implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
-    private final double fireballExplosionSize;
-    private final boolean fireballMakeFire;
-    private final double fireballHorizontal;
-    private final double fireballVertical;
-    private final double knockbackTeammates;
-    private final double knockbackEnemy;
+    private double fireballExplosionSize;
+    private boolean fireballMakeFire;
+    private double fireballHorizontal;
+    private double fireballVertical;
+    private double knockbackTeammates;
+    private double knockbackEnemy;
 
-    private final double damageSelf;
-    private final double damageEnemy;
-    private final double damageTeammates;
+    private double damageSelf;
+    private double damageEnemy;
+    private double damageTeammates;
 
     public FireballListener() {
+        refreshConfiguration();
+    }
+
+    @Override
+    public void refreshConfiguration() {
         this.fireballExplosionSize = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         this.fireballMakeFire = config.getYml().getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
         this.fireballHorizontal = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL);
