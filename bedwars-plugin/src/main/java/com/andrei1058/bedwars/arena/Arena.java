@@ -742,6 +742,9 @@ public class Arena implements IArena {
             p.closeInventory();
             spectators.add(p);
             players.remove(p);
+            for (Player viewer : Bukkit.getOnlinePlayers()) {
+                ArenaGUI.refreshInv(viewer, this, players.size());
+            }
 
             updateSpectatorCollideRule(p, false);
 
@@ -1144,6 +1147,9 @@ public class Arena implements IArena {
         Bukkit.getPluginManager().callEvent(new PlayerLeaveArenaEvent(p, this, null));
         spectators.remove(p);
         removeArenaByPlayer(p, this);
+        for (Player viewer : Bukkit.getOnlinePlayers()) {
+            ArenaGUI.refreshInv(viewer, this, players.size());
+        }
         p.getInventory().clear();
         p.getInventory().setArmorContents(null);
         nms.setCollide(p, this, true);
