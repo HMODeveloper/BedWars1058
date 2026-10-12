@@ -957,6 +957,9 @@ public class Messages {
     public static final String CONFIG_SET_CONFLICT = "command.config-set.conflict";
     public static final String CONFIG_SET_INVALID_KEY = "command.config-set.invalid-key";
     public static final String CONFIG_SET_INVALID_VALUE = "command.config-set.invalid-value";
+    public static final String COMMAND_FIREBALL_ALGORITHM_CURRENT = "cmd-fireballalgorithm-current";
+    public static final String COMMAND_FIREBALL_ALGORITHM_USAGE = "cmd-fireballalgorithm-usage";
+    public static final String COMMAND_FIREBALL_ALGORITHM_DISPLAY = "cmd-fireballalgorithm-display";
     @Deprecated(forRemoval = true)
     public static String FORMATTING_SPECTATOR_TEAM = "format-spectator-team";
     @Deprecated(forRemoval = true)

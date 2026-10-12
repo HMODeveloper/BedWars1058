@@ -270,6 +270,7 @@ public class ConfigPath {
     public static final String GENERAL_TNT_FUSE_TICKS = GENERAL_TNT_PRIME+".fuse-ticks";
 
     private static final String GENERAL_FIREBALL_PATH = "fireball";
+    public static final String GENERAL_FIREBALL_ALGORITHM = GENERAL_FIREBALL_PATH + ".algorithm";
     public static final String GENERAL_FIREBALL_EXPLOSION_SIZE = GENERAL_FIREBALL_PATH + ".explosion-size";
     public static final String GENERAL_FIREBALL_SPEED_MULTIPLIER = GENERAL_FIREBALL_PATH + ".speed-multiplier";
     public static final String GENERAL_FIREBALL_MAKE_FIRE = GENERAL_FIREBALL_PATH + ".make-fire";

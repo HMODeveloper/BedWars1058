@@ -485,6 +485,15 @@ public abstract class VersionSupport {
      */
     public abstract Fireball setFireballDirection(Fireball fireball, Vector vector);
 
+    /** 发射能够在原版爆炸前记录命中点的竞技场火球。 */
+    public abstract Fireball launchBedWarsFireball(Player player);
+
+    /** 玩家当前真实碰撞箱，用于确定性爆炸快照。 */
+    public abstract com.andrei1058.bedwars.api.util.AstraFireballEngine.Box getPlayerBoundingBox(Player player);
+
+    /** 原版只结算伤害，击退由调用方独立提交。 */
+    public abstract void applyFireballExplosionDamage(Player victim, Player owner, double rawDamage);
+
     public abstract void playRedStoneDot(Player player);
 
     public abstract void clearArrowsFromPlayerBody(Player player);

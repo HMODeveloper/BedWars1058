@@ -90,6 +90,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.Build(this, "build"); //priority 9
         new Level(this, "level");
         new Reload(this, "reload"); //priority 11
+        new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.FireballAlgorithmCommand(this, "fireballalgorithm");
         new com.andrei1058.bedwars.commands.bedwars.subcmds.sensitive.Config(this, "config");
         new CmdList(this, "cmds"); //priority 20
         new CmdEcho(this, "echo"); //priority 21

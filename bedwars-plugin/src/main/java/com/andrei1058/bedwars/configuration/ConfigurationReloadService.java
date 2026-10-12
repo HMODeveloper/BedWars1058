@@ -280,6 +280,7 @@ public final class ConfigurationReloadService {
             for (String key : mainDefaults.keySet()) {
                 if (!candidate.contains(key)) throw new IllegalArgumentException("missing-key: " + key);
             }
+            com.andrei1058.bedwars.listeners.FireballAlgorithm.parse(candidate.getString(ConfigPath.GENERAL_FIREBALL_ALGORITHM));
             String serverType = candidate.getString("serverType");
             if (!"BUNGEE_LEGACY".equalsIgnoreCase(serverType)) ServerType.valueOf(serverType.toUpperCase(Locale.ROOT));
             requirePositive(candidate, "heal-pool-particle-density");

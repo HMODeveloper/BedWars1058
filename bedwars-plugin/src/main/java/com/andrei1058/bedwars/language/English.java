@@ -163,6 +163,9 @@ public class English extends Language {
         yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY, "§6 ▪ §7/{command} {subcommand}       §8 - §ereload messages");
         yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY_HOVER, "§fReload messages.\n§cNot recommended!");
         yml.addDefault(Messages.COMMAND_RELOAD_LANGUAGE, "§6 ▪ §7{language} reloaded!");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_CURRENT, "{prefix}&7Fireball algorithm: &e{algorithm}");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_USAGE, "{prefix}&cUsage: /{command} fireballalgorithm <default|astra>");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_DISPLAY, "&6/{command} fireballalgorithm &7- Switch fireball algorithm");
         yml.addDefault(Messages.COMMAND_SETUP_ALREADY_IN_SESSION, "§c ▪ §7You're already in a setup session!");
         yml.addDefault(Messages.COMMAND_SETUP_ARENA_CAPITALS, "§c▪ §c{arena}§7 mustn't contain capital letters! Rename your folder to: §a{lowercase}");
         yml.addDefault(Messages.COMMAND_SETUP_ARENA_DISABLE_FIRST, "§c▪ §7Please disable it first!");

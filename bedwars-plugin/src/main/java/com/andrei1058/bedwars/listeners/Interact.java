@@ -252,7 +252,7 @@ public class Interact implements Listener, com.andrei1058.bedwars.configuration.
 
                         if(System.currentTimeMillis() - a.getFireballCooldowns().getOrDefault(p.getUniqueId(), 0L) > (fireballCooldown*1000)) {
                             a.getFireballCooldowns().put(p.getUniqueId(), System.currentTimeMillis());
-                            Fireball fb = p.launchProjectile(Fireball.class);
+                            Fireball fb = nms.launchBedWarsFireball(p);
                             Vector direction = p.getEyeLocation().getDirection();
                             fb = nms.setFireballDirection(fb, direction);
                             fb.setVelocity(fb.getDirection().multiply(fireballSpeedMultiplier));

@@ -77,6 +77,44 @@ Restart after installing the plugin so the new permission declarations are loade
 若主配置在磁盘上已有尚未 reload 的修改，命令会拒绝覆盖并提示先 reload。
 该功能不使用 Bukkit 全服 `/reload`。首次安装新版 JAR 仍需正常重启服务器。
 
+### 火焰弹算法切换（Minecraft 1.8.8）
+
+```yaml
+fireball:
+  algorithm: default # default 或 astra
+```
+
+- `default` 保留现有爆炸、固定伤害和击退行为；默认不改变服务器手感。
+- `astra` 独立计算方块破坏、原始伤害和击退，先计算全部结果再提交。
+  使用爆炸前的墙体遮挡本轮冲击，允许自身火焰弹跳，自伤为零，队友和出生保护玩家免疫。
+  护甲、附魔、抗性和吸收由原版 1.8 管线结算一次，因此原版减伤不属于确定性计算器的保证范围。
+- Astra 的破坏/伤害/击退半径分别为 `2.8` / `4.0` / `5.0`，使用固定参数，
+  不读取旧 `fireball.damage`、`fireball.knockback`、`explosion-size`、`make-fire`；
+  两种算法共享发射速度和冷却设置。
+- Astra 可炸羊毛、木板和普通完整玻璃；末地石、黑曜石、彩色玻璃、玻璃板、水、
+  床和显式地图保护方块不可炸且挡传播。其他未定义材料保守视为防爆；
+  非玩家放置的地图方块仅在竞技场允许破坏地图时进入材料规则。遮挡按完整体素处理。
+  不产生方块掉落，不点火，不改变摔落伤害规则。
+
+OP（并具有原有 reload 权限）可执行：
+
+```text
+/bw fireballalgorithm
+/bw fireballalgorithm astra
+/bw fireballalgorithm default
+```
+
+无参数查看当前运行算法；切换会保存 `config.yml` 并立即作用于下一次爆炸，
+包括已经发射但尚未撞击的火焰弹，不重建竞技场、不重注册监听器。
+`/bw config set fireball.algorithm astra` 或编辑配置后 `/bw reload` 同样立即生效。
+非法值和未加载的磁盘修改会拒绝变更，保留原运行算法。仅作用于本插件的竞技场火球。
+首次安装新版 JAR 仍需正常重启；安装后切换算法不需要重启。
+
+验证：插件 `0.2.4-beta` 在隔离的 PaperSpigot `git-PaperSpigot-445`（1.8.8）上，
+使用三个协议客户端与受控竞技场夹具运行烟测，验证实际 NMS 碰撞、算法热切换和重启保留、
+墙体快照、防爆材料、同 tick 叠加、原版护甲/吸收、出生保护及伤害/爆炸事件取消。
+独立 Java 烟测验证确定性重放、DDA 边界、半径与软限速。未进行真人对局手感、
+完整死亡重生流程及反弹归属的人工验收；上线后应在实际竞技场补验这些场景。
 
 # System requirements
 This software runs on [Spigot](https://www.spigotmc.org/) and NMS.

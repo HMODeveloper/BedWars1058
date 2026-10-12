@@ -846,6 +846,49 @@ public class v1_8_R3 extends VersionSupport {
     }
 
     @Override
+    public Fireball launchBedWarsFireball(Player player) {
+        Location eye = player.getEyeLocation();
+        Vector direction = eye.getDirection().multiply(10);
+        WorldServer world = ((CraftWorld) player.getWorld()).getHandle();
+        BedWarsFireball fireball = new BedWarsFireball(world, ((CraftPlayer) player).getHandle(),
+                direction.getX(), direction.getY(), direction.getZ(), getPlugin());
+        fireball.projectileSource = player;
+        fireball.setPositionRotation(eye.getX(), eye.getY(), eye.getZ(), eye.getYaw(), eye.getPitch());
+        // addEntity 已发送 ProjectileLaunchEvent，不再重复发送。
+        world.addEntity(fireball);
+        return (Fireball) fireball.getBukkitEntity();
+    }
+
+    @Override
+    public com.andrei1058.bedwars.api.util.AstraFireballEngine.Box getPlayerBoundingBox(Player player) {
+        AxisAlignedBB box = ((CraftPlayer) player).getHandle().getBoundingBox();
+        return new com.andrei1058.bedwars.api.util.AstraFireballEngine.Box(box.a, box.b, box.c, box.d, box.e, box.f);
+    }
+
+    @Override
+    public void applyFireballExplosionDamage(Player victim, Player owner, double rawDamage) {
+        EntityPlayer handle = ((CraftPlayer) victim).getHandle();
+        int invulnerability = handle.noDamageTicks;
+        double x = handle.motX, y = handle.motY, z = handle.motZ;
+        boolean changed = handle.velocityChanged;
+        EntityPlayer source = ((CraftPlayer) owner).getHandle();
+        net.minecraft.server.v1_8_R3.Entity previousSource = org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory.entityDamage;
+        try {
+            // 普通受击无敌帧不免除火球；出生保护仍由竞技场和事件检查。
+            handle.noDamageTicks = 0;
+            // 1.8 的爆炸 Bukkit 归属从 CraftEventFactory 上下文读取，不读取 DamageSource.owner。
+            org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory.entityDamage = source;
+            // 与 DamageSource.explosion 工厂相同：q 标记难度缩放，d 标记爆炸；setExplosion 在此映射中实际标记火焰。
+            handle.damageEntity(new EntityDamageSource("explosion.player", source).q().d(), (float) rawDamage);
+        } finally {
+            org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory.entityDamage = previousSource;
+            handle.noDamageTicks = invulnerability;
+            handle.motX = x; handle.motY = y; handle.motZ = z;
+            handle.velocityChanged = changed;
+        }
+    }
+
+    @Override
     public void playRedStoneDot(Player player) {
         Color color = Color.RED;
         PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, (float) player.getLocation().getX(),

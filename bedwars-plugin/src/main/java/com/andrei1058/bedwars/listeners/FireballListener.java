@@ -4,6 +4,8 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.LastHit;
+import com.andrei1058.bedwars.BedWars;
+import com.andrei1058.bedwars.api.arena.GameState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -14,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -24,6 +28,7 @@ import static com.andrei1058.bedwars.BedWars.getAPI;
 
 public class FireballListener implements Listener, com.andrei1058.bedwars.configuration.ReloadableConfiguration {
 
+    private static FireballAlgorithm algorithm = FireballAlgorithm.DEFAULT;
     private double fireballExplosionSize;
     private boolean fireballMakeFire;
     private double fireballHorizontal;
@@ -41,6 +46,12 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
 
     @Override
     public void refreshConfiguration() {
+        try {
+            algorithm = FireballAlgorithm.parse(config.getYml().getString(ConfigPath.GENERAL_FIREBALL_ALGORITHM));
+        } catch (IllegalArgumentException exception) {
+            algorithm = FireballAlgorithm.DEFAULT;
+            BedWars.plugin.getLogger().warning(exception.getMessage());
+        }
         this.fireballExplosionSize = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         this.fireballMakeFire = config.getYml().getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
         this.fireballHorizontal = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL);
@@ -58,6 +69,7 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
         // validate important info
         if (!(e.getEntity() instanceof Fireball)) return;
         Fireball fireball = (Fireball) e.getEntity();
+        if (isAstraSettled(fireball)) return;
         ProjectileSource projectileSource = e.getEntity().getShooter();
         if (!(projectileSource instanceof Player)) return;
         Player source = (Player) projectileSource;
@@ -68,7 +80,7 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
         // calc explosion loc
         Vector velocity = fireball.getVelocity();
         Location startLoc = fireball.getLocation();
-        Location explosionLoc = calculateExactExplosionLoc(startLoc, velocity, 0);
+        Location explosionLoc = calculateExactExplosionLoc(startLoc, velocity);
 
         // apply player kb
         World world = explosionLoc.getWorld();
@@ -117,10 +129,6 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
                 }
             }
 
-            // debug
-            String debugMsg = String.format("[FireballDebug]: %s | BoomLoc: %.2f, %.2f, %.2f | PlayerLoc: %.2f, %.2f, %.2f | KB_Vel: %.2f, %.2f, %.2f", player.getName(), explosionLoc.getX(), explosionLoc.getY(), explosionLoc.getZ(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), finalVelocity.getX(), finalVelocity.getY(), finalVelocity.getZ());
-            System.out.println(debugMsg);
-
             // Prevent teammates from overriding last hit
             if (!isTeammate || isSelf) {
                 LastHit lh = LastHit.getLastHit(player);
@@ -132,11 +140,11 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
                 }
             }
 
-            if (player.equals(source)) {
+            if (isSelf) {
                 if (damageSelf > 0) {
                     player.damage(damageSelf); // damage shooter
                 }
-            } else if (arena.getTeam(player).equals(arena.getTeam(source))) {
+            } else if (isTeammate) {
                 if (damageTeammates > 0) {
                     player.damage(damageTeammates); // damage teammates
                 }
@@ -148,9 +156,7 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
         }
     }
 
-    // AI 写的，好复杂的算法我没太认真看，反正测试了能用
-
-    private Location calculateExactExplosionLoc(Location startLoc, Vector velocity, double offset) {
+    private Location calculateExactExplosionLoc(Location startLoc, Vector velocity) {
         if (velocity.length() < 0.0001) return startLoc; // 速度为0防报错
 
         // 1. 先找到撞到了哪个方块 (使用之前的粗测法，只需确定 Block 坐标)
@@ -248,17 +254,14 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
         // 算出精确撞击坐标：P = Start + Velocity * t
         Location hitLoc = startLoc.clone().add(velocity.clone().multiply(maxT));
 
-        // 强制修正：根据撞击的轴，把该轴的坐标强制锁定到 方块表面 + offset
+        // 根据命中轴把坐标锁定到方块表面。
         // 其他两个轴的坐标保持算出来的精确值
         if (hitAxis == 0) { // Hit X
-            if (hitXFaceIsMax) hitLoc.setX(blockMaxX + offset);
-            else hitLoc.setX(blockMinX - offset);
+            hitLoc.setX(hitXFaceIsMax ? blockMaxX : blockMinX);
         } else if (hitAxis == 1) { // Hit Y
-            if (hitYFaceIsMax) hitLoc.setY(blockMaxY + offset);
-            else hitLoc.setY(blockMinY - offset);
+            hitLoc.setY(hitYFaceIsMax ? blockMaxY : blockMinY);
         } else { // Hit Z
-            if (hitZFaceIsMax) hitLoc.setZ(blockMaxZ + offset);
-            else hitLoc.setZ(blockMinZ - offset);
+            hitLoc.setZ(hitZFaceIsMax ? blockMaxZ : blockMinZ);
         }
 
         return hitLoc;
@@ -271,6 +274,12 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
     @EventHandler
     public void fireballExplosionHit(EntityDamageByEntityEvent e) {
         if (!(e.getDamager() instanceof Fireball)) return;
+        if (algorithm == FireballAlgorithm.ASTRA && pluginMetadata(e.getDamager(), "bw1058") != null
+                && Arena.getArenaByIdentifier(e.getDamager().getWorld().getName()) != null) {
+            // 同时禁用原版直击；未参赛玩家和实体也不能额外受到原版的 6 HP。
+            e.setCancelled(true);
+            return;
+        }
         if (!(e.getEntity() instanceof Player)) return;
 
         if (Arena.getArenaByPlayer((Player) e.getEntity()) == null) return;
@@ -281,13 +290,46 @@ public class FireballListener implements Listener, com.andrei1058.bedwars.config
     @EventHandler
     public void fireballPrime(ExplosionPrimeEvent e) {
         if (!(e.getEntity() instanceof Fireball)) return;
-        ProjectileSource shooter = ((Fireball) e.getEntity()).getShooter();
+        Fireball fireball = (Fireball) e.getEntity();
+        ProjectileSource shooter = fireball.getShooter();
         if (!(shooter instanceof Player)) return;
         Player player = (Player) shooter;
-
+        if (isAstraSettled(fireball)) {
+            e.setCancelled(true);
+            return;
+        }
+        if (algorithm == FireballAlgorithm.ASTRA && pluginMetadata(fireball, "bw1058") != null) {
+            IArena arena = Arena.getArenaByIdentifier(fireball.getWorld().getName());
+            if (arena == null) return;
+            boolean cancelled = e.isCancelled();
+            e.setCancelled(true);
+            fireball.setMetadata("bw1058-astra-settled", new FixedMetadataValue(BedWars.plugin, true));
+            if (cancelled || arena.getStatus() != GameState.playing) return;
+            Object impact = pluginMetadata(fireball, "bw1058-impact");
+            if (!(impact instanceof Location) || !fireball.getWorld().equals(((Location) impact).getWorld())) {
+                BedWars.plugin.getLogger().warning("Fireball " + fireball.getUniqueId() + ": missing or invalid bw1058-impact");
+                return;
+            }
+            AstraFireballExplosion.explode(fireball, player, arena, (Location) impact);
+            return;
+        }
         if (Arena.getArenaByPlayer(player) == null) return;
-
         e.setFire(fireballMakeFire);
+    }
+
+    public static FireballAlgorithm getAlgorithm() {
+        return algorithm;
+    }
+
+    public static boolean isAstraSettled(Entity entity) {
+        return entity != null && Boolean.TRUE.equals(pluginMetadata(entity, "bw1058-astra-settled"));
+    }
+
+    private static Object pluginMetadata(Entity entity, String key) {
+        for (MetadataValue value : entity.getMetadata(key)) {
+            if (value.getOwningPlugin() == BedWars.plugin) return value.value();
+        }
+        return null;
     }
 
 }

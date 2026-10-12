@@ -163,6 +163,9 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY, "§6 ▪ §7/{command} {subcommand}       §8 - §e重新加载消息");
         yml.addDefault(Messages.COMMAND_RELOAD_DISPLAY_HOVER, "§f重新加载消息。\n§c不建议这样做！");
         yml.addDefault(Messages.COMMAND_RELOAD_LANGUAGE, "§6 ▪ §7语言 {language} 已重新加载！");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_CURRENT, "{prefix}&7当前火焰弹算法：&e{algorithm}");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_USAGE, "{prefix}&c用法：/{command} fireballalgorithm <default|astra>");
+        yml.addDefault(Messages.COMMAND_FIREBALL_ALGORITHM_DISPLAY, "&6/{command} fireballalgorithm &7- 切换火焰弹算法");
         yml.addDefault(Messages.COMMAND_SETUP_ALREADY_IN_SESSION, "§c ▪ §7你已在设置流程中！");
         yml.addDefault(Messages.COMMAND_SETUP_ARENA_CAPITALS, "§c▪ §c{arena}§7 不得包含大写字母！请将文件夹重命名为：§a{lowercase}");
         yml.addDefault(Messages.COMMAND_SETUP_ARENA_DISABLE_FIRST, "&c▪ &7请先禁用它！");

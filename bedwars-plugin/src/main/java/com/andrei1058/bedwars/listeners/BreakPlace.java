@@ -635,6 +635,7 @@ public class BreakPlace implements Listener, com.andrei1058.bedwars.configuratio
     @EventHandler
     public void onBlow(@NotNull EntityExplodeEvent e) {
         if (e.isCancelled()) return;
+        if (FireballListener.isAstraSettled(e.getEntity())) return;
         IArena a = Arena.getArenaByIdentifier(e.getLocation().getWorld().getName());
         //End dragon destroys
         boolean isDragon = e.getEntity().getType() == EntityType.ENDER_DRAGON;
