@@ -85,6 +85,15 @@ public class GamePlayingTask implements Runnable, PlayingTask {
 
     @Override
     public void run() {
+        // 状态守卫：非 playing 状态取消任务；无活跃玩家时直接进入 restarting
+        if (getArena().getStatus() != GameState.playing) {
+            cancel();
+            return;
+        }
+        if (getArena().getPlayers().isEmpty()) {
+            getArena().changeStatus(GameState.restarting);
+            return;
+        }
         switch (getArena().getNextEvent()) {
             case EMERALD_GENERATOR_TIER_II:
             case EMERALD_GENERATOR_TIER_III:

@@ -90,12 +90,19 @@ public class GameStartingTask implements Runnable, StartingTask {
 
     @Override
     public void run() {
+        if (!canContinueStarting()) {
+            return;
+        }
         if (countdown == 0) {
 
             Arena concreteArena = getArena() instanceof Arena ? (Arena) getArena() : null;
             if (concreteArena != null) concreteArena.prepareTeamAssignment();
             getArena().getTeamAssigner().assignTeams(getArena());
             if (concreteArena != null) concreteArena.finishTeamAssignment();
+
+            if (!canContinueStarting()) {
+                return;
+            }
 
             //Color bed block if possible
             //Destroy bed if team is empty
@@ -124,9 +131,16 @@ public class GameStartingTask implements Runnable, StartingTask {
             //Spawn players
             spawnPlayers();
 
+            if (!canContinueStarting()) {
+                return;
+            }
+
             //Lobby removal
             BedWars.getAPI().getRestoreAdapter().onLobbyRemoval(arena);
 
+            if (!canContinueStarting()) {
+                return;
+            }
 
             task.cancel();
             getArena().changeStatus(GameState.playing);
@@ -166,8 +180,20 @@ public class GameStartingTask implements Runnable, StartingTask {
     private void spawnPlayers() {
         for (ITeam bwt : getArena().getTeams()) {
             for (Player p : new ArrayList<>(bwt.getMembers())) {
+                if (!canContinueStarting()) {
+                    return;
+                }
+                if (!getArena().getPlayers().contains(p)) {
+                    continue;
+                }
                 BedWarsTeam.reSpawnInvulnerability.put(p.getUniqueId(), System.currentTimeMillis() + 2000L);
                 bwt.firstSpawn(p);
+                if (!canContinueStarting()) {
+                    return;
+                }
+                if (!getArena().getPlayers().contains(p)) {
+                    continue;
+                }
                 Sounds.playSound(ConfigPath.SOUND_GAME_START, p);
                 nms.sendTitle(p, getMsg(p, Messages.ARENA_STATUS_START_PLAYER_TITLE), null, 0, 30, 10);
                 for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_TUTORIAL)) {
@@ -175,6 +201,22 @@ public class GameStartingTask implements Runnable, StartingTask {
                 }
             }
         }
+    }
+
+    /**
+     * 检查游戏是否仍处于 starting 状态且存在玩家，否则取消任务或重置为 waiting。
+     */
+    private boolean canContinueStarting() {
+        if (getArena().getStatus() != GameState.starting) {
+            cancel();
+            return false;
+        }
+        if (getArena().getPlayers().isEmpty()) {
+            getArena().changeStatus(GameState.waiting);
+            cancel();
+            return false;
+        }
+        return true;
     }
 
     public void cancel() {
