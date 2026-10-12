@@ -81,6 +81,8 @@ public class Sounds {
         addDefSound("player-re-spawn", BedWars.getForCurrentVersion("SLIME_ATTACK", "BLOCK_SLIME_FALL", "BLOCK_SLIME_BLOCK_FALL"));
         addDefSound("arena-selector-open", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound("stats-gui-open", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
+        addDefSound(SOUNDS_TEAM_SELECTOR_OPEN, BedWars.getForCurrentVersion("CHEST_OPEN", "BLOCK_CHEST_OPEN", "BLOCK_CHEST_OPEN"));
+        addDefSound(SOUNDS_TEAM_SELECTOR_CLOSE, BedWars.getForCurrentVersion("CHEST_CLOSE", "BLOCK_CHEST_CLOSE", "BLOCK_CHEST_CLOSE"));
         addDefSound("trap-sound", BedWars.getForCurrentVersion("ENDERMAN_TELEPORT", "ENDERMAN_TELEPORT", "ENTITY_ENDERMAN_TELEPORT"));
         addDefSound("shop-auto-equip", BedWars.getForCurrentVersion("HORSE_ARMOR", "ITEM_ARMOR_EQUIP_GENERIC", "ITEM_ARMOR_EQUIP_GENERIC"));
         addDefSound("egg-bridge-block", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));

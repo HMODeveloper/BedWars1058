@@ -150,6 +150,15 @@ public class Interact implements Listener {
         if (BedWars.getAPI().getAFKUtil().isPlayerAFK(e.getPlayer())) {
             BedWars.getAPI().getAFKUtil().setPlayerAFK(e.getPlayer(), false);
         }
+        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            IArena arena = Arena.getArenaByPlayer(p);
+            ItemStack item = e.getItem();
+            if (arena instanceof Arena && ((Arena) arena).canSelectTeam(p)
+                    && item != null && item.getType() != Material.AIR && nms.isCustomBedWarsItem(item)
+                    && "TEAM_SELECTOR".equals(nms.getCustomData(item))) {
+                return;
+            }
+        }
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Block b = e.getClickedBlock();
             if (b == null) return;

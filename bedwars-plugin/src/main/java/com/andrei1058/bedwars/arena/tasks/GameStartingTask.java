@@ -33,7 +33,6 @@ import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.tasks.StartingTask;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.team.BedWarsTeam;
-import com.andrei1058.bedwars.arena.team.LegacyTeamAssigner;
 import com.andrei1058.bedwars.configuration.Sounds;
 import com.andrei1058.bedwars.support.papi.SupportPAPI;
 import org.bukkit.Bukkit;
@@ -93,11 +92,10 @@ public class GameStartingTask implements Runnable, StartingTask {
     public void run() {
         if (countdown == 0) {
 
-            if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER)) {
-                getArena().getTeamAssigner().assignTeams(getArena());
-            } else {
-                LegacyTeamAssigner.assignTeams(getArena());
-            }
+            Arena concreteArena = getArena() instanceof Arena ? (Arena) getArena() : null;
+            if (concreteArena != null) concreteArena.prepareTeamAssignment();
+            getArena().getTeamAssigner().assignTeams(getArena());
+            if (concreteArena != null) concreteArena.finishTeamAssignment();
 
             //Color bed block if possible
             //Destroy bed if team is empty

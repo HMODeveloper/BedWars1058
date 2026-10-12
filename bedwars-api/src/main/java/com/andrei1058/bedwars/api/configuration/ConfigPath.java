@@ -102,7 +102,8 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
-    public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";
+    public static final String GENERAL_CONFIGURATION_TEAM_ASSIGNMENT_PREFER_PAIRS = "team-assignment.prefer-pairs";
+    public static final String GENERAL_CONFIGURATION_TEAM_SELECTOR_ENABLED = "team-selector.enabled";
     public static final String GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS = "ender-dragon-breaks";
     public static final String GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS_MAP = "ender-dragon-breaks-map";
 
@@ -231,6 +232,8 @@ public class ConfigPath {
     public static final String SOUNDS_INSUFF_INVENTORY = "shop-insufficient-inventory";
     public static final String SOUNDS_BOUGHT = "shop-bought";
     public static final String SOUNDS_KILL = "kill";
+    public static final String SOUNDS_TEAM_SELECTOR_OPEN = "team-selector-open";
+    public static final String SOUNDS_TEAM_SELECTOR_CLOSE = "team-selector-close";
 
     public static final String SIGNS_STATUS_BLOCK_WAITING_MATERIAL = "status-block.waiting.material";
     public static final String SIGNS_STATUS_BLOCK_WAITING_DATA = "status-block.waiting.data";

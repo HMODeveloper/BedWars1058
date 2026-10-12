@@ -219,7 +219,8 @@ public class MainConfig extends ConfigManager {
 
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DEFAULT_ITEMS + ".Default", Collections.singletonList(getForCurrentVersion("WOOD_SWORD", "WOOD_SWORD", "WOODEN_SWORD")));
         yml.addDefault(ConfigPath.CENERAL_CONFIGURATION_ALLOWED_COMMANDS, Arrays.asList("shout", "bw", "leave"));
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_TEAM_ASSIGNMENT_PREFER_PAIRS, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_TEAM_SELECTOR_ENABLED, false);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENDER_DRAGON_BREAKS_MAP, false);
 
@@ -235,6 +236,7 @@ public class MainConfig extends ConfigManager {
 
         yml.addDefault(ConfigPath.GENERAL_IRON_GOLEM_DAMAGE, 9.0D);
         yml.options().copyDefaults(true);
+        yml.set("use-experimental-team-assigner", null);
         save();
 
         //remove old config

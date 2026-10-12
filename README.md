@@ -115,6 +115,42 @@ The waiting-lobby inside the map can be removed once the game starts.
 - custom game rules per map.
 - unlimited iron/ gold / emerald (this one can pe activated from upgrades) generators per team.
 
+###### Team allocation and waiting-lobby selection:
+
+```yaml
+team-assignment:
+  prefer-pairs: true
+team-selector:
+  enabled: false
+```
+
+- The built-in allocator balances unselected players within team capacity. With
+  `prefer-pairs: true`, it first minimizes one-player teams, then keeps as many
+  teams active as possible; some teams can remain empty. It still starts normally
+  when pairs are impossible and keeps at least two opposing teams when automatic
+  assignment can do so. Solo arenas use ordinary balanced allocation.
+- Set `prefer-pairs: false` to balance across as many teams as possible instead.
+  Parties stay together only when they fit the balanced target sizes; otherwise
+  their members can be split.
+- Enable `team-selector.enabled` to let players choose or cancel a team while
+  waiting or during the countdown. The selector uses wool in hotbar slot 5,
+  overriding any configured waiting item in that slot only while enabled.
+  Selected teams preview their colors on leather armor and in TAB, including when
+  waiting/starting TAB formatting is otherwise disabled. Selection menus use
+  the configurable `team-selector-open` and `team-selector-close` sounds.
+- Manual selections reserve capacity without joining the actual team until game
+  start. They are preserved rather than moved for balance, so fixed choices can
+  make the final teams uneven. Cancelling restores automatic assignment; leaving,
+  spectating or starting the game clears the waiting preview.
+- Restart the plugin/server after changing these settings. Existing explicit
+  settings are preserved when missing defaults are added. The obsolete
+  `use-experimental-team-assigner` setting is removed on load; its old value is
+  not converted into either new setting.
+- The existing team-assigner API and assignment-event overrides remain available.
+  Third-party assigners receive already committed manual selections and must
+  respect existing members; their own assignments or event overrides can change
+  the final balance.
+
 ###### Vip Kick | Privilege:
 Players with bw.vip permission are able to join full arenas in starting phase. This will kick a player without bw.vip permission from that game.
 

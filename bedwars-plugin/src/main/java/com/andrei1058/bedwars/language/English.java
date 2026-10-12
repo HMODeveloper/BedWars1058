@@ -54,6 +54,18 @@ public class English extends Language {
             yml.set("player-die-knocked-final", null);
         }
 
+        yml.addDefault(Messages.TEAM_SELECTOR_TITLE, "&8Select a team");
+        yml.addDefault(Messages.TEAM_SELECTOR_ITEM_NAME, "&eTeam selector");
+        yml.addDefault(Messages.TEAM_SELECTOR_ITEM_LORE, Arrays.asList("&7Current team: {team}", "&fRight-click to select a team"));
+        yml.addDefault(Messages.TEAM_SELECTOR_NONE, "&fNot selected");
+        yml.addDefault(Messages.TEAM_SELECTOR_TEAM_LORE, Arrays.asList("&7Players: {selected}/{max}", "&eClick to select", "{state}"));
+        yml.addDefault(Messages.TEAM_SELECTOR_SELECTED, "&aYou selected this team");
+        yml.addDefault(Messages.TEAM_SELECTOR_CANCEL_NAME, "&cCancel team selection");
+        yml.addDefault(Messages.TEAM_SELECTOR_CANCEL_LORE, Collections.singletonList("&7Your team will be assigned at game start"));
+        yml.addDefault(Messages.TEAM_SELECTOR_FULL, "&cThis team is full. Please select another team.");
+        yml.addDefault(Messages.TEAM_SELECTOR_PREVIOUS_PAGE, "&ePrevious page");
+        yml.addDefault(Messages.TEAM_SELECTOR_NEXT_PAGE, "&eNext page");
+
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<arena/group>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3(vip)", "&2▪ &7/" + mainCmd + " specmode &3(spectator)"));
         yml.addDefault(Messages.SERVER_SPAWN_PROTECTION_WARNING, "spawn-protection is enabled in server.properties; this may affect BedWars arenas. It is recommended to set it to 0.");
         yml.addDefault(Messages.SERVER_MULTIVERSE_WARNING, "&c[BedWars1058] Multiverse-Core detected! Please remove it or make sure it won't touch BedWars maps!");

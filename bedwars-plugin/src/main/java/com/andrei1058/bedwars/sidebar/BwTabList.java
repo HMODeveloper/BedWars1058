@@ -28,6 +28,7 @@ import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.ServerType;
+import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.spigot.sidebar.PlayerTab;
 import com.andrei1058.spigot.sidebar.Sidebar;
 import com.andrei1058.spigot.sidebar.SidebarLine;
@@ -173,6 +174,11 @@ public class BwTabList {
             return !config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_LIST_FORMAT_LOBBY);
         }
         GameState status = sidebar.getArena().getStatus();
+        if ((status == GameState.waiting || status == GameState.starting)
+                && sidebar.getArena() instanceof Arena
+                && config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_TEAM_SELECTOR_ENABLED)) {
+            return false;
+        }
 
         // if tab formatting is disabled in game
         if (status == GameState.playing) {
@@ -305,15 +311,22 @@ public class BwTabList {
         if (status != GameState.playing) {
 
             String currentTabId = playerTabId;
+            ITeam selected = null;
+            if ((status == GameState.waiting || status == GameState.starting)
+                    && arena instanceof Arena
+                    && config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_TEAM_SELECTOR_ENABLED)) {
+                selected = ((Arena) arena).getSelectedTeam(player);
+            }
+            HashMap<String, String> selectedReplacements = selected == null ? null : getTeamReplacements(selected);
 
             switch (status) {
                 case waiting:
-                    prefix = getTabText(Messages.FORMATTING_SB_TAB_WAITING_PREFIX, player, null);
-                    suffix = getTabText(Messages.FORMATTING_SB_TAB_WAITING_SUFFIX, player, null);
+                    prefix = getTabText(Messages.FORMATTING_SB_TAB_WAITING_PREFIX, player, selectedReplacements);
+                    suffix = getTabText(Messages.FORMATTING_SB_TAB_WAITING_SUFFIX, player, selectedReplacements);
                     break;
                 case starting:
-                    prefix = getTabText(Messages.FORMATTING_SB_TAB_STARTING_PREFIX, player, null);
-                    suffix = getTabText(Messages.FORMATTING_SB_TAB_STARTING_SUFFIX, player, null);
+                    prefix = getTabText(Messages.FORMATTING_SB_TAB_STARTING_PREFIX, player, selectedReplacements);
+                    suffix = getTabText(Messages.FORMATTING_SB_TAB_STARTING_SUFFIX, player, selectedReplacements);
                     break;
                 case restarting:
                     ITeam team = arena.getTeam(player);
@@ -326,6 +339,18 @@ public class BwTabList {
                     break;
                 default:
                     throw new IllegalStateException("Unhandled game status!");
+            }
+            if (selected != null) {
+                currentTabId = getPlayerTabIdentifierAliveInTeam(selected, playerTabId);
+                final SidebarLine waitingPrefix = prefix;
+                final String selectedColor = selected.getColor().chat().toString();
+                prefix = new SidebarLine() {
+                    @NotNull
+                    @Override
+                    public String getLine() {
+                        return waitingPrefix.getLine() + selectedColor;
+                    }
+                };
             }
             PlayerTab t = handle.playerTabCreate(
                     currentTabId, player, prefix, suffix, PlayerTab.PushingRule.NEVER, this.sidebar.getPlaceholders(player)

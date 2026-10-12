@@ -41,6 +41,18 @@ public class Messages {
     public static String COMMAND_READY_ITEM_LORE_READY = "cmd-ready-item-lore-ready";
     public static String COMMAND_READY_ITEM_LORE_NOT_READY = "cmd-ready-item-lore-not-ready";
 
+    public static String TEAM_SELECTOR_TITLE = "team-selector.title";
+    public static String TEAM_SELECTOR_ITEM_NAME = "team-selector.item-name";
+    public static String TEAM_SELECTOR_ITEM_LORE = "team-selector.item-lore";
+    public static String TEAM_SELECTOR_NONE = "team-selector.none";
+    public static String TEAM_SELECTOR_TEAM_LORE = "team-selector.team-lore";
+    public static String TEAM_SELECTOR_SELECTED = "team-selector.selected";
+    public static String TEAM_SELECTOR_CANCEL_NAME = "team-selector.cancel-name";
+    public static String TEAM_SELECTOR_CANCEL_LORE = "team-selector.cancel-lore";
+    public static String TEAM_SELECTOR_FULL = "team-selector.full";
+    public static String TEAM_SELECTOR_PREVIOUS_PAGE = "team-selector.previous-page";
+    public static String TEAM_SELECTOR_NEXT_PAGE = "team-selector.next-page";
+
     /**
      * next event related
      */

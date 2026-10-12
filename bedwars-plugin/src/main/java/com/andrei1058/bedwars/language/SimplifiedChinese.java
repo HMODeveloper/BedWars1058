@@ -54,6 +54,18 @@ public class SimplifiedChinese extends Language {
             yml.set("player-die-knocked-final", null);
         }
 
+        yml.addDefault(Messages.TEAM_SELECTOR_TITLE, "&8选择队伍");
+        yml.addDefault(Messages.TEAM_SELECTOR_ITEM_NAME, "&e选择队伍");
+        yml.addDefault(Messages.TEAM_SELECTOR_ITEM_LORE, Arrays.asList("&7当前队伍：{team}", "&f右键选择队伍"));
+        yml.addDefault(Messages.TEAM_SELECTOR_NONE, "&f未选择");
+        yml.addDefault(Messages.TEAM_SELECTOR_TEAM_LORE, Arrays.asList("&7人数：{selected}/{max}", "&e点击选择", "{state}"));
+        yml.addDefault(Messages.TEAM_SELECTOR_SELECTED, "&a已选择此队伍");
+        yml.addDefault(Messages.TEAM_SELECTOR_CANCEL_NAME, "&c取消选择队伍");
+        yml.addDefault(Messages.TEAM_SELECTOR_CANCEL_LORE, Collections.singletonList("&7开场时自动分配队伍"));
+        yml.addDefault(Messages.TEAM_SELECTOR_FULL, "&c该队伍已满，请选择其他队伍。");
+        yml.addDefault(Messages.TEAM_SELECTOR_PREVIOUS_PAGE, "&e上一页");
+        yml.addDefault(Messages.TEAM_SELECTOR_NEXT_PAGE, "&e下一页");
+
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）", "&2▪ &7/" + mainCmd + " specmode &3（旁观者）"));
         yml.addDefault(Messages.SERVER_SPAWN_PROTECTION_WARNING, "server.properties 中启用了 spawn-protection，这可能会影响 BedWars 竞技场，建议将其设为 0。");
         yml.addDefault(Messages.SERVER_MULTIVERSE_WARNING, "检测到 Multiverse-Core；请将其移除，或确保它不会修改 BedWars 地图。");

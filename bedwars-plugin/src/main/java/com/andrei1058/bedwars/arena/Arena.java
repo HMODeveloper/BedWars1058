@@ -36,6 +36,7 @@ import com.andrei1058.bedwars.api.entity.Despawnable;
 import com.andrei1058.bedwars.api.events.gameplay.GameEndEvent;
 import com.andrei1058.bedwars.api.events.gameplay.GameStateChangeEvent;
 import com.andrei1058.bedwars.api.events.gameplay.NextEventChangeEvent;
+import com.andrei1058.bedwars.api.events.gameplay.TeamAssignEvent;
 import com.andrei1058.bedwars.api.events.player.PlayerJoinArenaEvent;
 import com.andrei1058.bedwars.api.events.player.PlayerKillEvent;
 import com.andrei1058.bedwars.api.events.player.PlayerLeaveArenaEvent;
@@ -59,6 +60,7 @@ import com.andrei1058.bedwars.arena.tasks.GameStartingTask;
 import com.andrei1058.bedwars.arena.tasks.ReJoinTask;
 import com.andrei1058.bedwars.arena.team.BedWarsTeam;
 import com.andrei1058.bedwars.arena.team.TeamAssigner;
+import com.andrei1058.bedwars.arena.team.TeamSelector;
 import com.andrei1058.bedwars.configuration.ArenaConfig;
 import com.andrei1058.bedwars.configuration.Sounds;
 import com.andrei1058.bedwars.levels.internal.InternalLevel;
@@ -115,6 +117,90 @@ public class Arena implements IArena {
     public static HashMap<UUID, Integer> afkCheck = new HashMap<>();
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
     private final Set<UUID> readyPlayers = new HashSet<>();
+    private final Map<UUID, ITeam> selectedTeams = new HashMap<>();
+    private boolean teamSelectionLocked;
+
+    public boolean canSelectTeam(Player player) {
+        return config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_TEAM_SELECTOR_ENABLED)
+                && !teamSelectionLocked && (status == GameState.waiting || status == GameState.starting)
+                && isPlayer(player) && !isSpectator(player);
+    }
+
+    public ITeam getSelectedTeam(Player player) {
+        return selectedTeams.get(player.getUniqueId());
+    }
+
+    public int getSelectedTeamSize(ITeam team) {
+        int count = 0;
+        for (Player player : players) {
+            if (!isSpectator(player) && selectedTeams.get(player.getUniqueId()) == team) count++;
+        }
+        return count;
+    }
+
+    public boolean selectTeam(Player player, ITeam team) {
+        if (!canSelectTeam(player) || !teams.contains(team)) return false;
+        if (getSelectedTeam(player) == team) return true;
+        if (getSelectedTeamSize(team) >= maxInTeam) return false;
+        selectedTeams.put(player.getUniqueId(), team);
+        refreshTeamSelection(player);
+        return true;
+    }
+
+    public void clearSelectedTeam(Player player) {
+        if (!canSelectTeam(player)) return;
+        selectedTeams.remove(player.getUniqueId());
+        refreshTeamSelection(player);
+    }
+
+    private void refreshTeamSelection(Player player) {
+        TeamSelector.giveItem(this, player);
+        TeamSelector.updatePreview(this, player);
+        SidebarService.getInstance().handleReJoin(this, player);
+        TeamSelector.refreshOpenMenus(this);
+    }
+
+    private void closeTeamSelectionMenus() {
+        if (players == null) return;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof TeamSelector.TeamSelectorHolder
+                    && ((TeamSelector.TeamSelectorHolder) player.getOpenInventory().getTopInventory().getHolder()).getArena() == this) {
+                player.closeInventory();
+            }
+        }
+    }
+
+    private void removeTeamSelection(Player player) {
+        selectedTeams.remove(player.getUniqueId());
+        TeamSelector.clearPreview(player);
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof TeamSelector.TeamSelectorHolder
+                && ((TeamSelector.TeamSelectorHolder) player.getOpenInventory().getTopInventory().getHolder()).getArena() == this) {
+            player.closeInventory();
+        }
+        TeamSelector.refreshOpenMenus(this);
+    }
+
+    public void prepareTeamAssignment() {
+        teamSelectionLocked = true;
+        closeTeamSelectionMenus();
+        for (Player player : players) TeamSelector.clearPreview(player);
+        selectedTeams.entrySet().removeIf(entry -> {
+            Player player = Bukkit.getPlayer(entry.getKey());
+            return player == null || !isPlayer(player) || isSpectator(player) || !teams.contains(entry.getValue());
+        });
+        for (Player player : new ArrayList<>(players)) {
+            ITeam team = getSelectedTeam(player);
+            if (team == null || getTeam(player) != null || team.getMembers().size() >= maxInTeam) continue;
+            TeamAssignEvent event = new TeamAssignEvent(player, team, this);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled() && isPlayer(player) && !isSpectator(player) && getTeam(player) == null
+                    && team.getMembers().size() < maxInTeam) team.addPlayers(player);
+        }
+    }
+
+    public void finishTeamAssignment() {
+        selectedTeams.clear();
+    }
 
 
     private List<Player> players = new ArrayList<>();
@@ -500,6 +586,7 @@ public class Arena implements IArena {
 
             p.closeInventory();
             players.add(p);
+            selectedTeams.remove(p.getUniqueId());
             // New players are not ready by default, so we check if this change affects the start status
             checkReady();
             p.setFlying(false);
@@ -572,6 +659,7 @@ public class Arena implements IArena {
         }
 
         p.getInventory().setArmorContents(null);
+        TeamSelector.updatePreview(this, p);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             // bungee mode invisibility issues
             if (getServerType() == ServerType.BUNGEE) {
@@ -634,6 +722,7 @@ public class Arena implements IArena {
                 Bukkit.getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) return false;
             }
+            removeTeamSelection(p);
 
             //Remove from ReJoin
             ReJoin reJoin = ReJoin.getPlayer(p);
@@ -766,6 +855,7 @@ public class Arena implements IArena {
         } else {
             leaving.add(p);
         }
+        removeTeamSelection(p);
         debug("Player removed: " + p.getName() + " arena: " + getArenaName());
         respawnSessions.remove(p);
 
@@ -1042,6 +1132,7 @@ public class Arena implements IArena {
         } else {
             leaving.add(p);
         }
+        removeTeamSelection(p);
 
         Bukkit.getPluginManager().callEvent(new PlayerLeaveArenaEvent(p, this, null));
         spectators.remove(p);
@@ -1514,6 +1605,10 @@ public class Arena implements IArena {
 
         if (status == GameState.restarting || status == GameState.playing) {
             readyPlayers.clear();
+            teamSelectionLocked = true;
+            closeTeamSelectionMenus();
+            selectedTeams.clear();
+            for (Player player : players) TeamSelector.clearPreview(player);
         }
 
         if (this.status != GameState.playing && status == GameState.playing) {
@@ -1890,7 +1985,10 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
-        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) return;
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) {
+            TeamSelector.giveItem(this, p);
+            return;
+        }
         p.getInventory().clear();
 
         for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH).getKeys(false)) {
@@ -1923,6 +2021,7 @@ public class Arena implements IArena {
 
             p.getInventory().setItem(config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)), i);
         }
+        TeamSelector.giveItem(this, p);
     }
 
     /**
@@ -2550,6 +2649,8 @@ public class Arena implements IArena {
     }
 
     public void destroyData() {
+        closeTeamSelectionMenus();
+        selectedTeams.clear();
         destroyReJoins();
         if (worldName != null) arenaByIdentifier.remove(worldName);
         arenas.remove(this);
