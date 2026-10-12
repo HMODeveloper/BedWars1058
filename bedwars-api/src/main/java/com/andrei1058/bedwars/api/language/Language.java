@@ -33,6 +33,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Language extends ConfigManager {
 
@@ -56,6 +58,89 @@ public class Language extends ConfigManager {
             "&7Do ulepszeń i pułapek", "&7To Upgrades & Traps", "&7La îmbunătățiri și capcane",
             "&7К Улучшениям и Ловушкам", "&7回到升级和陷阱菜单", "&7A actualizaciones y trampas",
             "&7Yükseltmeler & Tuzaklar"));
+    private static final Pattern PARTY_HELP_COMMAND_PATTERN = Pattern.compile("/party\\s+([a-zA-Z]+)(?=\\s|$)");
+
+    /**
+     * 解析 Party 帮助行中的子命令标识，未匹配返回 null。
+     */
+    private static String partyHelpCommand(Object value) {
+        if (!(value instanceof String)) return null;
+        Matcher matcher = PARTY_HELP_COMMAND_PATTERN.matcher((String) value);
+        return matcher.find() ? matcher.group(1).toLowerCase(Locale.ROOT) : null;
+    }
+
+    /**
+     * 迁移语言配置中的列表默认值。
+     * 完整英文默认列表整体替换；Party 帮助部分自定义按命令匹配；其他部分自定义保留原位置精确匹配。
+     */
+    private static List<?> migrateEnglishList(String path, List<?> current, List<?> englishDefaults, List<?> localizedDefaults) {
+        if (current == null || englishDefaults == null || localizedDefaults == null) return current;
+        if (current.equals(englishDefaults)) {
+            return englishDefaults.equals(localizedDefaults) ? current : new ArrayList<>(localizedDefaults);
+        }
+        if (Messages.COMMAND_PARTY_HELP.equals(path)) {
+            Map<String, Integer> englishCmdCounts = new HashMap<>();
+            for (Object item : englishDefaults) {
+                String cmd = partyHelpCommand(item);
+                if (cmd != null) englishCmdCounts.put(cmd, englishCmdCounts.getOrDefault(cmd, 0) + 1);
+            }
+            Map<String, String> localizedCmdMap = new HashMap<>();
+            Map<String, Integer> localizedCmdCounts = new HashMap<>();
+            for (Object item : localizedDefaults) {
+                String cmd = partyHelpCommand(item);
+                if (cmd != null) {
+                    localizedCmdCounts.put(cmd, localizedCmdCounts.getOrDefault(cmd, 0) + 1);
+                    localizedCmdMap.put(cmd, item.toString());
+                }
+            }
+            Map<Object, Integer> englishCounts = new HashMap<>();
+            for (Object item : englishDefaults) {
+                englishCounts.put(item, englishCounts.getOrDefault(item, 0) + 1);
+            }
+            boolean sameDefaultsSize = englishDefaults.size() == localizedDefaults.size();
+            List<Object> migrated = null;
+            for (int i = 0; i < current.size(); i++) {
+                Object currentItem = current.get(i);
+                int engIndex = englishDefaults.indexOf(currentItem);
+                if (engIndex < 0) continue;
+                Object replacement = null;
+                String cmd = partyHelpCommand(currentItem);
+                if (cmd != null) {
+                    if (englishCmdCounts.getOrDefault(cmd, 0) == 1 && localizedCmdCounts.getOrDefault(cmd, 0) == 1) {
+                        replacement = localizedCmdMap.get(cmd);
+                    }
+                } else if (englishCounts.getOrDefault(currentItem, 0) == 1 && sameDefaultsSize) {
+                    Object locCandidate = localizedDefaults.get(engIndex);
+                    if (partyHelpCommand(locCandidate) == null) {
+                        replacement = locCandidate;
+                    }
+                }
+                if (replacement != null && !Objects.equals(currentItem, replacement)) {
+                    if (migrated == null) {
+                        migrated = new ArrayList<>(current);
+                    }
+                    migrated.set(i, replacement);
+                }
+            }
+            return migrated != null ? migrated : current;
+        }
+        if (current.size() == englishDefaults.size() && current.size() == localizedDefaults.size()) {
+            List<Object> migrated = null;
+            for (int i = 0; i < current.size(); i++) {
+                Object currentItem = current.get(i);
+                Object engItem = englishDefaults.get(i);
+                Object locItem = localizedDefaults.get(i);
+                if (Objects.equals(currentItem, engItem) && !Objects.equals(locItem, engItem)) {
+                    if (migrated == null) {
+                        migrated = new ArrayList<>(current);
+                    }
+                    migrated.set(i, locItem);
+                }
+            }
+            return migrated != null ? migrated : current;
+        }
+        return current;
+    }
 
     private static Language fallbackLanguage() {
         if (defaultLanguage != null) return defaultLanguage;
@@ -616,17 +701,8 @@ public class Language extends ConfigManager {
                     List<?> currentList = (List<?>) current;
                     List<?> englishList = (List<?>) englishDefault;
                     List<?> localizedList = (List<?>) localizedDefault;
-                    if (currentList.size() != englishList.size() || currentList.size() != localizedList.size()) continue;
-                    List<Object> migrated = new ArrayList<>(currentList);
-                    boolean listChanged = false;
-                    for (int index = 0; index < currentList.size(); index++) {
-                        if (Objects.equals(currentList.get(index), englishList.get(index))
-                                && !Objects.equals(localizedList.get(index), englishList.get(index))) {
-                            migrated.set(index, localizedList.get(index));
-                            listChanged = true;
-                        }
-                    }
-                    if (listChanged) {
+                    List<?> migrated = migrateEnglishList(path, currentList, englishList, localizedList);
+                    if (migrated != currentList) {
                         language.getYml().set(path, migrated);
                         changed = true;
                     }
