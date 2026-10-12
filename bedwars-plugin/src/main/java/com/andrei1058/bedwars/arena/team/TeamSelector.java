@@ -180,6 +180,12 @@ public final class TeamSelector {
                 for (String line : Language.getList(player, Messages.TEAM_SELECTOR_TEAM_LORE)) {
                     lore.add(line.replace("{selected}", size).replace("{max}", maximum).replace("{state}", state));
                 }
+                // 等候选择独立于正式成员，名单与菜单预留人数保持一致。
+                for (Player member : arena.getPlayers()) {
+                    if (!arena.isSpectator(member) && arena.getSelectedTeam(member) == team) {
+                        lore.add(team.getColor().chat() + member.getName());
+                    }
+                }
                 meta.setLore(lore);
                 item.setItemMeta(meta);
                 inventory.setItem(slot, item);

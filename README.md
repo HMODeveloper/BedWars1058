@@ -138,6 +138,8 @@ team-selector:
   Selected teams preview their colors on leather armor and in TAB, including when
   waiting/starting TAB formatting is otherwise disabled. Selection menus use
   the configurable `team-selector-open` and `team-selector-close` sounds.
+  Hovering a team's wool lists all players currently selecting that team; the
+  list refreshes when players select, switch, cancel, or leave.
 - Manual selections reserve capacity without joining the actual team until game
   start. They are preserved rather than moved for balance, so fixed choices can
   make the final teams uneven. Cancelling restores automatic assignment; leaving,
