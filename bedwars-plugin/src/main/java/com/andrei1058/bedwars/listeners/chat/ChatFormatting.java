@@ -148,10 +148,12 @@ public class ChatFormatting implements Listener {
             // player team chat
             if (a.getMaxInTeam() == 1) {
                 setRecipients(e, a.getPlayers(), a.getSpectators());
+                // 单人模式普通聊天面向整局，使用公屏标签。
+                e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_SHOUT), p, team));
             } else {
                 setRecipients(e, team.getMembers());
+                e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_TEAM), p, team));
             }
-            e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_TEAM), p, team));
             return;
         }
 
@@ -206,10 +208,10 @@ public class ChatFormatting implements Listener {
 
     private static String parsePHolders(String content, Player player, @Nullable ITeam team) {
         content = content
-                .replace("{vPrefix}", getChatSupport().getPrefix(player))
+                .replace("{vPrefix}", getChatSupport().getPrefix(player).trim())
                 .replace("{vSuffix}", getChatSupport().getSuffix(player))
                 .replace("{playername}", player.getName())
-                .replace("{level}", getLevelSupport().getLevel(player))
+                .replace("{level}", getLevelSupport().getLevel(player).trim())
                 .replace("{player}", player.getDisplayName());
         if (team != null) {
             String teamFormat = getMsg(player, Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM)
@@ -217,7 +219,8 @@ public class ChatFormatting implements Listener {
                     .replace("{TeamName}", team.getDisplayName(Language.getPlayerLanguage(player)).toUpperCase());
             content = content.replace("{team}", teamFormat);
         }
-        return SupportPAPI.getSupportPAPI().replace(player, content).replace("{message}", "%2$s");
+        // 正文尚未插入，只整理格式中可选等级和身份留下的多余空格。
+        return SupportPAPI.getSupportPAPI().replace(player, content).replaceAll(" {2,}", " ").trim().replace("{message}", "%2$s");
     }
 
     private static boolean isShouting(String msg, Language lang) {

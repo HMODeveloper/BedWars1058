@@ -569,13 +569,13 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.GENERATOR_HOLOGRAM_TYPE_EMERALD, "&a&l绿宝石");
         yml.addDefault(Messages.GENERATOR_HOLOGRAM_TIMER, "&c{seconds}&e 秒后生成");
         yml.addDefault(Messages.GENERATOR_UPGRADE_CHAT_ANNOUNCEMENT, "{prefix}{generatorType}资源点&e升级到&c{tier}级。");
-        yml.addDefault(Messages.FORMATTING_CHAT_LOBBY, "{level}{vPrefix}&7{player}{vSuffix}&f：{message}");
-        yml.addDefault(Messages.FORMATTING_CHAT_WAITING, "{level}{vPrefix}&7{player}{vSuffix}&f：{message}");
-        yml.addDefault(Messages.FORMATTING_CHAT_SHOUT, "{level}{vPrefix}&6[公屏] {team} &7{player}{vSuffix}&f：{message}");
-        yml.addDefault(Messages.FORMATTING_CHAT_SERVER, "{level}{vPrefix}&6[全服] &7{player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_LOBBY, "&7[大厅] {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_WAITING, "&7[等待] {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_SHOUT, "&6[公屏] {team} {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_SERVER, "&6[全服] {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
         yml.addDefault(Messages.CHAT_GLOBAL_USAGE, "{prefix}&c请在 @ 后输入要发送到全服的消息。");
-        yml.addDefault(Messages.FORMATTING_CHAT_TEAM, "{level}{vPrefix}&f{team}&7 {player}{vSuffix}&f：{message}");
-        yml.addDefault(Messages.FORMATTING_CHAT_SPECTATOR, "{level}{vPrefix}&7[旁观者] {player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_TEAM, "&b[队内] {team} {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
+        yml.addDefault(Messages.FORMATTING_CHAT_SPECTATOR, "&8[旁观] {level} {vPrefix} &a{player}{vSuffix}&f：{message}");
         yml.addDefault(Messages.FORMATTING_SCOREBOARD_HEALTH, Arrays.asList("&c❤", "&a生命值"));
 
         yml.addDefault(Messages.FORMATTING_SCOREBOARD_DATE, "yy/MM/dd");
