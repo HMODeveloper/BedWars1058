@@ -66,6 +66,12 @@ public class English extends Language {
         yml.addDefault(Messages.TEAM_SELECTOR_PREVIOUS_PAGE, "&ePrevious page");
         yml.addDefault(Messages.TEAM_SELECTOR_NEXT_PAGE, "&eNext page");
 
+        yml.addDefault(Messages.HINT_CHAT_GLOBAL, "&7Start a message with &e@&7 to send it to the whole server.");
+        yml.addDefault(Messages.HINT_REJOIN, "&7Use &e/rejoin&7 to rejoin your previous game.");
+        yml.addDefault(Messages.HINT_READY_ITEM, "&7Right-click the &credstone block&7 in hotbar &eslot 2&7 to ready up.");
+        yml.addDefault(Messages.HINT_CHAT_SHOUT, "&7Start a message with &e!&7 to send it to everyone in your game.");
+        yml.addDefault(Messages.HINT_SPECTATOR_MODE, "&7Use &e/{command} spec&7 to toggle vanilla spectator mode.");
+
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<arena/group>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3(vip)", "&2▪ &7/" + mainCmd + " specmode &3(spectator)"));
         yml.addDefault(Messages.SERVER_SPAWN_PROTECTION_WARNING, "spawn-protection is enabled in server.properties; this may affect BedWars arenas. It is recommended to set it to 0.");
         yml.addDefault(Messages.SERVER_MULTIVERSE_WARNING, "&c[BedWars1058] Multiverse-Core detected! Please remove it or make sure it won't touch BedWars maps!");

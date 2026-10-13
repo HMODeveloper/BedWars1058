@@ -1,9 +1,3 @@
-# Unreleased
-- fixed 1.8.8 generator resources not stacking in inventories: stack-items now controls ground merging only, with persistent hidden entity markers instead of unique item NBT.
-- migrate legacy generator IDs in loaded items, containers, player inventories and ender chests, and on chunk load, item spawn, player join and inventory open; preserve other item data and normalize empty NBT.
-- respect pickup cancellation and apply generator collection/AFK rules once for both ground stacking modes; preserve generator identity across allowed item merges.
-- count nearby generator resource amounts rather than entities for spawn limits, preserving complete batches and gen-split overflow.
-
 # 19.11.1
 - fixed issue where you can't open the shop after rejoin
 - fixed issue where you are invisible after rejoin

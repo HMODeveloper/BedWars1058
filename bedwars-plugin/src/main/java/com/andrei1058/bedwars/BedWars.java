@@ -283,7 +283,7 @@ public class BedWars extends JavaPlugin {
                 new Inventory(), new Interact(), new TeamSelectorListener(), new RefreshGUI(), new HungerWeatherSpawn(), new CmdProcess(),
                 new FireballListener(), new EggBridge(), new SpectatorListeners(), new BaseListener(),
                 new TargetListener(), new LangListener(), new Warnings(this), new ChatAFK(),
-                new GameEndListener(), new DefaultStatsHandler(), new ArenaOpFilterListener()
+                new GameEndListener(), new DefaultStatsHandler(), new ArenaOpFilterListener(), new CommandHintListener()
         );
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE)) {

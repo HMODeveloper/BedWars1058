@@ -53,6 +53,20 @@ public class ChatFormatting implements Listener {
     private final Map<UUID, Long> globalCooldowns = new HashMap<>();
     private long nextCooldownCleanup;
 
+    // 提示和实际聊天发送共用权限规则，显式拒绝优先于通配权限。
+    public static boolean canSendArenaShout(Player player) {
+        return !(player.isPermissionSet(Permissions.PERMISSION_SHOUT_COMMAND)
+                && !player.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND))
+                && Permissions.hasPermission(player, Permissions.PERMISSION_SHOUT_COMMAND, Permissions.PERMISSION_ALL);
+    }
+
+    public static boolean canSendGlobalChat(Player player) {
+        return player.hasPermission(Permissions.PERMISSION_GLOBAL_CHAT)
+                || (!player.isPermissionSet(Permissions.PERMISSION_GLOBAL_CHAT)
+                && (!config.getBoolean(ConfigPath.GLOBAL_CHAT_REQUIRE_PERMISSION)
+                || player.hasPermission(Permissions.PERMISSION_ALL)));
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
         if (e == null) return;
@@ -107,9 +121,7 @@ public class ChatFormatting implements Listener {
             // shout format
             if (isShouting(msg, language)) {
                 // Explicit shout denial takes precedence over wildcard permission.
-                if ((p.isPermissionSet(Permissions.PERMISSION_SHOUT_COMMAND)
-                        && !p.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND))
-                        || !Permissions.hasPermission(p, Permissions.PERMISSION_SHOUT_COMMAND, Permissions.PERMISSION_ALL)) {
+                if (!canSendArenaShout(p)) {
                     e.setCancelled(true);
                     p.sendMessage(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
                     return;
@@ -154,10 +166,7 @@ public class ChatFormatting implements Listener {
             player.sendMessage(getMsg(player, Messages.CHAT_GLOBAL_USAGE));
             return;
         }
-        boolean canSend = player.hasPermission(Permissions.PERMISSION_GLOBAL_CHAT);
-        if (!canSend && (player.isPermissionSet(Permissions.PERMISSION_GLOBAL_CHAT)
-                || (config.getBoolean(ConfigPath.GLOBAL_CHAT_REQUIRE_PERMISSION)
-                && !player.hasPermission(Permissions.PERMISSION_ALL)))) {
+        if (!canSendGlobalChat(player)) {
             event.setCancelled(true);
             player.sendMessage(getMsg(player, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
             return;

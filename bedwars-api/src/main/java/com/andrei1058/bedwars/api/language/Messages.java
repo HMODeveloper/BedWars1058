@@ -220,6 +220,11 @@ public class Messages {
     public static String FORMATTING_CHAT_SHOUT = "format-chat-global";
     public static String FORMATTING_CHAT_SERVER = "format-chat-server";
     public static String CHAT_GLOBAL_USAGE = "chat-global-usage";
+    public static String HINT_CHAT_GLOBAL = "hint-chat-global";
+    public static String HINT_REJOIN = "hint-rejoin";
+    public static String HINT_READY_ITEM = "hint-ready-item";
+    public static String HINT_CHAT_SHOUT = "hint-chat-shout";
+    public static String HINT_SPECTATOR_MODE = "hint-spectator-mode";
     public static String FORMATTING_CHAT_TEAM = "format-chat-team";
     public static String FORMATTING_CHAT_SPECTATOR = "format-chat-spectator";
     public static String FORMATTING_SCOREBOARD_DATE = "format-sb-date";

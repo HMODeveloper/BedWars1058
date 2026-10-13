@@ -66,6 +66,12 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.TEAM_SELECTOR_PREVIOUS_PAGE, "&e上一页");
         yml.addDefault(Messages.TEAM_SELECTOR_NEXT_PAGE, "&e下一页");
 
+        yml.addDefault(Messages.HINT_CHAT_GLOBAL, "&7使用&e@&7开头发送全服消息。");
+        yml.addDefault(Messages.HINT_REJOIN, "&7使用&e/rejoin&7重新加入刚刚的对局。");
+        yml.addDefault(Messages.HINT_READY_ITEM, "&7可右键快捷栏&e第 2 格&7的&c红石块&7准备。");
+        yml.addDefault(Messages.HINT_CHAT_SHOUT, "&7使用&e!&7开头发送全局消息。");
+        yml.addDefault(Messages.HINT_SPECTATOR_MODE, "&7使用&e/{command} spec&7切换原版旁观模式。");
+
         yml.addDefault(Messages.COMMAND_MAIN, Arrays.asList("", "&2▪ &7/" + mainCmd + " stats", "&2▪ &7/" + mainCmd + " join &o<游戏/模式>", "&2▪ &7/" + mainCmd + " leave", "&2▪ &7/" + mainCmd + " lang", "&2▪ &7/" + mainCmd + " gui", "&2▪ &7/" + mainCmd + " start &3（赞助者）", "&2▪ &7/" + mainCmd + " specmode &3（旁观者）"));
         yml.addDefault(Messages.SERVER_SPAWN_PROTECTION_WARNING, "server.properties 中启用了 spawn-protection，这可能会影响 BedWars 竞技场，建议将其设为 0。");
         yml.addDefault(Messages.SERVER_MULTIVERSE_WARNING, "检测到 Multiverse-Core；请将其移除，或确保它不会修改 BedWars 地图。");
