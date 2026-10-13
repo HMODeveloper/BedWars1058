@@ -23,6 +23,7 @@ package com.andrei1058.bedwars.listeners;
 import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.arena.generator.GeneratorDrop;
 import com.andrei1058.bedwars.api.events.player.PlayerGeneratorCollectEvent;
 import com.andrei1058.bedwars.api.server.ServerType;
 import com.andrei1058.bedwars.support.version.common.VersionCommon;
@@ -46,7 +47,7 @@ public class PlayerDropPick_1_11Minus implements Listener {
     /* This Class is used for versions from 1.8.8 to 1.11 included */
 
     @SuppressWarnings("deprecation")
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPickup(PlayerPickupItemEvent e) {
         if (api.getServerType() == ServerType.MULTIARENA) {
             //noinspection ConstantConditions
@@ -82,7 +83,7 @@ public class PlayerDropPick_1_11Minus implements Listener {
         if (VersionCommon.api.getVersionSupport().isBed(e.getItem().getItemStack().getType())) {
             e.setCancelled(true);
             e.getItem().remove();
-        } else if (api.getVersionSupport().getTag(e.getItem().getItemStack(), "bw1058-generator-drop") != null) {
+        } else if (GeneratorDrop.isGeneratorDrop(e.getItem())) {
             if (api.getAFKUtil().isPlayerAFK(e.getPlayer())) {
                 e.setCancelled(true);
                 return;
@@ -92,10 +93,6 @@ public class PlayerDropPick_1_11Minus implements Listener {
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 e.setCancelled(true);
-            } else {
-                ItemStack resource = e.getItem().getItemStack();
-                // Remove the unique ground-drop marker before the resource enters the inventory.
-                e.getItem().setItemStack(new ItemStack(resource.getType(), resource.getAmount(), resource.getDurability()));
             }
         }
     }

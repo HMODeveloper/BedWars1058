@@ -36,7 +36,6 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -49,15 +48,6 @@ public class ItemDropPickListener {
         @EventHandler
         public void onDrop(PlayerDropItemEvent e){
             if (manageDrop(e.getPlayer(), e.getItemDrop())) e.setCancelled(true);
-        }
-    }
-
-    // 1.11 or older
-    public static class PlayerPickup implements Listener {
-        @SuppressWarnings("deprecation")
-        @EventHandler
-        public void onDrop(PlayerPickupItemEvent e){
-            if (managePickup(e.getItem(), e.getPlayer())) e.setCancelled(true);
         }
     }
 

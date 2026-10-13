@@ -829,6 +829,9 @@ public class v1_8_R3 extends VersionSupport {
     public void registerVersionListeners() {
         new VersionCommon(this);
         getPlugin().getServer().getPluginManager().registerEvents(new SpongeProtection(VersionCommon.api), getPlugin());
+        GeneratorDropMigration migration = new GeneratorDropMigration();
+        getPlugin().getServer().getPluginManager().registerEvents(migration, getPlugin());
+        migration.migrateLoadedData();
     }
 
     @Override

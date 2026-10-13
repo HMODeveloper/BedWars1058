@@ -23,6 +23,7 @@ package com.andrei1058.bedwars.arena;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.arena.generator.GeneratorDrop;
 import com.andrei1058.bedwars.api.arena.generator.GeneratorType;
 import com.andrei1058.bedwars.api.arena.generator.IGenHolo;
 import com.andrei1058.bedwars.api.arena.generator.IGenerator;
@@ -56,7 +57,7 @@ public class OreGenerator implements IGenerator {
     private IArena arena;
     private ItemStack ore;
     private GeneratorType type;
-    private int rotate = 0, dropID = 0;
+    private int rotate = 0;
     private ITeam bwt;
     boolean up = true;
 
@@ -163,8 +164,9 @@ public class OreGenerator implements IGenerator {
                 for (Entity e : location.getWorld().getNearbyEntities(location, 3, 3, 3)) {
                     if (e.getType() == EntityType.DROPPED_ITEM) {
                         Item i = (Item) e;
-                        if (i.getItemStack().getType() == ore.getType()) {
-                            oreCount++;
+                        ItemStack droppedStack = i.getItemStack();
+                        if (droppedStack.getType() == ore.getType()) {
+                            oreCount += droppedStack.getAmount();
                         }
                         if (oreCount >= spawnLimit) return;
                     }
@@ -210,16 +212,15 @@ public class OreGenerator implements IGenerator {
     private void dropItem(Location location, int amount) {
         for (int temp = amount; temp > 0; temp--) {
             ItemStack itemStack = new ItemStack(ore);
-            if (!stack) {
-                itemStack = nms.setTag(itemStack, "bw1058-generator-drop", String.valueOf(dropID++));
-            }
+            // Entity-only markers leave the resource stack compatible with inventory resources.
             Item item = location.getWorld().dropItem(location, itemStack);
+            GeneratorDrop.mark(item, stack);
             item.setVelocity(new Vector(0, 0, 0));
         }
     }
 
     /**
-     * Drop item stack with ID
+     * Drop resources with generator identity and the configured ground-merge policy.
      */
     @Override
     public void dropItem(Location location) {
