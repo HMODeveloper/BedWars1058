@@ -297,7 +297,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_SET_LOBBY_NOT_SET, " §c（未设置）");
         yml.addDefault(Messages.COMMAND_SET_LOBBY_SET, " §a（已设置）");
         yml.addDefault(Messages.COMMAND_SET_LOBBY_SUCCESS, "§6 ▪ §7大厅位置已设置！");
-        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISPLAY, "§e/bw toggleReady §7- 切换准备检查功能。");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISPLAY, "§e/bw toggleReady §7- 开启或关闭准备确认功能。");
         yml.addDefault(Messages.COMMAND_ECHO_DISPLAY, "&6 ▪ &7/{command} {subcommand} &8- &e向当前竞技场发送消息");
         yml.addDefault(Messages.COMMAND_ECHO_HOVER, "&f向当前竞技场中的所有玩家发送消息。\n&f用法：/{command} echo <消息>");
         yml.addDefault(Messages.COMMAND_ECHO_PREFIX, "&8[&c管理员&8] &f");
@@ -440,8 +440,8 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.COMMAND_READY_SUCCESS, "{prefix}&a你现在准备好了！");
         yml.addDefault(Messages.COMMAND_UNREADY_SUCCESS, "{prefix}&e你取消了准备。");
         yml.addDefault(Messages.COMMAND_READY_COUNTDOWN_SHORTENED, "{prefix}&a所有玩家都已准备！倒计时缩短至10秒！");
-        yml.addDefault(Messages.COMMAND_TOGGLE_READY_ENABLED, "{prefix}&a准备检查功能已启用。");
-        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISABLED, "{prefix}&c准备检查功能已禁用。");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_ENABLED, "{prefix}&a准备确认功能已启用。");
+        yml.addDefault(Messages.COMMAND_TOGGLE_READY_DISABLED, "{prefix}&c准备确认功能已禁用。");
         yml.addDefault(Messages.COMMAND_READY_DISABLED, "{prefix}&c该命令已禁用。");
         yml.addDefault(Messages.COMMAND_READY_NOT_IN_GAME, "{prefix}&c你不在游戏中！");
         yml.addDefault(Messages.COMMAND_READY_NOT_WAITING, "{prefix}&c你现在不能使用此命令。");
@@ -1435,7 +1435,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_LORE_REPLACEMENT_LOCKED, "&c已锁定");
         yml.addDefault(Messages.UPGRADES_LORE_REPLACEMENT_UNLOCKED, "{color}已解锁");
         yml.addDefault(Messages.UPGRADES_UPGRADE_BOUGHT_CHAT, "&a{player}购买了&6{upgradeName}");
-        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "forge").replace("{tier}", "tier-1"), "{color}铁锭熔炉");
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("{name}", "forge").replace("{tier}", "tier-1"), "{color}铁锻炉");
         yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("{name}", "forge"),
                 Arrays.asList("&7提高你方岛屿上的", "&7资源生成速度。", "", "{tier_1_color}等级 1：+50% 生成速率，&b{tier_1_cost} {tier_1_currency}",
                         "{tier_2_color}等级 2：+100% 生成速率，&b{tier_2_cost} {tier_2_currency}",
