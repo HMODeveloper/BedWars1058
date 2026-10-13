@@ -26,19 +26,28 @@ import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.events.player.PlayerLangChangeEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Language extends ConfigManager {
 
     private final String iso;
+    private final Plugin owner;
+    private ConfigManager overrides;
+    private File overrideFile;
+    private YamlConfiguration baseConfiguration;
+    private YamlConfiguration overrideConfiguration;
+    private boolean overrideReadFailed;
     private String prefix = "";
     private static String prefixStatic = "";
     private static final HashMap<UUID, Language> langByPlayer = new HashMap<>();
@@ -46,101 +55,6 @@ public class Language extends ConfigManager {
     private static Language defaultLanguage;
     private static Language englishLanguage;
     private static final String MISSING_LANGUAGE_MESSAGE = "MISSING_LANG";
-    private static final Set<String> LEGACY_UPGRADE_MENU_TITLES = new HashSet<>(Arrays.asList(
-            "&8Upgrades & Traps", "&8দলের উন্নতি ও ফাঁদ", "&8दल के सुधार और जाल",
-            "&8Peningkatan & Perangkap", "&8Potenziamenti e Trappole", "&8ارتقاهای گروه و تله‌ها",
-            "&8Ulepszenia drużyny i pułapki", "&8Melhorias e Armadilhas", "&8Îmbunătățiri și capcane",
-            "&8Улучшения команды и ловушки", "&8团队升级与陷阱", "&8队伍升级与陷阱",
-            "&8Mejoras de equipo y trampas", "&8Takım Yükseltme ve Tuzaklar", "&8Takım Yükseltmeleri ve Tuzaklar"));
-    private static final Set<String> LEGACY_UPGRADE_BACK_LORE = new HashSet<>(Arrays.asList(
-            "&7To Upgrades & Traps", "&7Unnoti o fand-e", "&7Unnayans aur Fands par",
-            "&7Ke Peningkatan & Perangkap", "&7A Potenziamenti e Trappole", "&7Be Unnayan-ha va Fand-ha",
-            "&7Do ulepszeń i pułapek", "&7To Upgrades & Traps", "&7La îmbunătățiri și capcane",
-            "&7К Улучшениям и Ловушкам", "&7回到升级和陷阱菜单", "&7A actualizaciones y trampas",
-            "&7Yükseltmeler & Tuzaklar"));
-    private static final Pattern PARTY_HELP_COMMAND_PATTERN = Pattern.compile("/party\\s+([a-zA-Z]+)(?=\\s|$)");
-
-    /**
-     * 解析 Party 帮助行中的子命令标识，未匹配返回 null。
-     */
-    private static String partyHelpCommand(Object value) {
-        if (!(value instanceof String)) return null;
-        Matcher matcher = PARTY_HELP_COMMAND_PATTERN.matcher((String) value);
-        return matcher.find() ? matcher.group(1).toLowerCase(Locale.ROOT) : null;
-    }
-
-    /**
-     * 迁移语言配置中的列表默认值。
-     * 完整英文默认列表整体替换；Party 帮助部分自定义按命令匹配；其他部分自定义保留原位置精确匹配。
-     */
-    private static List<?> migrateEnglishList(String path, List<?> current, List<?> englishDefaults, List<?> localizedDefaults) {
-        if (current == null || englishDefaults == null || localizedDefaults == null) return current;
-        if (current.equals(englishDefaults)) {
-            return englishDefaults.equals(localizedDefaults) ? current : new ArrayList<>(localizedDefaults);
-        }
-        if (Messages.COMMAND_PARTY_HELP.equals(path)) {
-            Map<String, Integer> englishCmdCounts = new HashMap<>();
-            for (Object item : englishDefaults) {
-                String cmd = partyHelpCommand(item);
-                if (cmd != null) englishCmdCounts.put(cmd, englishCmdCounts.getOrDefault(cmd, 0) + 1);
-            }
-            Map<String, String> localizedCmdMap = new HashMap<>();
-            Map<String, Integer> localizedCmdCounts = new HashMap<>();
-            for (Object item : localizedDefaults) {
-                String cmd = partyHelpCommand(item);
-                if (cmd != null) {
-                    localizedCmdCounts.put(cmd, localizedCmdCounts.getOrDefault(cmd, 0) + 1);
-                    localizedCmdMap.put(cmd, item.toString());
-                }
-            }
-            Map<Object, Integer> englishCounts = new HashMap<>();
-            for (Object item : englishDefaults) {
-                englishCounts.put(item, englishCounts.getOrDefault(item, 0) + 1);
-            }
-            boolean sameDefaultsSize = englishDefaults.size() == localizedDefaults.size();
-            List<Object> migrated = null;
-            for (int i = 0; i < current.size(); i++) {
-                Object currentItem = current.get(i);
-                int engIndex = englishDefaults.indexOf(currentItem);
-                if (engIndex < 0) continue;
-                Object replacement = null;
-                String cmd = partyHelpCommand(currentItem);
-                if (cmd != null) {
-                    if (englishCmdCounts.getOrDefault(cmd, 0) == 1 && localizedCmdCounts.getOrDefault(cmd, 0) == 1) {
-                        replacement = localizedCmdMap.get(cmd);
-                    }
-                } else if (englishCounts.getOrDefault(currentItem, 0) == 1 && sameDefaultsSize) {
-                    Object locCandidate = localizedDefaults.get(engIndex);
-                    if (partyHelpCommand(locCandidate) == null) {
-                        replacement = locCandidate;
-                    }
-                }
-                if (replacement != null && !Objects.equals(currentItem, replacement)) {
-                    if (migrated == null) {
-                        migrated = new ArrayList<>(current);
-                    }
-                    migrated.set(i, replacement);
-                }
-            }
-            return migrated != null ? migrated : current;
-        }
-        if (current.size() == englishDefaults.size() && current.size() == localizedDefaults.size()) {
-            List<Object> migrated = null;
-            for (int i = 0; i < current.size(); i++) {
-                Object currentItem = current.get(i);
-                Object engItem = englishDefaults.get(i);
-                Object locItem = localizedDefaults.get(i);
-                if (Objects.equals(currentItem, engItem) && !Objects.equals(locItem, engItem)) {
-                    if (migrated == null) {
-                        migrated = new ArrayList<>(current);
-                    }
-                    migrated.set(i, locItem);
-                }
-            }
-            return migrated != null ? migrated : current;
-        }
-        return current;
-    }
 
     private static Language fallbackLanguage() {
         if (defaultLanguage != null) return defaultLanguage;
@@ -192,6 +106,7 @@ public class Language extends ConfigManager {
     public Language(Plugin plugin, String iso) {
         super(plugin, "messages_" + iso, plugin.getDataFolder().getPath() + "/Languages");
         this.iso = iso;
+        this.owner = plugin;
         if ("en".equalsIgnoreCase(iso)) {
             englishLanguage = this;
         }
@@ -246,6 +161,106 @@ public class Language extends ConfigManager {
         }
 
         languages.add(this);
+    }
+
+    /** 默认文件由内置文案生成，自定义文案只从覆盖文件读取。 */
+    public void initializeOverrides() {
+        if (overrides != null) return;
+        Configuration defaults = getYml().getDefaults();
+        baseConfiguration = copyConfiguration(defaults == null ? getYml() : defaults);
+        if (defaults != null) baseConfiguration.setDefaults(defaults);
+        overrideFile = new File(owner.getDataFolder(), "Languages/overrides/" + getName() + ".yml");
+        overrides = new ConfigManager(owner, getName(), overrideFile.getParent());
+        try {
+            replaceConfiguration(readConfiguration());
+        } catch (IOException | InvalidConfigurationException e) {
+            owner.getLogger().log(Level.SEVERE, "Could not initialize language " + iso + " with overrides " + overrideFile, e);
+            replaceConfiguration(copyConfiguration(baseConfiguration));
+        }
+        refreshConfiguration();
+    }
+
+    public boolean hasOverride(String path) {
+        return overrideConfiguration != null && path != null && overrideConfiguration.isSet(path);
+    }
+
+    @Override
+    public YamlConfiguration readConfiguration() throws IOException, InvalidConfigurationException {
+        // super 构造器也会调用此方法，此时子类字段尚未初始化。
+        if (overrides == null) {
+            return getClass() == Language.class ? super.readConfiguration() : new YamlConfiguration();
+        }
+        if (baseConfiguration.getDefaults() != null) super.saveConfiguration(baseConfiguration);
+        try {
+            YamlConfiguration loaded = overrideFile.exists() ? overrides.readConfiguration() : new YamlConfiguration();
+            YamlConfiguration merged = copyConfiguration(baseConfiguration);
+            configurationLeaves(loaded).forEach(merged::set);
+            overrideConfiguration = loaded;
+            overrideReadFailed = false;
+            return merged;
+        } catch (IOException | InvalidConfigurationException e) {
+            overrideReadFailed = true;
+            throw e;
+        }
+    }
+
+    @Override
+    public void replaceConfiguration(YamlConfiguration configuration) {
+        if (overrides != null && baseConfiguration.getDefaults() != null) {
+            configuration.setDefaults(baseConfiguration.getDefaults());
+        }
+        super.replaceConfiguration(configuration);
+    }
+
+    @Override
+    public void saveConfiguration(YamlConfiguration configuration) throws IOException {
+        // 语言子类先注册全部 defaults，再由 initializeOverrides 同步默认文件。
+        if (overrides == null) return;
+        if (overrideReadFailed) throw new IOException("Unreadable language overrides: " + overrideFile);
+        YamlConfiguration changes = new YamlConfiguration();
+        configurationLeaves(configuration).forEach((path, value) -> {
+            if (hasOverride(path) || !Objects.equals(value, copyValue(baseConfiguration.get(path)))) changes.set(path, value);
+        });
+        overrides.saveConfiguration(changes);
+        overrideConfiguration = changes;
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        refreshConfiguration();
+    }
+
+    private static Map<String, Object> configurationLeaves(ConfigurationSection configuration) {
+        Map<String, Object> leaves = new LinkedHashMap<>();
+        for (String path : configuration.getKeys(true)) {
+            Object value = configuration.get(path);
+            if (!(value instanceof ConfigurationSection)) leaves.put(path, copyValue(value));
+        }
+        return leaves;
+    }
+
+    private static YamlConfiguration copyConfiguration(Configuration source) {
+        YamlConfiguration copy = new YamlConfiguration();
+        configurationLeaves(source).forEach(copy::set);
+        if (source.getDefaults() != null) copy.setDefaults(source.getDefaults());
+        return copy;
+    }
+
+    private static Object copyValue(Object value) {
+        if (value instanceof Object[]) value = Arrays.asList((Object[]) value);
+        if (value instanceof List<?>) {
+            List<Object> copy = new ArrayList<>(((List<?>) value).size());
+            for (Object item : (List<?>) value) copy.add(copyValue(item));
+            return copy;
+        }
+        if (value instanceof Map<?, ?>) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            ((Map<?, ?>) value).forEach((key, item) -> copy.put(copyValue(key), copyValue(item)));
+            return copy;
+        }
+        if (value instanceof Float) return Double.parseDouble(value.toString());
+        return value;
     }
 
     /**
@@ -330,7 +345,7 @@ public class Language extends ConfigManager {
         Object current = getYml().get(path);
         Object configuredDefault = getYml().getDefaults() == null ? null : getYml().getDefaults().get(path);
         String replacement = configuredDefault instanceof String ? (String) configuredDefault : m(Messages.CONFIG_ITEM_NAME_NOT_SET);
-        if (current == null || isLegacyUnsetName(current)) set(path, replacement);
+        if (current == null || (!hasOverride(path) && isLegacyUnsetName(current))) set(path, replacement);
     }
 
     /**
@@ -342,7 +357,7 @@ public class Language extends ConfigManager {
         Object configuredDefault = getYml().getDefaults() == null ? null : getYml().getDefaults().get(path);
         List<String> replacement = configuredDefault instanceof List ? new ArrayList<>((List<String>) configuredDefault)
                 : l(Messages.CONFIG_ITEM_LORE_NOT_SET);
-        if (current == null || isLegacyUnsetLore(current)) set(path, replacement);
+        if (current == null || (!hasOverride(path) && isLegacyUnsetLore(current))) set(path, replacement);
     }
 
     /**
@@ -508,7 +523,7 @@ public class Language extends ConfigManager {
         YamlConfiguration yml = language.getYml();
         String message = getDefaultMessage(language, Messages.CONFIG_ITEM_NAME_NOT_SET, fallback);
         Object current = yml.get(path);
-        if (isLegacyUnsetName(current) && !sameMessage(current, message)) yml.set(path, message);
+        if (!language.hasOverride(path) && isLegacyUnsetName(current) && !sameMessage(current, message)) yml.set(path, message);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path)) yml.addDefault(path, message);
     }
 
@@ -516,7 +531,7 @@ public class Language extends ConfigManager {
         YamlConfiguration yml = language.getYml();
         List<String> messages = getDefaultMessageList(language, Messages.CONFIG_ITEM_LORE_NOT_SET, fallback);
         Object current = yml.get(path);
-        if (isLegacyUnsetLore(current) && !sameMessage(current, messages)) yml.set(path, messages);
+        if (!language.hasOverride(path) && isLegacyUnsetLore(current) && !sameMessage(current, messages)) yml.set(path, messages);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path)) yml.addDefault(path, messages);
     }
 
@@ -612,9 +627,9 @@ public class Language extends ConfigManager {
             Object inventoryName = getYml().get(inventoryNamePath);
             Object itemName = getYml().get(itemNamePath);
             Object itemLore = getYml().get(itemLorePath);
-            if (inventoryName == null || (isLegacyUnsetName(inventoryName) && !sameMessage(inventoryName, nameFallback))) set(inventoryNamePath, nameFallback);
-            if (itemName == null || (isLegacyUnsetName(itemName) && !sameMessage(itemName, nameFallback))) set(itemNamePath, nameFallback);
-            if (itemLore == null || (isLegacyUnsetLore(itemLore) && !sameMessage(itemLore, loreFallback))) set(itemLorePath, loreFallback);
+            if (inventoryName == null || (!hasOverride(inventoryNamePath) && isLegacyUnsetName(inventoryName) && !sameMessage(inventoryName, nameFallback))) set(inventoryNamePath, nameFallback);
+            if (itemName == null || (!hasOverride(itemNamePath) && isLegacyUnsetName(itemName) && !sameMessage(itemName, nameFallback))) set(itemNamePath, nameFallback);
+            if (itemLore == null || (!hasOverride(itemLorePath) && isLegacyUnsetLore(itemLore) && !sameMessage(itemLore, loreFallback))) set(itemLorePath, loreFallback);
             ConfigurationSection content = shop.getConfigurationSection(s + ConfigPath.SHOP_CATEGORY_CONTENT_PATH);
             if (content == null) continue;
             for (String c : content.getKeys(false)) {
@@ -622,8 +637,8 @@ public class Language extends ConfigManager {
                 String contentLorePath = Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", s).replace("%content%", c);
                 Object contentName = getYml().get(contentNamePath);
                 Object contentLore = getYml().get(contentLorePath);
-                if (contentName == null || (isLegacyUnsetName(contentName) && !sameMessage(contentName, nameFallback))) set(contentNamePath, nameFallback);
-                if (contentLore == null || (isLegacyUnsetLore(contentLore) && !sameMessage(contentLore, loreFallback))) set(contentLorePath, loreFallback);
+                if (contentName == null || (!hasOverride(contentNamePath) && isLegacyUnsetName(contentName) && !sameMessage(contentName, nameFallback))) set(contentNamePath, nameFallback);
+                if (contentLore == null || (!hasOverride(contentLorePath) && isLegacyUnsetLore(contentLore) && !sameMessage(contentLore, loreFallback))) set(contentLorePath, loreFallback);
             }
         }
     }
@@ -649,72 +664,6 @@ public class Language extends ConfigManager {
                 path2 = Messages.SHOP_CONTENT_TIER_ITEM_LORE.replace("%category%", categoryName).replace("%content%", contentName);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path1)) yml.addDefault(path1, itemName);
         if (yml.getDefaults() == null || !yml.getDefaults().contains(path2)) yml.addDefault(path2, itemLore);
-    }
-
-    private static boolean migrateUpgradeMenuTerminology(Language language) {
-        ConfigurationSection defaults = language.getYml().getDefaults();
-        if (defaults == null) return false;
-        Object defaultTitle = defaults.get(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT);
-        boolean changed = false;
-        if (defaultTitle instanceof String) {
-            for (String path : language.getYml().getKeys(true)) {
-                if (!path.equals(Messages.UPGRADES_MENU_GUI_NAME_DEFAULT)
-                        && !path.startsWith(Messages.UPGRADES_MENU_GUI_NAME_PATH)) continue;
-                Object current = language.getYml().get(path);
-                if (current instanceof String && LEGACY_UPGRADE_MENU_TITLES.contains(((String) current).replace('§', '&'))) {
-                    language.getYml().set(path, defaultTitle);
-                    changed = true;
-                }
-            }
-        }
-        String backPath = Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + "back";
-        Object defaultBackLore = defaults.get(backPath);
-        Object currentBackLore = language.getYml().get(backPath);
-        if (defaultBackLore instanceof List && currentBackLore instanceof List && ((List<?>) currentBackLore).size() == 1) {
-            Object currentLine = ((List<?>) currentBackLore).get(0);
-            if (currentLine instanceof String && LEGACY_UPGRADE_BACK_LORE.contains(((String) currentLine).replace('§', '&'))) {
-                language.getYml().set(backPath, defaultBackLore);
-                changed = true;
-            }
-        }
-        return changed;
-    }
-
-    /**
-     * Replace persisted stock-English values with the current built-in translation.
-     * Administrator-customized values are preserved because only exact English defaults migrate.
-     */
-    public static void migrateEnglishDefaults() {
-        if (englishLanguage == null || englishLanguage.getYml() == null || englishLanguage.getYml().getDefaults() == null) return;
-        ConfigurationSection englishDefaults = englishLanguage.getYml().getDefaults();
-        if (migrateUpgradeMenuTerminology(englishLanguage)) englishLanguage.save();
-        for (Language language : languages) {
-            if (language == null || language == englishLanguage || language.getYml() == null || language.getYml().getDefaults() == null) continue;
-            ConfigurationSection localizedDefaults = language.getYml().getDefaults();
-            boolean changed = false;
-            for (String path : localizedDefaults.getKeys(true)) {
-                Object current = language.getYml().get(path);
-                Object englishDefault = englishDefaults.get(path);
-                Object localizedDefault = localizedDefaults.get(path);
-                if (englishDefault instanceof ConfigurationSection || localizedDefault instanceof ConfigurationSection) continue;
-                if (current instanceof List && englishDefault instanceof List && localizedDefault instanceof List) {
-                    List<?> currentList = (List<?>) current;
-                    List<?> englishList = (List<?>) englishDefault;
-                    List<?> localizedList = (List<?>) localizedDefault;
-                    List<?> migrated = migrateEnglishList(path, currentList, englishList, localizedList);
-                    if (migrated != currentList) {
-                        language.getYml().set(path, migrated);
-                        changed = true;
-                    }
-                } else if (englishDefault != null && localizedDefault != null && Objects.equals(current, englishDefault)
-                        && !Objects.equals(localizedDefault, englishDefault)) {
-                    language.getYml().set(path, localizedDefault);
-                    changed = true;
-                }
-            }
-            changed |= migrateUpgradeMenuTerminology(language);
-            if (changed) language.save();
-        }
     }
 
     /**

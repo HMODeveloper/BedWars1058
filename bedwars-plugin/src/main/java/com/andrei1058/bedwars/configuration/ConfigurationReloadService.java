@@ -110,7 +110,7 @@ public final class ConfigurationReloadService {
         add(files, BedWars.shop, "shop.yml");
         ConfigManager upgrades = UpgradesManager.getConfiguration();
         if (upgrades != null) add(files, upgrades, upgrades.getName() + ".yml");
-        for (Language language : Language.getLanguages()) add(files, language, "Languages/" + language.getName() + ".yml");
+        for (Language language : Language.getLanguages()) add(files, language, "Languages/overrides/" + language.getName() + ".yml");
         for (IArena arena : Arena.getArenas()) add(files, arena.getConfig(), "Arenas/" + arena.getArenaName() + ".yml");
         return files;
     }

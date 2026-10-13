@@ -376,12 +376,15 @@ public class MainConfig extends ConfigManager {
         if (langs != null) {
             for (File f : langs) {
                 if (f.isFile()) {
-                    if (f.getName().contains("messages_") && f.getName().contains(".yml")) {
-                        String lang = f.getName().replace("messages_", "").replace(".yml", "");
+                    String fileName = f.getName();
+                    if (fileName.startsWith("messages_") && fileName.endsWith(".yml") && fileName.length() > 13) {
+                        String lang = fileName.substring(9, fileName.length() - 4);
                         if (lang.equalsIgnoreCase(yml.getString("language"))) {
-                            whatLang = f.getName().replace("messages_", "").replace(".yml", "");
+                            whatLang = lang;
                         }
-                        if (Language.findLang(lang) == null) new Language(BedWars.plugin, lang);
+                        if (Language.findLang(lang) == null) {
+                            new Language(BedWars.plugin, lang).initializeOverrides();
+                        }
                     }
                 }
             }
@@ -390,6 +393,7 @@ public class MainConfig extends ConfigManager {
 
         if (def == null) throw new IllegalStateException("Could not found default language: " + whatLang);
         Language.setDefaultLanguage(def);
+        def.refreshConfiguration();
 
         //remove languages if disabled
         //server language can t be disabled

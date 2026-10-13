@@ -204,7 +204,9 @@ public class BedWars extends JavaPlugin {
         new Portuguese();
         new SimplifiedChinese();
         new Turkish();
-        Language.migrateEnglishDefaults();
+        for (Language language : Language.getLanguages()) {
+            language.initializeOverrides();
+        }
 
         config = new MainConfig(this, "config");
 
