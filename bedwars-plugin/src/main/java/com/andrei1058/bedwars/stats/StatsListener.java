@@ -50,16 +50,26 @@ public class StatsListener implements Listener {
             // Do nothing if login fails
             return;
         }
-        PlayerStats stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
-        stats.setName(event.getName());
-        BedWars.getStatsManager().put(event.getUniqueId(), stats);
+        PlayerStats stats = BedWars.getStatsManager().getUnsafe(event.getUniqueId());
+        if (stats == null) {
+            stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
+        }
+        BedWars.getStatsManager().prepare(event.getUniqueId(), stats);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerLoginEvent(PlayerLoginEvent event) {
+        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) return;
+        if (!BedWars.getStatsManager().activate(event.getPlayer())) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
+                    "BedWars stats are not ready. Please reconnect.");
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerLoginEvent(PlayerLoginEvent event) {
+    public void onLoginMonitor(PlayerLoginEvent event) {
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-            // Prevent memory leak if login fails
-            BedWars.getStatsManager().remove(event.getPlayer().getUniqueId());
+            BedWars.getStatsManager().remove(event.getPlayer());
         }
     }
 
@@ -194,6 +204,6 @@ public class StatsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(@NotNull PlayerQuitEvent event) {
-        BedWars.getStatsManager().remove(event.getPlayer().getUniqueId());
+        BedWars.getStatsManager().remove(event.getPlayer());
     }
 }

@@ -21,33 +21,62 @@
 package com.andrei1058.bedwars.stats;
 
 import com.andrei1058.bedwars.BedWars;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class StatsManager {
 
-    private final Map<UUID, PlayerStats> stats = new ConcurrentHashMap<>();
+    private final Map<UUID, StatsSession> stats = new ConcurrentHashMap<>();
+    // Preloads survive the previous connection's quit, but abandoned logins expire.
+    private final Cache<UUID, PlayerStats> preloadedStats = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES).build();
 
     public StatsManager() {
-        registerListeners();
+        Bukkit.getPluginManager().registerEvents(new StatsListener(), BedWars.plugin);
     }
 
-    public void remove(UUID uuid) {
-        stats.remove(uuid);
+    public void remove(Player player) {
+        // Player equality can compare UUIDs; ownership must compare connections.
+        stats.computeIfPresent(player.getUniqueId(), (uuid, session) ->
+                session.owner == player ? null : session);
     }
 
-    public void put(UUID uuid, PlayerStats playerStats) {
-        stats.put(uuid, playerStats);
+    public void prepare(UUID uuid, PlayerStats playerStats) {
+        preloadedStats.put(uuid, playerStats);
+    }
+
+    public boolean activate(Player player) {
+        UUID uuid = player.getUniqueId();
+        PlayerStats data = getUnsafe(uuid);
+        if (data == null) data = preloadedStats.getIfPresent(uuid);
+        if (data == null) return false;
+        data.setName(player.getName());
+        stats.put(uuid, new StatsSession(player, data));
+        return true;
+    }
+
+    private static final class StatsSession {
+        private final Player owner;
+        private final PlayerStats stats;
+
+        private StatsSession(Player owner, PlayerStats stats) {
+            this.owner = owner;
+            this.stats = stats;
+        }
     }
 
     @NotNull
     public PlayerStats get(UUID uuid) {
-        PlayerStats playerStats = stats.get(uuid);
+        PlayerStats playerStats = getUnsafe(uuid);
         if (playerStats == null) {
             throw new IllegalStateException("Trying to get stats data of an unloaded player!");
         }
@@ -56,13 +85,7 @@ public class StatsManager {
 
     @Nullable
     public PlayerStats getUnsafe(UUID uuid) {
-        return stats.get(uuid);
-    }
-
-    /**
-     * Register listeners related to stats cache.
-     */
-    private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new StatsListener(), BedWars.plugin);
+        StatsSession session = stats.get(uuid);
+        return session == null ? null : session.stats;
     }
 }
